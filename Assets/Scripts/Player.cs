@@ -24,6 +24,11 @@ public class Player : MonoBehaviour
         view = newView;
     }
 
+    public Vector3 GetPosition()
+    {
+        return this.transform.position;
+    }
+
     // Use this for initialization
     void Start()
     {
