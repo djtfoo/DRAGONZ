@@ -67,6 +67,16 @@ public class Player : MonoBehaviour
 
         if (!velocity.Equals(Vector3.zero)) {
             this.transform.position += velocity * Time.deltaTime;
+
+            // decelerate
+            Vector3 velDir = velocity.normalized;
+            velocity -= (10f + velocity.magnitude * 0.5f) * velDir * Time.deltaTime;
+
+            double cosOfAngle = (velDir.x * velocity.x + velDir.y * velocity.y + velDir.z * velocity.z);
+            if (cosOfAngle < 0)     // -ve, parallel & opp direction
+            {
+                velocity = Vector3.zero;
+            }
         }
     }
 

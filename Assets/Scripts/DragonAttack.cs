@@ -4,8 +4,8 @@ using UnityEngine.UI;
 public class DragonAttack : MonoBehaviour {
     public EnergyScript energy;
     public GameObject DragonMouth,Projectile,Target;
-    public Text debug;
-    public Text energyMeterText;
+    //public Text debug;
+    //public Text energyMeterText;
     bool keypress;
     int test;
 
@@ -17,7 +17,7 @@ public class DragonAttack : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        energyMeterText.text = energy.currentEnergy.ToString();
+        //energyMeterText.text = energy.currentEnergy.ToString();
         if (Input.GetMouseButtonUp(0) && energy.readyToUse)
         {
             FireBallAttack();
@@ -37,7 +37,7 @@ public class DragonAttack : MonoBehaviour {
     {
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
          ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed+= energy.AmtenergyCharge*10;
-         debug.text = ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed.ToString();
+         //debug.text = ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed.ToString();
         energy.AmtenergyCharge = 0;
         energy.recharging = true;
         energy.timer = 0;
@@ -54,7 +54,7 @@ public class DragonAttack : MonoBehaviour {
     }
     public void FireBallAttack()
     {
-        debug.text = "Fired";
+        //debug.text = "Fired";
        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
        energy.DecreaseEnergy(  );
        ProjectileScript script2 = ProjectileInstianted.GetComponent<ProjectileScript>();

@@ -43,7 +43,7 @@ public class ProjectileScript : MonoBehaviour {
 	}
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name=="Terrain")
+        if(col.gameObject.tag=="Terrain")
         {
             Destroy(this.gameObject);
             ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, particleSystem.transform.rotation);
