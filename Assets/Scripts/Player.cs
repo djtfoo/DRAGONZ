@@ -19,7 +19,7 @@ public class Player : NetworkBehaviour
     private Vector3 velocity = Vector3.zero;
     private Vector3 force = Vector3.zero;
 
-    private Vector3 view = new Vector3(0, 0, 1);   // the dragon's view vector - for shooting, etc
+    private Vector3 view;   // the dragon's view vector - for shooting, etc
 
     // Get the view vector
     public Vector3 GetView()
@@ -40,6 +40,8 @@ public class Player : NetworkBehaviour
     // Use this for initialization
     public override void OnStartLocalPlayer()
     {
+        view = new Vector3(0, 0, 1);
+
         rbody = GetComponent<Rigidbody>();
     }
 

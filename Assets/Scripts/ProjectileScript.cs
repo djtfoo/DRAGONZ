@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ProjectileScript : MonoBehaviour {
+public class ProjectileScript : MonoBehaviour 
+{
     public Vector3 Vel, Scale,Target;
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
@@ -56,7 +57,7 @@ public class ProjectileScript : MonoBehaviour {
        //instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
        this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
        //instantiateTrail.gameObject.transform.position = this.transform.position;
-       Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
+       //Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
         if(timer > lifeTime)
         {
             this.gameObject.SetActive(false);
@@ -65,6 +66,7 @@ public class ProjectileScript : MonoBehaviour {
         }
     
 	}
+
     void OnCollisionEnter(Collision col)
     {
         if(col.gameObject.tag=="Terrain")

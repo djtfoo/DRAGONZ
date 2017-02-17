@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-public class ThirdPersonCamera : NetworkBehaviour {
-
+public class ThirdPersonCamera : NetworkBehaviour
+{
     public GameObject player;
     public GameObject target;   // DON'T USE THIS
     public float rotateSpeed = 4;
@@ -31,6 +31,9 @@ public class ThirdPersonCamera : NetworkBehaviour {
     [Client]
     void Update()
     {
+        if (!playerScript.isLocalPlayer)
+            return;
+
         // Rotate
         UpdatePitch();
         UpdateYaw();
@@ -48,6 +51,7 @@ public class ThirdPersonCamera : NetworkBehaviour {
         playerScript.SetView(new Vector3(0, 0, 1));
         playerScript.SetView(rotation * playerScript.GetView());
         target.transform.position = this.transform.position + 10f * playerScript.GetView();
+        Debug.Log(playerScript.name + "view: " + playerScript.GetView());
     }
 
     [Client]
