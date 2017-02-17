@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
+using System.Collections;
 
-public class ProjectileScript : NetworkBehaviour {
+public class ProjectileScript : MonoBehaviour {
     public Vector3 Vel, Scale,Target;
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
@@ -9,18 +9,24 @@ public class ProjectileScript : NetworkBehaviour {
    public ParticleSystem particleSystem,ShockWaveSystem,ExplosionSystem;
    float degradeTimer;
     ParticleSystem ParticleSysInstianted, ParticleSysInstianted2, ParticleSysInstianted3;
-      
+
+    float spawnTrailTimer = 0f;
 
 
 	// Use this for initialization
 	void Start ()
     {
         //Vel = ( this.gameObject.transform.position-Target).normalized;
-        transform.localScale = Scale;
+        transform.localScale = Scale;          
+       
+       // Debug.Log(parti)
+     //   particleSystem.transform.ro
+       ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+       ParticleSysInstianted.transform.position = this.gameObject.transform.position;
+       ParticleSysInstianted.Play();
 	}
 
 	// Update is called once per frame
-    [Client]
 	void Update () {
         timer += Time.deltaTime;
         if (VeloctiyDegrade)
@@ -32,8 +38,25 @@ public class ProjectileScript : NetworkBehaviour {
                 degradeTimer = 0;
             }
         }
-        
-        this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
+
+        spawnTrailTimer += Time.deltaTime;
+        if (spawnTrailTimer > 0.5f)
+        {
+            spawnTrailTimer = 0f;
+            ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+
+            instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
+            instantiateTrail.gameObject.transform.position = this.transform.position;
+
+            instantiateTrail.Play();
+        }
+
+       //ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+       //
+       //instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
+       this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
+       //instantiateTrail.gameObject.transform.position = this.transform.position;
+       Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
         if(timer > lifeTime)
         {
             this.gameObject.SetActive(false);
@@ -47,9 +70,8 @@ public class ProjectileScript : NetworkBehaviour {
         if(col.gameObject.tag=="Terrain")
         {
             Destroy(this.gameObject);
-            ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, particleSystem.transform.rotation);
-            ParticleSysInstianted.transform.position = this.gameObject.transform.position;
-            ParticleSysInstianted.Play();
+
+            
 
             ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
             ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
