@@ -1,8 +1,16 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
+    [SyncVar]
+    Vector3 realPosition = Vector3.zero;
+
+    [SyncVar]
+    Quaternion realRotation;
+
+    private float updateInterval;
+
     public float movementSpeed;
     public float turningSpeed;
 
@@ -30,59 +38,85 @@ public class Player : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    public override void OnStartLocalPlayer()
     {
         rbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
+    [Client]
     void Update()
     {
-        //float horizontal = Input.GetAxis("Horizontal") * turningSpeed * Time.deltaTime;
-        //transform.Rotate(0, horizontal, 0);
-
-        //float vertical = Input.GetAxis("Vertical") * movementSpeed * Time.deltaTime;
-        //transform.Translate(0, 0, vertical);
-
-        //transform.Translate(movementSpeed * Input.GetAxis("Horizontal") * Time.deltaTime, 0f, movementSpeed * Input.GetAxis("Vertical") * Time.deltaTime);
-
-
-        //float inputX = Input.GetAxis("Horizontal");
-        //float inputZ = Input.GetAxis("Vertical");
-        //
-        //float moveX = inputX * movementSpeed * Time.deltaTime;
-        //float moveZ = inputZ * movementSpeed * Time.deltaTime;
-        //
-        //transform.Translate(moveX, 0f, moveZ);
-        
-        //rbody.AddForce(moveX, 0f, moveZ);
-
-        force = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W))
+        if (isLocalPlayer)
         {
-            force = 100f * view;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            force = -100f * view;
-        }
 
-        velocity += force * Time.deltaTime;
 
-        if (!velocity.Equals(Vector3.zero)) {
-            this.transform.position += velocity * Time.deltaTime;
+            //float horizontal = Input.GetAxis("Horizontal") * turningSpeed * Time.deltaTime;
+            //transform.Rotate(0, horizontal, 0);
 
-            // decelerate
-            Vector3 velDir = velocity.normalized;
-            velocity -= (10f + velocity.magnitude * 0.5f) * velDir * Time.deltaTime;
+            //float vertical = Input.GetAxis("Vertical") * movementSpeed * Time.deltaTime;
+            //transform.Translate(0, 0, vertical);
 
-            double cosOfAngle = (velDir.x * velocity.x + velDir.y * velocity.y + velDir.z * velocity.z);
-            if (cosOfAngle < 0)     // -ve, parallel & opp direction
+            //transform.Translate(movementSpeed * Input.GetAxis("Horizontal") * Time.deltaTime, 0f, movementSpeed * Input.GetAxis("Vertical") * Time.deltaTime);
+
+
+            //float inputX = Input.GetAxis("Horizontal");
+            //float inputZ = Input.GetAxis("Vertical");
+            //
+            //float moveX = inputX * movementSpeed * Time.deltaTime;
+            //float moveZ = inputZ * movementSpeed * Time.deltaTime;
+            //
+            //transform.Translate(moveX, 0f, moveZ);
+
+            //rbody.AddForce(moveX, 0f, moveZ);
+
+            force = Vector3.zero;
+
+            if (Input.GetKey(KeyCode.W))
             {
-                velocity = Vector3.zero;
+                force = 100f * view;
             }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                force = -100f * view;
+            }
+
+            velocity += force * Time.deltaTime;
+
+            if (!velocity.Equals(Vector3.zero))
+            {
+                this.transform.position += velocity * Time.deltaTime;
+
+                // decelerate
+                Vector3 velDir = velocity.normalized;
+                velocity -= (10f + velocity.magnitude * 0.5f) * velDir * Time.deltaTime;
+
+                double cosOfAngle = (velDir.x * velocity.x + velDir.y * velocity.y + velDir.z * velocity.z);
+                if (cosOfAngle < 0)     // -ve, parallel & opp direction
+                {
+                    velocity = Vector3.zero;
+                }
+            }
+
+            // Update the server with position/rotation
+            updateInterval += Time.deltaTime;
+            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
+            {
+                updateInterval = 0;
+                CmdSync(transform.position, transform.rotation);
+            }
+        }
+        else
+        {
+            transform.position = Vector3.Lerp(transform.position, realPosition, 0.1f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, realRotation, 0.1f);
         }
     }
 
+    [Command]
+    void CmdSync(Vector3 position, Quaternion rotation)
+    {
+        realPosition = position;
+        realRotation = rotation;
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
-public class ThirdPersonCamera : MonoBehaviour {
+public class ThirdPersonCamera : NetworkBehaviour {
 
     public GameObject player;
     public GameObject target;   // DON'T USE THIS
@@ -17,10 +17,10 @@ public class ThirdPersonCamera : MonoBehaviour {
     Player playerScript;
 
     // Use this for initialization
+    [Client]
     void Start()
     {
         playerScript = player.GetComponent<Player>();
-
         //offset = player.transform.position - transform.position;
         this.transform.position = player.transform.position - positionOffset;
 
@@ -28,6 +28,7 @@ public class ThirdPersonCamera : MonoBehaviour {
     }
 
     // Update is called once per frame
+    [Client]
     void Update()
     {
         // Rotate
@@ -49,6 +50,7 @@ public class ThirdPersonCamera : MonoBehaviour {
         target.transform.position = this.transform.position + 10f * playerScript.GetView();
     }
 
+    [Client]
     void UpdatePitch()
     {
         float vertical = Input.GetAxis("Mouse Y") * rotateSpeed;
@@ -59,6 +61,7 @@ public class ThirdPersonCamera : MonoBehaviour {
             pitch += 360f;
     }
 
+    [Client]
     void UpdateYaw()
     {
         float horizontal = Input.GetAxis("Mouse X") * rotateSpeed;

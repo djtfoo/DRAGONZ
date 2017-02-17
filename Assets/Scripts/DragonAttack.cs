@@ -1,26 +1,37 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 using UnityEngine.UI;
-public class DragonAttack : MonoBehaviour {
+
+public class DragonAttack : NetworkBehaviour {
+
     public EnergyScript energy;
     public GameObject DragonMouth,Projectile,Target;
     //public Text debug;
-    //public Text energyMeterText;
+    public Text energyMeterText;
     bool keypress;
     int test;
+    Player player;
 
 	// Use this for initialization
+    [Client]
 	void Start () {
+        player = GetComponent<Player>();//GameObject.GetComponent<Player>();
         keypress = false;
         test=0;
 	}
 	
 	// Update is called once per frame
+    [Client]
 	void Update () {
-        //energyMeterText.text = energy.currentEnergy.ToString();
+        //if (!isLocalPlayer)
+            //return;
+
+        if (energyMeterText != null)
+            energyMeterText.text = energy.currentEnergy.ToString();
+
         if (Input.GetMouseButtonUp(0) && energy.readyToUse)
         {
-            FireBallAttack();
+            CmdFireBallAttack();
         }
         else
             keypress = false;
@@ -33,6 +44,7 @@ public class DragonAttack : MonoBehaviour {
             ChargedAttack();
         }
 	}
+
     public void ChargedAttack()
     {
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
@@ -44,26 +56,29 @@ public class DragonAttack : MonoBehaviour {
         energy.ChargedReadyToUse = false;
        
         ProjectileScript script = ProjectileInstianted.GetComponent<ProjectileScript>();
-        Player player = GameObject.FindObjectOfType<Player>();
+        Player player = GetComponent<Player>();
         script.Target = player.GetView();
         script.gameObject.transform.position = this.transform.position;
 
         script.Vel = script.Target;
         test++;
-        
     }
-    public void FireBallAttack()
+
+    [Command]
+    public void CmdFireBallAttack()
     {
         //debug.text = "Fired";
        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
-       energy.DecreaseEnergy(  );
-       ProjectileScript script2 = ProjectileInstianted.GetComponent<ProjectileScript>();
 
-       Player player = GameObject.FindObjectOfType<Player>();
-       script2.Target = player.GetView();
-       script2.gameObject.transform.position = this.transform.position;
+       energy.DecreaseEnergy();
+       ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
+       
+       projScript.Target = player.GetView();
+       Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1)
+       projScript.gameObject.transform.position = this.transform.position;
+       projScript.Vel = projScript.Target;
 
-       script2.Vel = script2.Target;
+       NetworkServer.Spawn(ProjectileInstianted);
        test++;
     }
 }

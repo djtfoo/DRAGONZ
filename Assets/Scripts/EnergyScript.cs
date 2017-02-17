@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
+using UnityEngine.Networking;
 
-public class EnergyScript : MonoBehaviour
+public class EnergyScript : NetworkBehaviour
 {
     public float MaxEnergy, AmtEnergyIncrease, EnergyNeededToRun, currentEnergy,rateEnergyCharge;
     public float timer, timeToRecharge, TimeIncreaseEnergy,AmtenergyCharge,MaxCharge,MinimumCharge;
@@ -46,8 +47,13 @@ public class EnergyScript : MonoBehaviour
         }
 
     }
+
+    [Client]
     void Update()
     {
+        if (!isLocalPlayer)
+            return;
+
         timer += Time.deltaTime;
         if (recharging)
         {

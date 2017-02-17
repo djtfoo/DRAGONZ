@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
-public class ProjectileScript : MonoBehaviour {
+public class ProjectileScript : NetworkBehaviour {
     public Vector3 Vel, Scale,Target;
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
@@ -20,6 +20,7 @@ public class ProjectileScript : MonoBehaviour {
 	}
 
 	// Update is called once per frame
+    [Client]
 	void Update () {
         timer += Time.deltaTime;
         if (VeloctiyDegrade)
