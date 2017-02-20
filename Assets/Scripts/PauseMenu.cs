@@ -15,22 +15,22 @@ public class PauseMenu : NetworkBehaviour {
 
     public void LeaveRoom()
     {
-        CreateMatchResponse createMatchResponse = new CreateMatchResponse();
+        //CreateMatchResponse createMatchResponse = new CreateMatchResponse();
 
-        if (PlayerSetup.isHost)
-        {
-            //networkManager.matchMaker.DestroyMatch(createMatchResponse.networkId, NetworkManager);
-        }
-        else
-        {
-            DropConnectionRequest dropReq = new DropConnectionRequest();
-        }
+        //if (PlayerSetup.isHost)
+        //{
+        //    //networkManager.matchMaker.DestroyMatch(createMatchResponse.networkId, NetworkManager);
+        //}
+        //else
+        //{
+        //    DropConnectionRequest dropReq = new DropConnectionRequest();
+        //}
 
         
 
 
-        MatchInfo matchInfo = networkManager.matchInfo;
-        networkManager.matchMaker.DropConnection(matchInfo.networkId, matchInfo.nodeId, OnConnectionDropped);
+        //MatchInfo matchInfo = networkManager.matchInfo;
+        //networkManager.matchMaker.DropConnection(matchInfo.networkId, matchInfo.nodeId, OnConnectionDropped);
         networkManager.StopHost();
     }
 
