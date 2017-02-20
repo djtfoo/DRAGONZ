@@ -6,6 +6,11 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     GameObject pauseMenu;
 
+    [SerializeField]
+    Radar radar;
+
+    public static Vector3 playerPos;
+
     void Start()
     {
         PauseMenu.isOn = false;

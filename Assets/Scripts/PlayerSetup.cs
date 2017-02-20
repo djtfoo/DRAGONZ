@@ -43,6 +43,12 @@ public class PlayerSetup : NetworkBehaviour
         RegisterPlayer();
     }
 
+    void Update()
+    {
+        PlayerUI.playerPos = transform.position;
+        //Debug.Log(transform.position);
+    }
+
     void RegisterPlayer()
     {
         string _ID = "Player " + GetComponent<NetworkIdentity>().netId;
