@@ -19,6 +19,9 @@ public class Player : NetworkBehaviour
     private Vector3 velocity = Vector3.zero;
     private Vector3 force = Vector3.zero;
 
+    [SyncVar]
+    Vector3 realView = Vector3.zero;
+
     private Vector3 view;   // the dragon's view vector - for shooting, etc
 
     // Get the view vector
@@ -105,20 +108,22 @@ public class Player : NetworkBehaviour
             if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
             {
                 updateInterval = 0;
-                CmdSync(transform.position, transform.rotation);
+                CmdSync(transform.position, transform.rotation, view);
             }
         }
         else
         {
             transform.position = Vector3.Lerp(transform.position, realPosition, 0.1f);
             transform.rotation = Quaternion.Lerp(transform.rotation, realRotation, 0.1f);
+            view = Vector3.Lerp(view, realView, 0.1f);
         }
     }
 
     [Command]
-    void CmdSync(Vector3 position, Quaternion rotation)
+    void CmdSync(Vector3 position, Quaternion rotation, Vector3 view)
     {
         realPosition = position;
         realRotation = rotation;
+        realView = view;
     }
 }

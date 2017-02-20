@@ -31,8 +31,10 @@ public class ThirdPersonCamera : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!playerScript.isLocalPlayer)
+        if (!playerScript.isLocalPlayer || PauseMenu.isOn)
             return;
+
+        //Debug.Log(playerScript.name);
 
         // Rotate
         UpdatePitch();
@@ -51,7 +53,7 @@ public class ThirdPersonCamera : NetworkBehaviour
         playerScript.SetView(new Vector3(0, 0, 1));
         playerScript.SetView(rotation * playerScript.GetView());
         target.transform.position = this.transform.position + 10f * playerScript.GetView();
-        Debug.Log(playerScript.name + "view: " + playerScript.GetView());
+        //Debug.Log(playerScript.name + "view: " + playerScript.GetView());
     }
 
     [Client]

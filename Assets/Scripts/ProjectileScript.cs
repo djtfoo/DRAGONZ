@@ -1,20 +1,21 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
 
-public class ProjectileScript : MonoBehaviour 
+public class ProjectileScript : NetworkBehaviour 
 {
     public Vector3 Vel, Scale,Target;
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
     public float lifeTime, timer,particleTimer;
-   public ParticleSystem particleSystem,ShockWaveSystem,ExplosionSystem;
-   float degradeTimer;
+    public ParticleSystem particleSystem,ShockWaveSystem,ExplosionSystem;
+    float degradeTimer;
     ParticleSystem ParticleSysInstianted, ParticleSysInstianted2, ParticleSysInstianted3;
 
     float spawnTrailTimer = 0f;
 
 
 	// Use this for initialization
+    [Client]
 	void Start ()
     {
         //Vel = ( this.gameObject.transform.position-Target).normalized;
@@ -28,6 +29,7 @@ public class ProjectileScript : MonoBehaviour
 	}
 
 	// Update is called once per frame
+    [Client]
 	void Update () {
         timer += Time.deltaTime;
         if (VeloctiyDegrade)
@@ -64,25 +66,30 @@ public class ProjectileScript : MonoBehaviour
             Destroy(this.gameObject);
 
         }
-    
 	}
 
+    [Client]
     void OnCollisionEnter(Collision col)
     {
         if(col.gameObject.tag=="Terrain")
         {
-            Destroy(this.gameObject);
-
-            
-
-            ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
-            ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
-            ParticleSysInstianted2.Play();
-
-            ParticleSysInstianted3 = (ParticleSystem)Instantiate(ExplosionSystem, this.transform.position, ExplosionSystem.transform.rotation);
-            ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
-
-            ParticleSysInstianted3.Play();
+            CmdHitTerrainParticles();
         }
+    }
+
+    [Command]
+    void CmdHitTerrainParticles()
+    {
+        Destroy(this.gameObject);
+
+        ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
+        ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted2.Play();
+        NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
+
+        ParticleSysInstianted3 = (ParticleSystem)Instantiate(ExplosionSystem, this.transform.position, ExplosionSystem.transform.rotation);
+        ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted3.Play();
+        NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
     }
 }

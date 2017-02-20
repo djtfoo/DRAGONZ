@@ -3,12 +3,19 @@ using UnityEngine.Networking;
 
 public class PlayerSetup : NetworkBehaviour
 {
-
     [SerializeField]
     Behaviour[] componentsToDisable;
 
     [SerializeField]
     string remoteLayerName = "RemotePlayer";
+
+    [SerializeField]
+    GameObject playerUIPrefab;
+    private GameObject playerUIInstance;
+
+    public static bool isHost = false;
+    public static long m_networkID;
+    public static long m_nodeID;
 
     Camera sceneCamera;
 
@@ -28,6 +35,9 @@ public class PlayerSetup : NetworkBehaviour
             {
                 //sceneCamera.gameObject.SetActive(false);
             }
+
+            playerUIInstance = Instantiate(playerUIPrefab);
+            playerUIInstance.name = playerUIPrefab.name;
         }
 
         RegisterPlayer();
@@ -55,6 +65,8 @@ public class PlayerSetup : NetworkBehaviour
 
     void OnDisable()
     {
+        Destroy(playerUIInstance);
+
         if (sceneCamera != null)
         {
             sceneCamera.gameObject.SetActive(true);

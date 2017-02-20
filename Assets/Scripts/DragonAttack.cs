@@ -28,7 +28,7 @@ public class DragonAttack : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!isLocalPlayer)
+        if (!player.isLocalPlayer || PauseMenu.isOn)
             return;
 
         if (energyMeterText != null)
@@ -79,7 +79,6 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     public void CmdFireBallAttack()
     {
-        player = GetComponent<Player>();
         Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
 
         //debug.text = "Fired";
