@@ -72,6 +72,8 @@ public class DragonAttack : NetworkBehaviour
         script.Target = player.GetView();
         script.gameObject.transform.position = this.transform.position;
 
+        NetworkServer.Spawn(ProjectileInstianted);
+
         script.Vel = script.Target;
         test++;
     }
