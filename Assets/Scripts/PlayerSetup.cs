@@ -38,6 +38,14 @@ public class PlayerSetup : NetworkBehaviour
 
             playerUIInstance = Instantiate(playerUIPrefab);
             playerUIInstance.name = playerUIPrefab.name;
+
+            EnergyScript energy = this.gameObject.GetComponent<EnergyScript>();
+            PlayerUI playerUI = playerUIInstance.GetComponent<PlayerUI>();
+            energy.energyBarImage = playerUI.energyBar;
+            energy.chargeBarImage = playerUI.chargeEnergyBar;
+
+            Health health = this.gameObject.GetComponent<Health>();
+            health.HealthImage = playerUI.healthBar;
         }
 
         RegisterPlayer();

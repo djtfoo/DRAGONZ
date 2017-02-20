@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour {
 
@@ -8,6 +9,10 @@ public class PlayerUI : MonoBehaviour {
 
     [SerializeField]
     Radar radar;
+
+    public Image energyBar;
+    public Image chargeEnergyBar;
+    public Image healthBar;
 
     public static Vector3 playerPos;
 
