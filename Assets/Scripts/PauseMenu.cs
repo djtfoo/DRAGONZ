@@ -4,7 +4,7 @@ using UnityEngine.Networking.Match;
 
 public class PauseMenu : NetworkBehaviour {
 
-    public static bool isOn = false;
+    //public static bool isOn = false;
 
     private NetworkManager networkManager;
 

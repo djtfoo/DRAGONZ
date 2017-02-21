@@ -79,6 +79,9 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            if (OverlayActive.IsOverlayActive())
+                return;
+
             //float horizontal = Input.GetAxis("Horizontal") * turningSpeed * Time.deltaTime;
             //transform.Rotate(0, horizontal, 0);
 

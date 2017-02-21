@@ -28,7 +28,7 @@ public class DragonAttack : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!player.isLocalPlayer || PauseMenu.isOn)
+        if (!player.isLocalPlayer || OverlayActive.IsOverlayActive())
             return;
 
         if (energyMeterText != null)

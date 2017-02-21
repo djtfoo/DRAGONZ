@@ -19,7 +19,8 @@ public class PlayerUI : MonoBehaviour {
 
     void Start()
     {
-        PauseMenu.isOn = false;
+        OverlayActive.SetOverlayActive(false);
+        //PauseMenu.isOn = false;
     }
 	
 	// Update is called once per frame
@@ -34,6 +35,7 @@ public class PlayerUI : MonoBehaviour {
     void TogglePauseMenu()
     {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
-        PauseMenu.isOn = pauseMenu.activeSelf;
+        OverlayActive.SetOverlayActive(!OverlayActive.IsOverlayActive());
+        //PauseMenu.isOn = pauseMenu.activeSelf;
     }
 }

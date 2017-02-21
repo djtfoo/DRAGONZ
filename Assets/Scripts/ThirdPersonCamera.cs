@@ -24,7 +24,7 @@ public class ThirdPersonCamera : NetworkBehaviour
     {
         playerScript = player.GetComponent<Player>();
         //offset = player.transform.position - transform.position;
-        this.transform.position = player.transform.position - positionOffset;
+        this.transform.position = player.transform.position + positionOffset;
 
         target.transform.position = this.transform.position + 10f * playerScript.GetView();
     }
@@ -33,7 +33,7 @@ public class ThirdPersonCamera : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!playerScript.isLocalPlayer || PauseMenu.isOn)
+        if (!playerScript.isLocalPlayer || OverlayActive.IsOverlayActive())
             return;
 
         //Debug.Log(playerScript.name);
@@ -83,9 +83,24 @@ public class ThirdPersonCamera : NetworkBehaviour
         // rotate player
         //player.transform.eulerAngles = new Vector3(-pitch, yaw, -yaw * 0.5f);
 
-        // rotate & move camera
+        // move camera
         this.transform.position = player.transform.position;
         this.transform.Translate(positionOffset);
+        //Quaternion destRotate = Quaternion.Euler(-playerPitch + 30f, playerYaw, roll);
+        ////Vector3 destination = player.transform.position + positionOffset;
+        //Vector3 destination = positionOffset;
+        //destination = destRotate * destination + player.transform.position;
+        //Vector3 moveDir = (destination - this.transform.position).normalized;
+        //this.transform.position += moveDir * Time.deltaTime * 500f;
+        //
+        //Vector3 dist = destination - this.transform.position;
+        //double cosOfAngle = (moveDir.x * dist.x + moveDir.y * dist.y + moveDir.z * dist.z);
+        //if (cosOfAngle < 0)     // -ve, parallel & opp direction
+        //{
+        //    this.transform.position = destination;
+        //}
+
+        // rotate camera
         this.transform.eulerAngles = new Vector3(-pitch + 30f, yaw, roll);
 
         // rotate up vector
