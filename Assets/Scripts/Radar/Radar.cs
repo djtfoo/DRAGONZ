@@ -10,6 +10,14 @@ public class RadarIcon
     public Image icon;
     public Image iconHigher;
     public Image iconLower;
+
+    public void DestroySelf()
+    {
+        GameObject.Destroy(icon.gameObject);
+        GameObject.Destroy(iconHigher.gameObject);
+        GameObject.Destroy(iconLower.gameObject);
+        GameObject.Destroy(currentIcon.gameObject);
+    }
 }
 
 public class Radar : MonoBehaviour
@@ -72,10 +80,13 @@ public class Radar : MonoBehaviour
                 //radIcons[i].iconLower.gameObject.SetActive(false);
                 //radIcons[i].icon.gameObject.SetActive(false);
 
-                //worldObject.RemoveAt(i);
-
+                Destroy(go);
+                worldObject.RemoveAt(i);
+                //radIcons[i] = null;
+                radIcons[i].DestroySelf();
+                radIcons.RemoveAt(i);
                 Debug.Log("hey");
-                continue;
+                break;
             }
             //else
                 //worldObject.AddRange(worldObject);

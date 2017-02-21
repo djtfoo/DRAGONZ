@@ -7,7 +7,7 @@ public class DestroyEnvironment : MonoBehaviour {
     {
         if(col.gameObject.name == "TestCube")
         {
-            //Radar.RemoveRadarObject(col.gameObject);
+            Radar.RemoveRadarObject(col.gameObject);
             //Destroy(col.gameObject);
         }
     }
