@@ -12,7 +12,7 @@ public class ProjectileScript : NetworkBehaviour
     ParticleSystem ParticleSysInstianted, ParticleSysInstianted2, ParticleSysInstianted3;
 
     float spawnTrailTimer = 0f;
-
+    private ComboMeter combometer;
 
 	// Use this for initialization
     [Client]
@@ -26,6 +26,7 @@ public class ProjectileScript : NetworkBehaviour
        ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
        ParticleSysInstianted.transform.position = this.gameObject.transform.position;
        ParticleSysInstianted.Play();
+       combometer = (ComboMeter)FindObjectOfType<ComboMeter>();
 	}
 
 	// Update is called once per frame
@@ -74,6 +75,8 @@ public class ProjectileScript : NetworkBehaviour
         if(col.gameObject.tag=="Terrain")
         {
             CmdHitTerrainParticles();
+            combometer.AddToComboMeter(1);
+            
         }
     }
 

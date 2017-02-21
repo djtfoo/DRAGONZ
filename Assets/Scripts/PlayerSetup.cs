@@ -46,6 +46,10 @@ public class PlayerSetup : NetworkBehaviour
 
             Health health = this.gameObject.GetComponent<Health>();
             health.HealthImage = playerUI.healthBar;
+
+            ComboMeter combometer = this.gameObject.GetComponent<ComboMeter>();
+            combometer.ComboCounterText = playerUI.comboCounterText;
+            combometer.ComboTimerBar = playerUI.comboCounterTimer;
         }
 
         RegisterPlayer();

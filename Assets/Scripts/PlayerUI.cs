@@ -13,7 +13,8 @@ public class PlayerUI : MonoBehaviour {
     public Image energyBar;
     public Image chargeEnergyBar;
     public Image healthBar;
-
+    public Image comboCounterTimer;
+    public Text comboCounterText;
     public static Vector3 playerPos;
 
     void Start()

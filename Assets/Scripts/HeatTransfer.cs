@@ -39,6 +39,7 @@ public class HeatTransfer : MonoBehaviour {
                     if (go1Temp.currentTemperature > go2Temp.currentTemperature)
                     {
                         HeatTransferDegrees = (rateOfTransfer * (go1Temp.currentTemperature - go2Temp.currentTemperature)) / ((go1Temp.RValue - go2Temp.RValue)+length);
+                        if(!go1Temp.onFIRE)
                         go1Temp.currentTemperature -= HeatTransferDegrees;
                         go2Temp.currentTemperature += HeatTransferDegrees;
                         Debug.Log(HeatTransferDegrees);
@@ -47,6 +48,7 @@ public class HeatTransfer : MonoBehaviour {
                     {
                         HeatTransferDegrees = (rateOfTransfer * (go2Temp.currentTemperature - go1Temp.currentTemperature)) / ((go2Temp.RValue - go1Temp.RValue) + length);
                         go1Temp.currentTemperature += HeatTransferDegrees;
+                        if(!go2Temp.onFIRE)
                         go2Temp.currentTemperature -= HeatTransferDegrees;
                         Debug.Log(HeatTransferDegrees);
                     }

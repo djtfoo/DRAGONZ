@@ -15,7 +15,7 @@ public class Temperature : MonoBehaviour {
         Burnt = false;
         heatTransfer = FindObjectOfType<HeatTransfer>();
         heatTransfer.AddToGoList(this.gameObject);
-        onFireParticleSystem = (ParticleSystem)Instantiate(onFireParticleSystem, this.gameObject.transform.position, this.gameObject.transform.rotation);
+        onFireParticleSystem = (ParticleSystem)Instantiate(onFireParticleSystem, this.gameObject.transform.position, onFireParticleSystem.transform.rotation);
         onFireParticleSystem.transform.position = this.gameObject.transform.position;
     }
 
