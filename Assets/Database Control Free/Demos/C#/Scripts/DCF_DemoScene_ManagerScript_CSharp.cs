@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.UI;
 using DatabaseControl; // << Remember to add this reference to your scripts which use DatabaseControl
-using UnityEngine.SceneManagement;
 
 public class DCF_DemoScene_ManagerScript_CSharp : MonoBehaviour {
 
@@ -71,9 +70,8 @@ public class DCF_DemoScene_ManagerScript_CSharp : MonoBehaviour {
             //Username and Password were correct. Stop showing 'Loading...' and show the LoggedIn UI. And set the text to display the username.
             ResetAllUIElements();
             loadingParent.gameObject.SetActive(false);
-            loggedInParent.gameObject.SetActive(true);
+            //loggedInParent.gameObject.SetActive(true);
             LoggedIn_DisplayUsernameText.text = "Logged In As: " + playerUsername;
-            SceneManager.LoadScene("Lobby");
         } else
         {
             //Something went wrong logging in. Stop showing 'Loading...' and go back to LoginUI
