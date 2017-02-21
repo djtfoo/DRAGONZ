@@ -70,13 +70,14 @@ public class UserAccountManager : MonoBehaviour
         {
             yield return eee.Current;
         }
-        WWW returneddd = eee.Current as WWW;
-        if (returneddd.text == "ContainsUnsupportedSymbol")
+        //WWW returneddd = eee.Current as WWW;
+        string returneddd = eee.Current as string; // << The returned string from the request
+        if (returneddd == "ContainsUnsupportedSymbol")
         {
             //One of the parameters contained a - symbol
             Debug.Log("Data Upload Error. Could be a server error. To check try again, if problem still occurs, contact us.");
         }
-        if (returneddd.text == "Error")
+        if (returneddd == "Error")
         {
             //Error occurred. For more information of the error, DC.Login could
             //be used with the same username and password
@@ -103,8 +104,9 @@ public class UserAccountManager : MonoBehaviour
         {
             yield return eeee.Current;
         }
-        WWW returnedddd = eeee.Current as WWW;
-        if (returnedddd.text == "Error")
+        //WWW returnedddd = eeee.Current as WWW;
+        string returnedddd = eeee.Current as string; // << The returned string from the request
+        if (returnedddd == "Error")
         {
             //Error occurred. For more information of the error, DC.Login could
             //be used with the same username and password
@@ -112,7 +114,7 @@ public class UserAccountManager : MonoBehaviour
         }
         else
         {
-            if (returnedddd.text == "ContainsUnsupportedSymbol")
+            if (returnedddd == "ContainsUnsupportedSymbol")
             {
                 //One of the parameters contained a - symbol
                 Debug.Log("Get Data Error: Contains Unsupported Symbol '-'");
@@ -120,7 +122,7 @@ public class UserAccountManager : MonoBehaviour
             else
             {
                 //Data received in returned.text variable
-                string DataRecieved = returnedddd.text;
+                string DataRecieved = returnedddd;
                 data = DataRecieved;
             }
         }

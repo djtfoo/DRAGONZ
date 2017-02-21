@@ -57,7 +57,7 @@ public class ComboMeter :  MonoBehaviour {
         if(ComboCounterActivated)
         {
             timer += Time.deltaTime;
-            Debug.Log(timer / MaxComboCounterLifeTime);
+            //Debug.Log(timer / MaxComboCounterLifeTime);
             ComboTimerBar.fillAmount = (1-(timer / MaxComboCounterLifeTime));
             if(timer>=MaxComboCounterLifeTime)
             {
@@ -65,7 +65,7 @@ public class ComboMeter :  MonoBehaviour {
                 ComboCounterText.text = " ";
                 ComboCounterActivated = false;
                 timer = 0;
-                DescribeComboCounter.text = "";
+                //DescribeComboCounter.text = " ";
                
             }
             //if(ComboCounter >=15)

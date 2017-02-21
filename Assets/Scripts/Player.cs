@@ -21,6 +21,9 @@ public class Player : NetworkBehaviour
     private float pitch = 0f;
     private float roll = 0f;
 
+    public int kills;
+    public int deaths;
+
     private Rigidbody rbody;
 
     private Vector3 velocity = Vector3.zero;

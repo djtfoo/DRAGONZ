@@ -179,29 +179,34 @@ public class LoginMenu : MonoBehaviour
 
                 UserAccountManager.instance.LogIn(username, password);
             }
-            if (returned == "incorrectUser")
+            else if (returned == "incorrectUser")
             {
                 //Account with username not found in database
                 login_error.text = "Username not found";
                 part = 0; //back to login UI
             }
-            if (returned == "incorrectPass")
+            else if (returned == "incorrectPass")
             {
                 //Account with username found, but password incorrect
                 part = 0; //back to login UI
                 login_error.text = "Incorrect Password";
             }
-            if (returned == "ContainsUnsupportedSymbol")
+            else if (returned == "ContainsUnsupportedSymbol")
             {
                 //One of the parameters contained a - symbol
                 part = 0; //back to login UI
                 login_error.text = "Unsupported Symbol '-'";
             }
-            if (returned == "Error")
+            else if (returned == "Error")
             {
                 //Account Not Created, another error occurred
                 part = 0; //back to login UI
                 login_error.text = "Database Error. Try again later.";
+            }
+            else
+            {
+                part = 0;
+                login_error.text = "why";
             }
 
             //blank password field
