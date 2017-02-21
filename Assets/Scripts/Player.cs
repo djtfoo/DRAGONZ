@@ -13,6 +13,13 @@ public class Player : NetworkBehaviour
 
     public float movementSpeed;
     public float turningSpeed;
+    public float rotateSpeed = 4f;
+    private float changeSpeed = 20f;
+    private bool keyNotPressed = true;
+
+    private float yaw = 0f;
+    private float pitch = 0f;
+    private float roll = 0f;
 
     private Rigidbody rbody;
 
@@ -40,6 +47,21 @@ public class Player : NetworkBehaviour
         return this.transform.position;
     }
 
+    public float GetPitch()
+    {
+        return this.pitch;
+    }
+
+    public float GetYaw()
+    {
+        return this.yaw;
+    }
+
+    public float GetRoll()
+    {
+        return this.roll;
+    }
+
     // Use this for initialization
     public override void OnStartLocalPlayer()
     {
@@ -54,8 +76,6 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-
             //float horizontal = Input.GetAxis("Horizontal") * turningSpeed * Time.deltaTime;
             //transform.Rotate(0, horizontal, 0);
 
@@ -75,15 +95,63 @@ public class Player : NetworkBehaviour
 
             //rbody.AddForce(moveX, 0f, moveZ);
 
+            // Rotation & Angles
+            UpdatePitch();
+            UpdateYaw();    // roll updates here too
+
+            // update player's Euler angles
+            //this.transform.eulerAngles = new Vector3(-pitch, yaw, -yaw * 0.5f);
+            this.transform.eulerAngles = new Vector3(-pitch, yaw, roll);
+
+            Quaternion rotation = Quaternion.Euler(-pitch, yaw, 0f);
+            SetView(rotation * new Vector3(0, 0, 1));
+
+            // SLOWLY PITCH BACK
+            if (this.pitch != 0)
+            {
+                if (this.pitch < 0)
+                {
+                    this.pitch += changeSpeed * Time.deltaTime;
+                    if (this.pitch > 0)
+                        this.pitch = 0;
+                }
+                else
+                {
+                    this.pitch -= changeSpeed * Time.deltaTime;
+                    if (this.pitch < 0)
+                        this.pitch = 0;
+                }
+            }
+
+            // SLOWLY ROLL BACK
+            if (this.roll != 0)
+            {
+                if (this.roll < 0)
+                {
+                    this.roll += changeSpeed * Time.deltaTime;
+                    if (this.roll > 0)
+                        this.roll = 0;
+                }
+                else
+                {
+                    this.roll -= changeSpeed * Time.deltaTime;
+                    if (this.roll < 0)
+                        this.roll = 0;
+                }
+            }
+
+            // Movement
             force = Vector3.zero;
 
             if (Input.GetKey(KeyCode.W))
             {
-                force = 100f * view;
+                force = 200f * view;
+                keyNotPressed = false;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                force = -100f * view;
+                force = -200f * view;
+                keyNotPressed = false;
             }
 
             velocity += force * Time.deltaTime;
@@ -94,7 +162,19 @@ public class Player : NetworkBehaviour
 
                 // decelerate
                 Vector3 velDir = velocity.normalized;
-                velocity -= (10f + velocity.magnitude * 0.5f) * velDir * Time.deltaTime;
+                float decelerator = (10f + velocity.magnitude * 0.5f);
+                if (keyNotPressed)
+                {
+                    decelerator *= 2f;
+                }
+                else
+                {
+                    keyNotPressed = true;
+
+                    if (decelerator > 30f)
+                        decelerator = 30f;
+                }
+                velocity -= decelerator * velDir * Time.deltaTime;
 
                 double cosOfAngle = (velDir.x * velocity.x + velDir.y * velocity.y + velDir.z * velocity.z);
                 if (cosOfAngle < 0)     // -ve, parallel & opp direction
@@ -119,6 +199,72 @@ public class Player : NetworkBehaviour
         }
     }
 
+    [Client]
+    void UpdatePitch()
+    {
+        float inputValue = 0f;
+
+#if UNITY_ANDROID
+        Vector3 dir = Vector3.zero;
+        dir.x = Input.acceleration.x;
+        dir.y = Input.acceleration.y;
+        dir.z = Input.acceleration.z;
+
+        if (dir.sqrMagnitude > 1)
+            dir.Normalize();
+
+        inputValue = dir.z;
+
+#else
+        inputValue = Input.GetAxis("Mouse Y");
+
+#endif
+        float vertical = inputValue * rotateSpeed;
+
+        pitch += vertical;
+        if (pitch > 360f)
+            pitch -= 360f;
+        else if (pitch < -360f)
+            pitch += 360f;
+    }
+
+    [Client]
+    void UpdateYaw()
+    {
+        float inputValue = 0f;
+
+#if UNITY_ANDROID
+        Vector3 dir = Vector3.zero;
+        dir.x = Input.acceleration.x;
+        dir.y = Input.acceleration.y;
+        dir.z = Input.acceleration.z;
+
+        if (dir.sqrMagnitude > 1)
+            dir.Normalize();
+
+        inputValue = dir.x;
+
+#else
+        inputValue = Input.GetAxis("Mouse X");
+
+#endif
+        float horizontal = inputValue * rotateSpeed;
+        yaw += horizontal;
+        roll -= 0.5f * horizontal;
+
+        if (yaw > 360f)
+            yaw -= 360f;
+        else if (yaw < -360f)
+            yaw += 360f;
+        //target.transform.Rotate(0, horizontal, 0);
+
+        //float desiredAngle = target.transform.eulerAngles.y;
+        //Quaternion rotation = Quaternion.Euler(0, desiredAngle, 0);
+        //transform.position = target.transform.position - (rotation * offset);
+        //
+        //transform.LookAt(target.transform);
+    }
+
     [Command]
     void CmdSync(Vector3 position, Quaternion rotation, Vector3 view)
     {
@@ -126,4 +272,10 @@ public class Player : NetworkBehaviour
         realRotation = rotation;
         realView = view;
     }
+
+    void OnCollisionEnter(Collision col)
+    {
+        Debug.Log(col.gameObject.name);
+    }
+
 }
