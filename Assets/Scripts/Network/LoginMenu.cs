@@ -1,292 +1,343 @@
 ﻿using UnityEngine;
+using System; //allows string.Split to be used with SplitStringOptions.none
 using System.Collections;
-using UnityEngine.UI;
-using DatabaseControl; // << Remember to add this reference to your scripts which use DatabaseControl
+using DatabaseControl;//This line is always needed for any C# script using the database control requests. See PDF documentation for more information
+//use 'import DatabaseControl;' if you are using JS
 
-public class LoginMenu : MonoBehaviour {
+public class LoginMenu : MonoBehaviour
+{
+    ////These variables are set in the Inspector:
 
-    //All public variables bellow are assigned in the Inspector
+    //they are enabled and disabled to show and hide the different parts of the UI
+    public GameObject login_object;
+    public GameObject register_object;
+    public GameObject loading_object;
 
-    //These are the GameObjects which are parents of groups of UI elements. The objects are enabled and disabled to show and hide the UI elements.
-    public GameObject loginParent;
-    public GameObject registerParent;
-    public GameObject loggedInParent;
-    public GameObject loadingParent;
+    //these are the login input fields:
+    public UnityEngine.UI.InputField input_login_username;
+    public UnityEngine.UI.InputField input_login_password;
 
-    //These are all the InputFields which we need in order to get the entered usernames, passwords, etc
-    public InputField Login_UsernameField;
-    public InputField Login_PasswordField;
-    public InputField Register_UsernameField;
-    public InputField Register_PasswordField;
-    public InputField Register_ConfirmPasswordField;
-    public InputField LoggedIn_DataInputField;
-    public InputField LoggedIn_DataOutputField;
+    //these are the register input fields:
+    public UnityEngine.UI.InputField input_register_username;
+    public UnityEngine.UI.InputField input_register_password;
+    public UnityEngine.UI.InputField input_register_confirmPassword;
 
-    //These are the UI Texts which display errors
-    public Text Login_ErrorText;
-    public Text Register_ErrorText;
+    //red error UI Texts:
+    public UnityEngine.UI.Text login_error;
+    public UnityEngine.UI.Text register_error;
 
-    //This UI Text displays the username once logged in. It shows it in the form "Logged In As: " + username
-    public Text LoggedIn_DisplayUsernameText;
+    ////These variables cannot be set in the Inspector:
 
-    //These store the username and password of the player when they have logged in
-    private string playerUsername = "";
-    private string playerPassword = "";
+    //the part of UI currently being shown
+    // 0 = login, 1 = register, 2 = logged in, 3 = loading
+    int part = 0;
+    //scene starts showing login
 
-    //Called at the very start of the game
-    void Awake()
+    bool isDatabaseSetup = true;
+
+    void Start()
     {
-        ResetAllUIElements();
-    }
 
-    //Called by Button Pressed Methods to Reset UI Fields
-    void ResetAllUIElements ()
-    {
-        //This resets all of the UI elements. It clears all the strings in the input fields and any errors being displayed
-        Login_UsernameField.text = "";
-        Login_PasswordField.text = "";
-        Register_UsernameField.text = "";
-        Register_PasswordField.text = "";
-        Register_ConfirmPasswordField.text = "";
-        LoggedIn_DataInputField.text = "";
-        LoggedIn_DataOutputField.text = "";
-        Login_ErrorText.text = "";
-        Register_ErrorText.text = "";
-        LoggedIn_DisplayUsernameText.text = "";
-    }
-
-    //Called by Button Pressed Methods. These use DatabaseControl namespace to communicate with server.
-    IEnumerator LoginUser ()
-    {
-        IEnumerator e = DCF.Login(playerUsername, playerPassword); // << Send request to login, providing username and password
-        while (e.MoveNext())
+        //this checks whether the database is setup. It is used to prevent errors for users who try to use the demos
+        //without having setup a database.
+        //You don't need to use this bool as it will work without it as long as the database has been setup
+        //TextAsset datafile = Resources.Load("data") as TextAsset;
+        //string[] splitdatafile = datafile.text.Split(new string[] { "-" }, StringSplitOptions.None);
+        //if (splitdatafile[0] == "0")
+        //{
+        //    isDatabaseSetup = false;
+        //    Debug.Log("These demos will not work out of the box. You need to setup a database first for it to work. Please read the Setup section of the PDF for more information");
+        //}
+        //else
         {
-            yield return e.Current;
+            isDatabaseSetup = true;
         }
-        string response = e.Current as string; // << The returned string from the request
 
-        if (response == "Success")
+        //sets error Texts string to blank
+        blankErrors();
+    }
+
+    void Update()
+    {
+
+        if (isDatabaseSetup == true)
         {
-            //Username and Password were correct. Stop showing 'Loading...' and show the LoggedIn UI. And set the text to display the username.
-            ResetAllUIElements();
-            loadingParent.gameObject.SetActive(false);
-            loggedInParent.gameObject.SetActive(true);
-            LoggedIn_DisplayUsernameText.text = "Logged In As: " + playerUsername;
-        } else
+
+            //enables and disables the defferent objects to show correct part
+            if (part == 0)
+            {
+                login_object.gameObject.SetActive(true);
+                register_object.gameObject.SetActive(false);
+                loading_object.gameObject.SetActive(false);
+            }
+            if (part == 1)
+            {
+                login_object.gameObject.SetActive(false);
+                register_object.gameObject.SetActive(true);
+                loading_object.gameObject.SetActive(false);
+            }
+            if (part == 2)
+            {
+                // We are logged in - We have already transitioned to a new scene... Hopefully!
+            }
+            if (part == 3)
+            {
+                login_object.gameObject.SetActive(false);
+                register_object.gameObject.SetActive(false);
+                loading_object.gameObject.SetActive(true);
+            }
+
+        }
+
+    }
+
+    void blankErrors()
+    {
+        //blanks all error texts when part is changed e.g. login > Register
+        login_error.text = "";
+        register_error.text = "";
+    }
+
+    public void login_Register_Button()
+    { //called when the 'Register' button on the login part is pressed
+        part = 1; //show register UI
+        blankErrors();
+    }
+
+    public void register_Back_Button()
+    { //called when the 'Back' button on the register part is pressed
+        part = 0; //goes back to showing login UI
+        blankErrors();
+    }
+
+    public void data_LogOut_Button()
+    { //called when the 'Log Out' button on the data part is pressed
+        part = 0; //goes back to showing login UI
+
+        UserAccountManager.instance.LogOut();
+
+        blankErrors();
+    }
+
+    public void login_login_Button()
+    { //called when the 'Login' button on the login part is pressed
+
+        if (isDatabaseSetup == true)
         {
-            //Something went wrong logging in. Stop showing 'Loading...' and go back to LoginUI
-            loadingParent.gameObject.SetActive(false);
-            loginParent.gameObject.SetActive(true);
-            if (response == "UserError")
+
+            //check fields aren't blank
+            if ((input_login_username.text != "") && (input_login_password.text != ""))
             {
-                //The Username was wrong so display relevent error message
-                Login_ErrorText.text = "Error: Username not Found";
-            } else
-            {
-                if (response == "PassError")
+
+                //check fields don't contain '-' (if they do, login request will return with error and take longer)
+                if ((input_login_username.text.Contains("-")) || (input_login_password.text.Contains("-")))
                 {
-                    //The Password was wrong so display relevent error message
-                    Login_ErrorText.text = "Error: Password Incorrect";
-                } else
-                {
-                    //There was another error. This error message should never appear, but is here just in case.
-                    Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
-                }
-            }
-        }
-    }
-    IEnumerator RegisterUser()
-    {
-        IEnumerator e = DCF.RegisterUser(playerUsername, playerPassword, "Hello World"); // << Send request to register a new user, providing submitted username and password. It also provides an initial value for the data string on the account, which is "Hello World".
-        while (e.MoveNext())
-        {
-            yield return e.Current;
-        }
-        string response = e.Current as string; // << The returned string from the request
-
-        if (response == "Success")
-        {
-            //Username and Password were valid. Account has been created. Stop showing 'Loading...' and show the loggedIn UI and set text to display the username.
-            ResetAllUIElements();
-            loadingParent.gameObject.SetActive(false);
-            loggedInParent.gameObject.SetActive(true);
-            LoggedIn_DisplayUsernameText.text = "Logged In As: " + playerUsername;
-        } else
-        {
-            //Something went wrong logging in. Stop showing 'Loading...' and go back to RegisterUI
-            loadingParent.gameObject.SetActive(false);
-            registerParent.gameObject.SetActive(true);
-            if (response == "UserError")
-            {
-                //The username has already been taken. Player needs to choose another. Shows error message.
-                Register_ErrorText.text = "Error: Username Already Taken";
-            } else
-            {
-                //There was another error. This error message should never appear, but is here just in case.
-                Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
-            }
-        }
-    }
-    IEnumerator GetData ()
-    {
-        IEnumerator e = DCF.GetUserData(playerUsername, playerPassword); // << Send request to get the player's data string. Provides the username and password
-        while (e.MoveNext())
-        {
-            yield return e.Current;
-        }
-        string response = e.Current as string; // << The returned string from the request
-
-        if (response == "Error")
-        {
-            //There was another error. Automatically logs player out. This error message should never appear, but is here just in case.
-            ResetAllUIElements();
-            playerUsername = "";
-            playerPassword = "";
-            loginParent.gameObject.SetActive(true);
-            loadingParent.gameObject.SetActive(false);
-            Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
-        }
-        else
-        {
-            //The player's data was retrieved. Goes back to loggedIn UI and displays the retrieved data in the InputField
-            loadingParent.gameObject.SetActive(false);
-            loggedInParent.gameObject.SetActive(true);
-            LoggedIn_DataOutputField.text = response;
-        }
-    }
-    IEnumerator SetData (string data)
-    {
-        IEnumerator e = DCF.SetUserData(playerUsername, playerPassword, data); // << Send request to set the player's data string. Provides the username, password and new data string
-        while (e.MoveNext())
-        {
-            yield return e.Current;
-        }
-        string response = e.Current as string; // << The returned string from the request
-
-        if (response == "Success")
-        {
-            //The data string was set correctly. Goes back to LoggedIn UI
-            loadingParent.gameObject.SetActive(false);
-            loggedInParent.gameObject.SetActive(true);
-        }
-        else
-        {
-            //There was another error. Automatically logs player out. This error message should never appear, but is here just in case.
-            ResetAllUIElements();
-            playerUsername = "";
-            playerPassword = "";
-            loginParent.gameObject.SetActive(true);
-            loadingParent.gameObject.SetActive(false);
-            Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
-        }
-    }
-
-    //UI Button Pressed Methods
-    public void Login_LoginButtonPressed ()
-    {
-        //Called when player presses button to Login
-
-        //Get the username and password the player entered
-        playerUsername = Login_UsernameField.text;
-        playerPassword = Login_PasswordField.text;
-
-        //Check the lengths of the username and password. (If they are wrong, we might as well show an error now instead of waiting for the request to the server)
-        if (playerUsername.Length > 3)
-        {
-            if (playerPassword.Length > 5)
-            {
-                //Username and password seem reasonable. Change UI to 'Loading...'. Start the Coroutine which tries to log the player in.
-                loginParent.gameObject.SetActive(false);
-                loadingParent.gameObject.SetActive(true);
-                StartCoroutine(LoginUser());
-            }
-            else
-            {
-                //Password too short so it must be wrong
-                Login_ErrorText.text = "Error: Password Incorrect";
-            }
-        } else
-        {
-            //Username too short so it must be wrong
-            Login_ErrorText.text = "Error: Username Incorrect";
-        }
-    }
-    public void Login_RegisterButtonPressed ()
-    {
-        //Called when the player hits register on the Login UI, so switches to the Register UI
-        ResetAllUIElements();
-        loginParent.gameObject.SetActive(false);
-        registerParent.gameObject.SetActive(true);
-    }
-    public void Register_RegisterButtonPressed ()
-    {
-        //Called when the player presses the button to register
-
-        //Get the username and password and repeated password the player entered
-        playerUsername = Register_UsernameField.text;
-        playerPassword = Register_PasswordField.text;
-        string confirmedPassword = Register_ConfirmPasswordField.text;
-
-        //Make sure username and password are long enough
-        if (playerUsername.Length > 3)
-        {
-            if (playerPassword.Length > 5)
-            {
-                //Check the two passwords entered match
-                if (playerPassword == confirmedPassword)
-                {
-                    //Username and passwords seem reasonable. Switch to 'Loading...' and start the coroutine to try and register an account on the server
-                    registerParent.gameObject.SetActive(false);
-                    loadingParent.gameObject.SetActive(true);
-                    StartCoroutine(RegisterUser());
+                    //string contains "-" so return error
+                    login_error.text = "Unsupported Symbol '-'";
+                    input_login_password.text = ""; //blank password field
                 }
                 else
                 {
-                    //Passwords don't match, show error
-                    Register_ErrorText.text = "Error: Password's don't Match";
+                    //ready to send request
+                    StartCoroutine(sendLoginRequest(input_login_username.text, input_login_password.text)); //calls function to send login request
+                    part = 3; //show 'loading...'
                 }
+
             }
             else
             {
-                //Password too short so show error
-                Register_ErrorText.text = "Error: Password too Short";
+                //one of the fields is blank so return error
+                login_error.text = "Field Blank!";
+                input_login_password.text = ""; //blank password field
             }
+
         }
-        else
+
+    }
+
+    IEnumerator sendLoginRequest(string username, string password)
+    {
+
+        if (isDatabaseSetup == true)
         {
-            //Username too short so show error
-            Register_ErrorText.text = "Error: Username too Short";
+
+            IEnumerator e = DCF.Login(username, password);
+            while (e.MoveNext())
+            {
+                yield return e.Current;
+            }
+            //WWW returned = e.Current as WWW;
+            string returned = e.Current as string; // << The returned string from the request
+            if (returned == "Success")
+            {
+                //Password was correct
+                blankErrors();
+                part = 2; //show logged in UI
+
+                //blank username field
+                input_login_username.text = ""; //password field is blanked at the end of this function, even when error is returned
+
+                UserAccountManager.instance.LogIn(username, password);
+            }
+            if (returned == "incorrectUser")
+            {
+                //Account with username not found in database
+                login_error.text = "Username not found";
+                part = 0; //back to login UI
+            }
+            if (returned == "incorrectPass")
+            {
+                //Account with username found, but password incorrect
+                part = 0; //back to login UI
+                login_error.text = "Incorrect Password";
+            }
+            if (returned == "ContainsUnsupportedSymbol")
+            {
+                //One of the parameters contained a - symbol
+                part = 0; //back to login UI
+                login_error.text = "Unsupported Symbol '-'";
+            }
+            if (returned == "Error")
+            {
+                //Account Not Created, another error occurred
+                part = 0; //back to login UI
+                login_error.text = "Database Error. Try again later.";
+            }
+
+            //blank password field
+            input_login_password.text = "";
+
         }
     }
-    public void Register_BackButtonPressed ()
-    {
-        //Called when the player presses the 'Back' button on the register UI. Switches back to the Login UI
-        ResetAllUIElements();
-        loginParent.gameObject.SetActive(true);
-        registerParent.gameObject.SetActive(false);
+
+    public void register_register_Button()
+    { //called when the 'Register' button on the register part is pressed
+
+        if (isDatabaseSetup == true)
+        {
+
+            //check fields aren't blank
+            if ((input_register_username.text != "") && (input_register_password.text != "") && (input_register_confirmPassword.text != ""))
+            {
+
+                //check username is longer than 4 characters
+                if (input_register_username.text.Length > 4)
+                {
+
+                    //check password is longer than 6 characters
+                    if (input_register_password.text.Length > 6)
+                    {
+
+                        //check passwords are the same
+                        if (input_register_password.text == input_register_confirmPassword.text)
+                        {
+
+                            if ((input_register_username.text.Contains("-")) || (input_register_password.text.Contains("-")) || (input_register_confirmPassword.text.Contains("-")))
+                            {
+
+                                //string contains "-" so return error
+                                register_error.text = "Unsupported Symbol '-'";
+                                input_login_password.text = ""; //blank password field
+                                input_register_confirmPassword.text = "";
+
+                            }
+                            else
+                            {
+
+                                //ready to send request
+                                StartCoroutine(sendRegisterRequest(input_register_username.text, input_register_password.text, "[KILLS]0/[DEATHS]0")); //calls function to send register request
+                                part = 3; //show 'loading...'
+                            }
+
+                        }
+                        else
+                        {
+                            //return passwords don't match error
+                            register_error.text = "Passwords don't match!";
+                            input_register_password.text = ""; //blank password fields
+                            input_register_confirmPassword.text = "";
+                        }
+
+                    }
+                    else
+                    {
+                        //return password too short error
+                        register_error.text = "Password too Short";
+                        input_register_password.text = ""; //blank password fields
+                        input_register_confirmPassword.text = "";
+                    }
+
+                }
+                else
+                {
+                    //return username too short error
+                    register_error.text = "Username too Short";
+                    input_register_password.text = ""; //blank password fields
+                    input_register_confirmPassword.text = "";
+                }
+
+            }
+            else
+            {
+                //one of the fields is blank so return error
+                register_error.text = "Field Blank!";
+                input_register_password.text = ""; //blank password fields
+                input_register_confirmPassword.text = "";
+            }
+
+        }
+
     }
-    public void LoggedIn_SaveDataButtonPressed ()
+
+    IEnumerator sendRegisterRequest(string username, string password, string data)
     {
-        //Called when the player hits 'Set Data' to change the data string on their account. Switches UI to 'Loading...' and starts coroutine to set the players data string on the server
-        loadingParent.gameObject.SetActive(true);
-        loggedInParent.gameObject.SetActive(false);
-        StartCoroutine(SetData(LoggedIn_DataInputField.text));
+
+        if (isDatabaseSetup == true)
+        {
+
+            IEnumerator ee = DCF.RegisterUser(username, password, data);
+            while (ee.MoveNext())
+            {
+                yield return ee.Current;
+            }
+            //WWW returnedd = ee.Current as WWW;
+            string returnedd = ee.Current as string; // << The returned string from the request
+
+            if (returnedd == "Success")
+            {
+                //Account created successfully
+
+                blankErrors();
+                part = 2; //show logged in UI
+
+                //blank username field
+                input_register_username.text = ""; //password field is blanked at the end of this function, even when error is returned
+
+                UserAccountManager.instance.LogIn(username, password);
+            }
+            if (returnedd == "usernameInUse")
+            {
+                //Account Not Created due to username being used on another Account
+                part = 1;
+                register_error.text = "Username Unavailable. Try another.";
+            }
+            if (returnedd == "ContainsUnsupportedSymbol")
+            {
+                //Account Not Created as one of the parameters contained a - symbol
+                part = 1;
+                register_error.text = "Unsupported Symbol '-'";
+            }
+            if (returnedd == "Error")
+            {
+                //Account Not Created, another error occurred
+                part = 1;
+                login_error.text = "Database Error. Try again later.";
+            }
+
+            input_register_password.text = "";
+            input_register_confirmPassword.text = "";
+
+        }
     }
-    public void LoggedIn_LoadDataButtonPressed ()
-    {
-        //Called when the player hits 'Get Data' to retrieve the data string on their account. Switches UI to 'Loading...' and starts coroutine to get the players data string from the server
-        loadingParent.gameObject.SetActive(true);
-        loggedInParent.gameObject.SetActive(false);
-        StartCoroutine(GetData());
-    }
-    public void LoggedIn_LogoutButtonPressed ()
-    {
-        //Called when the player hits the 'Logout' button. Switches back to Login UI and forgets the player's username and password.
-        //Note: Database Control doesn't use sessions, so no request to the server is needed here to end a session.
-        ResetAllUIElements();
-        playerUsername = "";
-        playerPassword = "";
-        loginParent.gameObject.SetActive(true);
-        loggedInParent.gameObject.SetActive(false);
-    }
+
 }
