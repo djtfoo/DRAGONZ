@@ -32,6 +32,7 @@ public class Radar : MonoBehaviour
 
     public static List<GameObject> worldObject = new List<GameObject>();
     public static List<RadarIcon> radIcons = new List<RadarIcon>();
+    public static List<Player> players = new List<Player>();
 
 
     private void SetPlayer(GameObject setPlayer)
@@ -55,16 +56,26 @@ public class Radar : MonoBehaviour
         {
             if (worldObject[i] == go)
             {
-                //Destroy(go);
+                Destroy(worldObject[i]);
                 worldObject.RemoveAt(i);
                 radIcons[i].DestroySelf();
                 radIcons.RemoveAt(i);
-                Debug.Log("hey");
                 break;
             }
         }
     }
 
+    public void ZoomIn()
+    {
+        if (mapScale > 0.02f)
+            mapScale -= 0.005f;
+    }
+
+    public void ZoomOut()
+    {
+        if (mapScale < 0.05f)
+            mapScale += 0.005f;
+    }
     void DrawRadarDots()
     {
         for (int i = 0; i < worldObject.Count; ++i)
@@ -78,6 +89,14 @@ public class Radar : MonoBehaviour
 
             radIcons[i].currentIcon.gameObject.transform.SetParent(this.gameObject.transform);
             radIcons[i].currentIcon.gameObject.transform.position = new Vector3(radarPos.x, radarPos.z, 0) + this.transform.position;
+        }
+
+        for (int i = 0; i < players.Count; ++i)
+        {
+            if (players[i].gameObject.layer == 9)
+            {
+                
+            }
         }
     }
 
@@ -94,12 +113,17 @@ public class Radar : MonoBehaviour
 
 
         // find localplayer & set
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        for (int i = 0; i < players.Length; ++i)
+        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < playersGO.Length; ++i)
         {
-            if (players[i].layer == 8)  // localplayer layer
+            if (playersGO[i].layer == 8)  // localplayer layer
             {
-                this.SetPlayer(players[i]);
+                this.SetPlayer(playersGO[i]);
+            }
+            else
+            {
+                Player player = playersGO[i].GetComponent<Player>();
+                players.Add(player);
             }
         }
             
@@ -108,6 +132,7 @@ public class Radar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("num: " + players.Count);
         DrawRadarDots();
 
         for (int i = 0; i < worldObject.Count; ++i)

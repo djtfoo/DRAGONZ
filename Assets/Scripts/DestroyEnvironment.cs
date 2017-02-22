@@ -8,7 +8,7 @@ public class DestroyEnvironment : MonoBehaviour {
         if(col.gameObject.tag == "WorldObject")
         {
             Radar.RemoveRadarObject(col.gameObject);
-            Destroy(col.gameObject);
+            //Destroy(col.gameObject);
         }
     }
 
