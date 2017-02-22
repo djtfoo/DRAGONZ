@@ -8,7 +8,7 @@ public class PlayerUI : MonoBehaviour {
     GameObject pauseMenu;
 
     [SerializeField]
-    Radar radar;
+     public  Radar radar;
 
     public Image energyBar;
     public Image chargeEnergyBar;

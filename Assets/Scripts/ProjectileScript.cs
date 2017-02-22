@@ -27,6 +27,7 @@ public class ProjectileScript : NetworkBehaviour
        ParticleSysInstianted.transform.position = this.gameObject.transform.position;
        ParticleSysInstianted.Play();
        combometer = (ComboMeter)FindObjectOfType<ComboMeter>();
+       GetComponent<Rigidbody>().AddForce(Target * MovementSpeed);
 	}
 
 	// Update is called once per frame
@@ -38,7 +39,8 @@ public class ProjectileScript : NetworkBehaviour
             degradeTimer += Time.deltaTime;
             if (degradeTimer >= DegradeRateTime)
             {
-                Vel *= ((100-velocityDegradePercent) / 100);
+              //  Vel *= ((100-velocityDegradePercent) / 100);
+                  GetComponent<Rigidbody>().AddForce(-((Target)* ((100-velocityDegradePercent) / 100)));
                 degradeTimer = 0;
             }
         }
@@ -58,7 +60,7 @@ public class ProjectileScript : NetworkBehaviour
        //ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
        //
        //instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
-       this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
+     //  this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
        //instantiateTrail.gameObject.transform.position = this.transform.position;
        //Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
         if(timer > lifeTime)
@@ -100,5 +102,15 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted3.Play();
         NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
+    }
+     [Command]
+    void CmdHitPlayer()
+    {
+        Destroy(this.gameObject);
+
+        ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
+        ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted2.Play();
+        NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
     }
 }

@@ -25,6 +25,8 @@ public class PlayerSetup : NetworkBehaviour
         if (!isLocalPlayer)
         {
             DisableComponents();
+
+          
             AssignRemoteLayer();
         }
         else
@@ -50,6 +52,9 @@ public class PlayerSetup : NetworkBehaviour
             ComboMeter combometer = this.gameObject.GetComponent<ComboMeter>();
             combometer.ComboCounterText = playerUI.comboCounterText;
             combometer.ComboTimerBar = playerUI.comboCounterTimer;
+
+            Radar radar = this.gameObject.GetComponent <Radar>();
+            radar = playerUI.radar;
         }
 
         RegisterPlayer();
