@@ -76,8 +76,14 @@ public class ProjectileScript : NetworkBehaviour
         {
             CmdHitTerrainParticles();
             combometer.AddToComboMeter(1);
-            
         }
+
+        if (col.gameObject.tag == "WorldObject")
+        {
+            CmdHitTerrainParticles();
+            combometer.AddToComboMeter(1);
+        }
+
     }
 
     [Command]

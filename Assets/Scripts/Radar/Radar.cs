@@ -27,7 +27,7 @@ public class Radar : MonoBehaviour
     public Image iconLower;
 
     public GameObject player;
-    float mapScale = 0.05f;
+    float mapScale = 0.03f;
     int offsetY = 100;
 
     public static List<GameObject> worldObject = new List<GameObject>();
@@ -114,6 +114,7 @@ public class Radar : MonoBehaviour
         {
             // the position of all the gameobjects on the map
             Vector3 radarPos = worldObject[i].transform.position;
+            Vector3 worldObjectScale = worldObject[i].transform.localScale;
 
             // the position of players
             Player playerScript = player.GetComponent<Player>();
@@ -121,7 +122,7 @@ public class Radar : MonoBehaviour
       
 
             // check for gameobject above the player
-            if (radarPos.y > (playerPos.y + offsetY))
+            if (radarPos.y - worldObjectScale.y > (playerPos.y + offsetY))
             {
 
                 radIcons[i].iconHigher.gameObject.SetActive(true);
@@ -130,7 +131,7 @@ public class Radar : MonoBehaviour
                 radIcons[i].currentIcon = radIcons[i].iconHigher;
             }
             // check for gameobject below the player
-            else if (radarPos.y < (playerPos.y - offsetY))
+            else if (radarPos.y + worldObjectScale.y < (playerPos.y - offsetY))
             {
 
                 radIcons[i].iconHigher.gameObject.SetActive(false);
