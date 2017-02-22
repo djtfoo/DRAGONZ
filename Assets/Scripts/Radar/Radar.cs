@@ -22,23 +22,23 @@ public class RadarIcon
 
 public class Radar : MonoBehaviour
 {
-    public Image icon;
-    public Image iconHigher;
-    public Image iconLower;
+    public Image WO_icon;
+    public Image WO_iconHigher;
+    public Image WO_iconLower;
+
+    public Image DRAGON_icon;
+    public Image DRAGON_iconHigher;
+    public Image DRAGON_iconLower;
 
     public GameObject player;
+    private Player playerScript;
     float mapScale = 0.03f;
     int offsetY = 100;
-
     public static List<GameObject> worldObject = new List<GameObject>();
     public static List<RadarIcon> radIcons = new List<RadarIcon>();
-    public static List<Player> players = new List<Player>();
+    //public static List<Player> players = new List<Player>();
 
-
-    private void SetPlayer(GameObject setPlayer)
-    {
-        this.player = setPlayer;
-    }
+    private int lengthPlayerGo = 0;
 
     void RegisterRadarObject(Image icon ,Image iconHigher, Image iconLower)
     {
@@ -47,6 +47,43 @@ public class Radar : MonoBehaviour
         Image lowerIcon = Instantiate(iconLower);
         // Add into the radar icon list
         radIcons.Add(new RadarIcon() { icon = middleIcon, iconHigher = higherIcon , iconLower=lowerIcon, currentIcon = middleIcon });
+    }
+
+    private void SetPlayer(GameObject setPlayer)
+    {
+        this.player = setPlayer;
+    }
+
+    void addPlayerToRadar()
+    {
+        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        bool playerExistsAlready = false;
+
+        for (int i = 0; i < playersGO.Length; ++i)
+        {
+            if (playersGO[i].layer == 9)  // remoteplayer layer
+            {
+                for (int j = 0; j < worldObject.Count; ++j)
+                {
+                    if (worldObject[j].tag == "Player")
+                    {
+                        if (playersGO[i].name == worldObject[j].name)
+                        {
+                            playerExistsAlready = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!playerExistsAlready)
+                {
+                    worldObject.Add(playersGO[i]);
+                    RegisterRadarObject(DRAGON_icon, DRAGON_iconHigher, DRAGON_iconLower);
+                }
+                playerExistsAlready = false;
+            }
+        }
+
     }
 
     public static void RemoveRadarObject(GameObject go)
@@ -91,13 +128,6 @@ public class Radar : MonoBehaviour
             radIcons[i].currentIcon.gameObject.transform.position = new Vector3(radarPos.x, radarPos.z, 0) + this.transform.position;
         }
 
-        for (int i = 0; i < players.Count; ++i)
-        {
-            if (players[i].gameObject.layer == 9)
-            {
-                
-            }
-        }
     }
 
     // Use this for initialization
@@ -108,31 +138,42 @@ public class Radar : MonoBehaviour
         for (int i = 0; i < worldObjArr.Length; ++i)
         {
             worldObject.Add(worldObjArr[i]);
-            RegisterRadarObject(icon, iconHigher, iconLower);
+            RegisterRadarObject(WO_icon, WO_iconHigher, WO_iconLower);
         }
 
 
-        // find localplayer & set
+        // find players & set
         GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        lengthPlayerGo = playersGO.Length;
         for (int i = 0; i < playersGO.Length; ++i)
         {
-            if (playersGO[i].layer == 8)  // localplayer layer
+            if (playersGO[i].layer == 8)    // localplayer layer
             {
                 this.SetPlayer(playersGO[i]);
+                playerScript = playersGO[i].GetComponent<Player>();
             }
-            else
+            else if (playersGO[i].layer == 9)  // RemotePlayer layer
             {
-                Player player = playersGO[i].GetComponent<Player>();
-                players.Add(player);
+                worldObject.Add(playersGO[i]);
+                RegisterRadarObject(DRAGON_icon, DRAGON_iconHigher, DRAGON_iconLower);
             }
         }
-            
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("num: " + players.Count);
+        if (!playerScript.isLocalPlayer)
+            return;
+
+        // find remoteplayers & add
+        if(lengthPlayerGo!= GameObject.FindGameObjectsWithTag("Player").Length)
+        {
+            addPlayerToRadar();
+            ++lengthPlayerGo;
+        }
+
         DrawRadarDots();
 
         for (int i = 0; i < worldObject.Count; ++i)
@@ -142,7 +183,6 @@ public class Radar : MonoBehaviour
             Vector3 worldObjectScale = worldObject[i].transform.localScale;
 
             // the position of players
-            Player playerScript = player.GetComponent<Player>();
             Vector3 playerPos = PlayerUI.playerPos;//playerScript.transform.position;
       
 
