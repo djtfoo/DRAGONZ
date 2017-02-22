@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-public class Health : MonoBehaviour {
+using UnityEngine.Networking;
+
+public class Health : NetworkBehaviour {
     public float MaxHealth, currentHealth;
     public Image HealthImage;
 	// Use this for initialization
@@ -11,7 +13,9 @@ public class Health : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	        
+        if (!isLocalPlayer)
+            return;
+
         if(currentHealth>=MaxHealth)
         {
             currentHealth = MaxHealth;

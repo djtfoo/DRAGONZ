@@ -2,7 +2,9 @@
 using System.Collections;
 using UnityEngine.Events;
 using UnityEngine.UI;
-public class EnergyScript : MonoBehaviour
+using UnityEngine.Networking;
+
+public class EnergyScript : NetworkBehaviour
 {
     public float MaxEnergy, AmtEnergyIncrease, EnergyNeededToRun, currentEnergy,rateEnergyCharge;
     public float timer, timeToRecharge, TimeIncreaseEnergy,AmtenergyCharge,MaxCharge,MinimumCharge;
@@ -17,6 +19,9 @@ public class EnergyScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!isLocalPlayer)
+            return;
+
         energyBarImage.fillAmount = 0.9f;
         //  entry.eventID = energyClass.onStoreEnergyFull();
         // entry.callback.AddListener( (eventData) => { } );
@@ -51,6 +56,9 @@ public class EnergyScript : MonoBehaviour
     }
     void Update()
     {
+        if (!isLocalPlayer)
+            return;
+
         timer += Time.deltaTime;
 
         energyBarImage.fillAmount = (currentEnergy / MaxEnergy); //if()
