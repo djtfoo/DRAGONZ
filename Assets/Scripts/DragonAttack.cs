@@ -18,6 +18,9 @@ public class DragonAttack : NetworkBehaviour
     [Client]
     void Start() // public override void OnStartLocalPlayer()
     {
+        if (!isLocalPlayer)
+            return;
+
         player = GetComponent<Player>();//GameObject.GetComponent<Player>();
         keypress = false;
         test = 0;
@@ -28,7 +31,7 @@ public class DragonAttack : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!player.isLocalPlayer || OverlayActive.IsOverlayActive())
+        if (!isLocalPlayer || OverlayActive.IsOverlayActive())
             return;
 
         if (energyMeterText != null)
@@ -52,12 +55,13 @@ public class DragonAttack : NetworkBehaviour
         }
         if (Input.GetMouseButtonUp(1) && energy.ChargedReadyToUse)
         {
-            ChargedAttack();
+            CmdChargedAttack();
             exceptionCharge = false;
         }
     }
 
-    public void ChargedAttack()
+    [Command]
+    public void CmdChargedAttack()
     {
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
@@ -68,7 +72,9 @@ public class DragonAttack : NetworkBehaviour
         energy.ChargedReadyToUse = false;
 
         ProjectileScript script = ProjectileInstianted.GetComponent<ProjectileScript>();
-        Player player = GetComponent<Player>();
+        player = GetComponent<Player>();
+        script.owner = player; // this.gameObject; // player.gameObject;
+        
         script.Target = player.GetView();
         script.gameObject.transform.position = this.transform.position;
 
@@ -81,14 +87,15 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     public void CmdFireBallAttack()
     {
-        Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
+        player = GetComponent<Player>();
+        //Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
 
         //debug.text = "Fired";
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
 
         energy.DecreaseEnergy();
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
-
+        projScript.owner = player; // this.gameObject; //player.gameObject;
         projScript.Target = player.GetView();
         projScript.gameObject.transform.position = this.transform.position;
         projScript.Vel = projScript.Target;

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 //using UnityEditor;
 //[CustomEditor(typeof(ComboMeter))]
-public class ComboMeter :  MonoBehaviour {
+public class ComboMeter :  NetworkBehaviour {
     public float MaxComboCounterLifeTime,timer,AddtoTimer;
     public int ComboCounter;
     public bool ComboCounterActivated;
@@ -11,7 +12,11 @@ public class ComboMeter :  MonoBehaviour {
     public Image ComboTimerBar;
 	// Use this for initialization
     
-	void Start () {
+	void Start () 
+    {
+        if (!isLocalPlayer)
+            return;
+
         ComboCounter=0;
 	}
 	
@@ -27,6 +32,9 @@ public class ComboMeter :  MonoBehaviour {
 	// Update is called once per frame
     public void AddToComboMeter(int comboHits)
     {
+        if (!isLocalPlayer)
+            return;
+
         ComboCounter += comboHits;
         if(timer>=AddtoTimer)
         timer -= AddtoTimer;
@@ -51,8 +59,11 @@ public class ComboMeter :  MonoBehaviour {
         //    DescribeComboCounter.text = "";
         //}
     }
+
 	void Update () {
         
+        if(!isLocalPlayer)
+            return;
 
         if(ComboCounterActivated)
         {

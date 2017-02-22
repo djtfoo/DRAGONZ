@@ -13,6 +13,7 @@ public class ProjectileScript : NetworkBehaviour
 
     float spawnTrailTimer = 0f;
     private ComboMeter combometer;
+    public Player owner;
 
 	// Use this for initialization
     [Client]
@@ -32,7 +33,10 @@ public class ProjectileScript : NetworkBehaviour
 
 	// Update is called once per frame
     [Client]
-	void Update () {
+	void Update () 
+    {
+        //Debug.Log("owner: " + owner.name);
+
         timer += Time.deltaTime;
         if (VeloctiyDegrade)
         {
@@ -74,7 +78,7 @@ public class ProjectileScript : NetworkBehaviour
     [Client]
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.tag=="Terrain")
+        if(col.gameObject.tag == "Terrain")
         {
             CmdHitTerrainParticles();
             combometer.AddToComboMeter(1);
@@ -86,6 +90,16 @@ public class ProjectileScript : NetworkBehaviour
             combometer.AddToComboMeter(1);
         }
 
+        // Collides with remote players
+        if (col.gameObject.tag == "Player" && col.gameObject.name != owner.gameObject.name)
+        {
+            CmdHitPlayer();
+
+            combometer.AddToComboMeter(1);
+            Health health = col.gameObject.GetComponent<Health>();
+            health.currentHealth -= 10;
+            //Debug.Log(health.currentHealth);
+        }
     }
 
     [Command]
@@ -103,7 +117,8 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted3.Play();
         NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
     }
-     [Command]
+
+    [Command]
     void CmdHitPlayer()
     {
         Destroy(this.gameObject);

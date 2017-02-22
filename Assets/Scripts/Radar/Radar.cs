@@ -132,7 +132,7 @@ public class Radar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("num: " + players.Count);
+        //Debug.Log("num: " + players.Count);
         DrawRadarDots();
 
         for (int i = 0; i < worldObject.Count; ++i)

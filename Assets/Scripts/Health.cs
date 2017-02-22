@@ -12,9 +12,15 @@ public class Health : NetworkBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+    {
         if (!isLocalPlayer)
             return;
+
+        //Debug.Log(transform.name + " health: " + currentHealth);
+
+        if (currentHealth <= Mathf.Epsilon)
+            currentHealth = 0.0f;
 
         if(currentHealth>=MaxHealth)
         {
@@ -28,6 +34,7 @@ public class Health : NetworkBehaviour {
         {
             currentHealth++;
         }
+
         HealthImage.fillAmount = (currentHealth / MaxHealth);
 	}
 }
