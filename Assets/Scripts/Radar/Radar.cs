@@ -50,50 +50,19 @@ public class Radar : MonoBehaviour
 
     public static void RemoveRadarObject(GameObject go)
     {
-        //List<RadarObject> newList = new List<RadarObject>();
-        //for (int i = 0; i < radObjects.Count; i++)
-        //{
-        //    if (radObjects[i].owner == o)
-        //    {
-        //        Destroy(radObjects[i].icon);
-        //        continue;
-        //    }
-        //    else
-        //        newList.Add(radObjects[i]);
-        //}
-
-        //radObjects.RemoveRange(0, radObjects.Count);
-        //radObjects.AddRange(newList);
-
-
         // loop through world objects array
         for (int i = 0; i < worldObject.Count; ++i)
         {
             if (worldObject[i] == go)
             {
-                //worldObject.Remove(worldObject[i]);
-                //radIcons.Remove(radIcons[i]);
-
-
-                //worldObject[i].gameObject.SetActive(false);
-                //radIcons[i].iconHigher.gameObject.SetActive(false);
-                //radIcons[i].iconLower.gameObject.SetActive(false);
-                //radIcons[i].icon.gameObject.SetActive(false);
-
-                Destroy(go);
+                //Destroy(go);
                 worldObject.RemoveAt(i);
-                //radIcons[i] = null;
                 radIcons[i].DestroySelf();
                 radIcons.RemoveAt(i);
                 Debug.Log("hey");
                 break;
             }
-            //else
-                //worldObject.AddRange(worldObject);
         }
-
-        //worldObject.RemoveRange(0, worldObject.Count);
-        //worldObject.AddRange(worldObject);
     }
 
     void DrawRadarDots()

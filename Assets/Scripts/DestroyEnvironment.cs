@@ -5,10 +5,10 @@ public class DestroyEnvironment : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.name == "TestCube")
+        if(col.gameObject.tag == "WorldObject")
         {
             Radar.RemoveRadarObject(col.gameObject);
-            //Destroy(col.gameObject);
+            Destroy(col.gameObject);
         }
     }
 
