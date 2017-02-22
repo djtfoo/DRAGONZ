@@ -6,7 +6,10 @@ public class DragonAttack : NetworkBehaviour
 {
 
     public EnergyScript energy;
-    public GameObject DragonMouth, Projectile, Target;
+    public GameObject Projectile, Target;
+
+    public GameObject dragonMouth;
+
     //public Text debug;
     public Text energyMeterText;
     public bool exceptionCharge;
@@ -63,7 +66,7 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     public void CmdChargedAttack()
     {
-        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
+        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
         //debug.text = ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed.ToString();
         energy.AmtenergyCharge = 0;
@@ -71,16 +74,19 @@ public class DragonAttack : NetworkBehaviour
         energy.timer = 0;
         energy.ChargedReadyToUse = false;
 
-        ProjectileScript script = ProjectileInstianted.GetComponent<ProjectileScript>();
+        ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
         player = GetComponent<Player>();
-        script.owner = player; // this.gameObject; // player.gameObject;
-        
-        script.Target = player.GetView();
-        script.gameObject.transform.position = this.transform.position;
+        projScript.owner = player; // this.gameObject; // player.gameObject;
+
+        //projScript.Target = (Target.transform.position - this.transform.position).normalized;
+        //projScript.gameObject.transform.position = this.transform.position;
+
+        projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
+        projScript.gameObject.transform.position = dragonMouth.transform.position;
 
         NetworkServer.Spawn(ProjectileInstianted);
 
-        script.Vel = script.Target;
+        projScript.Vel = projScript.Target;
         test++;
     }
 
@@ -91,13 +97,18 @@ public class DragonAttack : NetworkBehaviour
         //Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
 
         //debug.text = "Fired";
-        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, DragonMouth.transform.position, DragonMouth.transform.rotation);
+        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
 
         energy.DecreaseEnergy();
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
         projScript.owner = player; // this.gameObject; //player.gameObject;
-        projScript.Target = player.GetView();
-        projScript.gameObject.transform.position = this.transform.position;
+
+        //projScript.Target = player.GetView();
+        //projScript.Target = (Target.transform.position - this.transform.position).normalized;
+        //projScript.gameObject.transform.position = this.transform.position;
+        projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
+        projScript.gameObject.transform.position = dragonMouth.transform.position;
+
         projScript.Vel = projScript.Target;
 
         NetworkServer.Spawn(ProjectileInstianted);

@@ -4,7 +4,8 @@ using UnityEngine.Networking;
 public class ThirdPersonCamera : NetworkBehaviour
 {
     public GameObject player;
-    public GameObject target;   // DON'T USE THIS
+    public GameObject target;
+    Vector3 cameraDir = new Vector3(0, 0, 1);
     Vector3 positionOffset = new Vector3(0, 30f, -150f); // dragon's offset from camera center
 
     // view = (player.transform.position - this.transform.position);
@@ -117,8 +118,9 @@ public class ThirdPersonCamera : NetworkBehaviour
         //playerScript.SetView(rotation * playerScript.GetView());
 
         // change target
-        target.transform.position = this.transform.position + 10f * playerScript.GetView();
-        //Debug.Log(playerScript.name + "view: " + playerScript.GetView());
+        Quaternion euler = Quaternion.Euler(-pitch + 30f, yaw, 0f);
+        cameraDir = euler * new Vector3(0, 0, 1);
+        target.transform.position = this.transform.position + 1000f * cameraDir;
     }
 
 }

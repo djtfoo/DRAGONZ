@@ -11,7 +11,6 @@ public class Player : NetworkBehaviour
 
     private float updateInterval;
 
-    public float movementSpeed;
     public float turningSpeed;
     public float rotateSpeed = 4f;
     private float changeSpeed = 20f;
@@ -151,12 +150,12 @@ public class Player : NetworkBehaviour
 
             if (Input.GetKey(KeyCode.W))
             {
-                force = 200f * view;
+                force = 100f * view;
                 keyNotPressed = false;
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                force = -200f * view;
+                force = -100f * view;
                 keyNotPressed = false;
             }
 
@@ -168,7 +167,7 @@ public class Player : NetworkBehaviour
 
                 // decelerate
                 Vector3 velDir = velocity.normalized;
-                float decelerator = (10f + velocity.magnitude * 0.5f);
+                float decelerator = (5f + velocity.magnitude * 0.5f);
                 if (keyNotPressed)
                 {
                     decelerator *= 2f;
@@ -177,8 +176,8 @@ public class Player : NetworkBehaviour
                 {
                     keyNotPressed = true;
 
-                    if (decelerator > 30f)
-                        decelerator = 30f;
+                    if (decelerator > 20f)
+                        decelerator = 20f;
                 }
                 velocity -= decelerator * velDir * Time.deltaTime;
 
@@ -228,10 +227,10 @@ public class Player : NetworkBehaviour
         float vertical = inputValue * rotateSpeed;
 
         pitch += vertical;
-        if (pitch > 360f)
-            pitch -= 360f;
-        else if (pitch < -360f)
-            pitch += 360f;
+        if (pitch > 80f)
+            pitch = 80f;
+        else if (pitch < -80f)
+            pitch = -80f;
     }
 
     [Client]
@@ -255,13 +254,21 @@ public class Player : NetworkBehaviour
 
 #endif
         float horizontal = inputValue * rotateSpeed;
-        yaw += horizontal;
-        roll -= 0.5f * horizontal;
 
-        if (yaw > 360f)
-            yaw -= 360f;
-        else if (yaw < -360f)
-            yaw += 360f;
+        float newRoll = roll - 0.5f * horizontal;
+        float overflow = 0f;
+        if (newRoll > 50f || newRoll < -50f)
+            overflow = newRoll - roll;
+
+        roll = newRoll - overflow;
+
+        yaw += horizontal - overflow;
+
+        //if (yaw > 360f)
+        //    yaw -= 360f;
+        //else if (yaw < -360f)
+        //    yaw += 360f;
+
         //target.transform.Rotate(0, horizontal, 0);
 
         //float desiredAngle = target.transform.eulerAngles.y;
