@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using UnityEditor;
+//using UnityEditor;
 //[CustomEditor(typeof(ComboMeter))]
 public class ComboMeter :  MonoBehaviour {
     public float MaxComboCounterLifeTime,timer,AddtoTimer;

@@ -179,13 +179,13 @@ public class LoginMenu : MonoBehaviour
 
                 UserAccountManager.instance.LogIn(username, password);
             }
-            else if (returned == "incorrectUser")
+            else if (returned == "UserError")
             {
                 //Account with username not found in database
                 login_error.text = "Username not found";
                 part = 0; //back to login UI
             }
-            else if (returned == "incorrectPass")
+            else if (returned == "PassError")
             {
                 //Account with username found, but password incorrect
                 part = 0; //back to login UI
@@ -206,7 +206,7 @@ public class LoginMenu : MonoBehaviour
             else
             {
                 part = 0;
-                login_error.text = "why";
+                login_error.text = "Unknown Error. Try again.";
             }
 
             //blank password field
@@ -230,7 +230,7 @@ public class LoginMenu : MonoBehaviour
                 {
 
                     //check password is longer than 6 characters
-                    if (input_register_password.text.Length > 6)
+                    if (input_register_password.text.Length > 5)
                     {
 
                         //check passwords are the same
@@ -267,7 +267,7 @@ public class LoginMenu : MonoBehaviour
                     else
                     {
                         //return password too short error
-                        register_error.text = "Password too Short";
+                        register_error.text = "Password too Short (min 6 characters)";
                         input_register_password.text = ""; //blank password fields
                         input_register_confirmPassword.text = "";
                     }
@@ -276,7 +276,7 @@ public class LoginMenu : MonoBehaviour
                 else
                 {
                     //return username too short error
-                    register_error.text = "Username too Short";
+                    register_error.text = "Username too Short (min 5 characters)";
                     input_register_password.text = ""; //blank password fields
                     input_register_confirmPassword.text = "";
                 }
@@ -320,11 +320,11 @@ public class LoginMenu : MonoBehaviour
 
                 UserAccountManager.instance.LogIn(username, password);
             }
-            if (returnedd == "usernameInUse")
+            if (returnedd == "UserError")
             {
                 //Account Not Created due to username being used on another Account
                 part = 1;
-                register_error.text = "Username Unavailable. Try another.";
+                register_error.text = "Username Already Taken.";
             }
             if (returnedd == "ContainsUnsupportedSymbol")
             {
