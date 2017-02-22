@@ -7,7 +7,8 @@ public class ProjectileScript : NetworkBehaviour
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
     public float lifeTime, timer,particleTimer;
-    public ParticleSystem particleSystem,ShockWaveSystem,ExplosionSystem;
+    public ParticleSystem particleSystem,ShockWaveSystem,ExplosionSystem, hitWaterSystem, waterSplashSystem;
+
     float degradeTimer;
     ParticleSystem ParticleSysInstianted, ParticleSysInstianted2, ParticleSysInstianted3;
 
@@ -80,8 +81,19 @@ public class ProjectileScript : NetworkBehaviour
     {
         if(col.gameObject.tag == "Terrain")
         {
-            CmdHitTerrainParticles();
-            combometer.AddToComboMeter(1);
+            Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
+
+            if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > 0.35f)
+            {
+                // hit ground
+                CmdHitTerrainParticles();
+                combometer.AddToComboMeter(1);
+            }
+            else
+            {
+                // hit water
+                CmdHitWaterParticles();
+            }
         }
 
         if (col.gameObject.tag == "WorldObject")
@@ -127,5 +139,20 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted2.Play();
         NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
+    }
+        
+    void CmdHitWaterParticles()
+    {
+        Destroy(this.gameObject);
+
+        ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
+        system1.transform.position = this.gameObject.transform.position;
+        system1.Play();
+        NetworkServer.Spawn(system1.gameObject);
+
+        ParticleSystem system2 = (ParticleSystem)Instantiate(waterSplashSystem, this.transform.position, waterSplashSystem.transform.rotation);
+        system1.transform.position = this.gameObject.transform.position;
+        system1.Play();
+        NetworkServer.Spawn(system1.gameObject);
     }
 }
