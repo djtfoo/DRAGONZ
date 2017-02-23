@@ -96,14 +96,14 @@ public class ProjectileScript : NetworkBehaviour
             }
         }
 
-        if (col.gameObject.tag == "WorldObject")
+        else if (col.gameObject.tag == "WorldObject")
         {
             CmdHitTerrainParticles();
             combometer.AddToComboMeter(1);
         }
 
         // Collides with remote players
-        if (col.gameObject.tag == "Player" && col.gameObject.name != owner.gameObject.name)
+        else if (col.gameObject.tag == "Player" && col.gameObject.name != owner.gameObject.name)
         {
             if (col.gameObject.GetComponent<Player>().GetIsDead())
             {

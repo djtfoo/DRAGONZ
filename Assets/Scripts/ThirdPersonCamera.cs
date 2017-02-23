@@ -8,6 +8,8 @@ public class ThirdPersonCamera : NetworkBehaviour
     Vector3 cameraDir = new Vector3(0, 0, 1);
     Vector3 positionOffset = new Vector3(0, 30f, -150f); // dragon's offset from camera center
 
+    private float cameraPitchOffset = 30f;
+
     // view = (player.transform.position - this.transform.position);
     // view.Normalize();
 
@@ -102,7 +104,7 @@ public class ThirdPersonCamera : NetworkBehaviour
         //}
 
         // rotate camera
-        this.transform.eulerAngles = new Vector3(-pitch + 30f, yaw, roll);
+        this.transform.eulerAngles = new Vector3(-pitch + cameraPitchOffset, yaw, roll);
 
         // rotate up vector
         //float playerRoll = playerScript.GetRoll();
@@ -118,7 +120,7 @@ public class ThirdPersonCamera : NetworkBehaviour
         //playerScript.SetView(rotation * playerScript.GetView());
 
         // change target
-        Quaternion euler = Quaternion.Euler(-pitch + 30f, yaw, 0f);
+        Quaternion euler = Quaternion.Euler(-pitch + cameraPitchOffset, yaw, 0f);
         cameraDir = euler * new Vector3(0, 0, 1);
         target.transform.position = this.transform.position + 1000f * cameraDir;
     }
