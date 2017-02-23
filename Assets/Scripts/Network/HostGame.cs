@@ -15,12 +15,18 @@ public class HostGame : NetworkBehaviour {
     public Toggle toggleOnline;
     private bool canCreate;
 
+    private bool clickedLAN;
+    private float LANTimer;
+
     private NetworkManager networkManager;
 
     void Start()
     {
         networkManager = NetworkManager.singleton;
         canCreate = false;
+        clickedLAN = false;
+        LANTimer = 0.0f;
+
         if (errorText != null)
             errorText.text = "";
 
@@ -90,5 +96,33 @@ public class HostGame : NetworkBehaviour {
                 networkManager.matchMaker.CreateMatch(roomName, roomSize, true, "", networkManager.OnMatchCreate);
             }
         }
+    }
+
+    void Update()
+    {
+        if (clickedLAN)
+        {
+            LANTimer += Time.deltaTime;
+            errorText.text = "Searching for LAN room";
+
+            if (LANTimer > 1.0f)
+            {
+                if (networkManager.client.isConnected == false)
+                {
+                    Debug.Log("shutdown");
+                    errorText.text = "No LAN room found";
+                    networkManager.StartClient().Shutdown();
+                }
+
+                LANTimer = 0.0f;
+                clickedLAN = false;
+            }
+        }
+    }
+
+    public void JoinLANRoom()
+    {
+        networkManager.StartClient();
+        clickedLAN = true;
     }
 }
