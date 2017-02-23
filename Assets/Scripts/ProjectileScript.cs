@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-
+using UnityEngine.UI;
 public class ProjectileScript : NetworkBehaviour 
 {
     public Vector3 Vel, Scale,Target;
@@ -15,6 +15,7 @@ public class ProjectileScript : NetworkBehaviour
     float spawnTrailTimer = 0f;
     private ComboMeter combometer;
     public Player owner;
+    
 
 	// Use this for initialization
     [Client]
@@ -37,7 +38,7 @@ public class ProjectileScript : NetworkBehaviour
 	void Update () 
     {
         //Debug.Log("owner: " + owner.name);
-
+        //Debug.DrawLine(this.transform.position, this.transform.position + GetComponent<Rigidbody>().GetPointVelocity(this.transform.position).normalized * 1000, Color.red);
         timer += Time.deltaTime;
         if (VeloctiyDegrade)
         {
@@ -88,6 +89,13 @@ public class ProjectileScript : NetworkBehaviour
                 // hit ground
                 CmdHitTerrainParticles();
                 combometer.AddToComboMeter(1);
+                BurntTexture burntTexture = GameObject.FindObjectOfType<BurntTexture>();
+                burntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal*5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
+
+                //if (burngm)
+                //{
+                //    burngm.transform.Rotate(Vector3.left, 70);
+                //}
             }
             else
             {
@@ -123,16 +131,16 @@ public class ProjectileScript : NetworkBehaviour
     void CmdHitTerrainParticles()
     {
         Destroy(this.gameObject);
+       
+        //ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
+        //ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
+        //ParticleSysInstianted2.Play();
+        //NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
 
-        ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
-        ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
-        ParticleSysInstianted2.Play();
-        NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
-
-        ParticleSysInstianted3 = (ParticleSystem)Instantiate(ExplosionSystem, this.transform.position, ExplosionSystem.transform.rotation);
-        ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
-        ParticleSysInstianted3.Play();
-        NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
+        //ParticleSysInstianted3 = (ParticleSystem)Instantiate(ExplosionSystem, this.transform.position, ExplosionSystem.transform.rotation);
+        //ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
+        //ParticleSysInstianted3.Play();
+        //NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
     }
 
     [Command]
@@ -145,7 +153,7 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted2.Play();
         NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
     }
-        
+   // [Command]
     void CmdHitWaterParticles()
     {
         Destroy(this.gameObject);
@@ -153,11 +161,11 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
         system1.transform.position = this.gameObject.transform.position;
         system1.Play();
-        NetworkServer.Spawn(system1.gameObject);
+      //  NetworkServer.Spawn(system1.gameObject);
 
         ParticleSystem system2 = (ParticleSystem)Instantiate(waterSplashSystem, this.transform.position, waterSplashSystem.transform.rotation);
         system1.transform.position = this.gameObject.transform.position;
         system1.Play();
-        NetworkServer.Spawn(system1.gameObject);
+      //      NetworkServer.Spawn(system1.gameObject);
     }
 }
