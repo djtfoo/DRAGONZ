@@ -201,6 +201,11 @@ public class Player : NetworkBehaviour
                 }
             }
 
+            if (rbody.velocity.magnitude > 1f)
+            {
+                rbody.velocity.Normalize();
+            }
+
             if (GetComponent<Health>().currentHealth <= 0.0f)
             {
                 Die();

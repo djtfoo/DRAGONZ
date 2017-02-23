@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 // takes noise map and apply it to a texture; apply the texture to the plane
 

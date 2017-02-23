@@ -73,7 +73,12 @@ public class MapGenerator : MonoBehaviour {
         else if (drawMode == DrawMode.ColorMap)
             display.DrawTexture(TextureGenerator.TextureFromColorMap(colorMap, mapChunkSize, mapChunkSize));
         else if (drawMode == DrawMode.Mesh)
-            display.DrawMesh(MeshGenerator.GenerateTerrainMesh(Noise.noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetail), TextureGenerator.TextureFromColorMap(colorMap, mapChunkSize, mapChunkSize));
+        {
+            Texture2D tex = TextureGenerator.TextureFromColorMap(colorMap, mapChunkSize, mapChunkSize);
+            display.DrawMesh(MeshGenerator.GenerateTerrainMesh(Noise.noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetail), tex);
+            // save the texture
+            GetTerrainTexture.SetTexture2D(tex);
+        }
         else if (drawMode == DrawMode.FalloffMap)
             display.DrawTexture(TextureGenerator.TextureFromHeightMap(FalloffGenerator.GenerateFalloffMap(mapChunkSize)));
     }
