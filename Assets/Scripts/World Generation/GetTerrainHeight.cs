@@ -9,7 +9,7 @@ public static class GetTerrainHeight {
         //Mesh mesh = terrain.GetComponent<MeshFilter>().mesh;
 
         float scale = terrain.transform.localScale.x;
-        Debug.Log(scale);
+        //Debug.Log(scale);
 
         const int mapChunkSize = 240;
         const int halfMapChunkSize = 120;

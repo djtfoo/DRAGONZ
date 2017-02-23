@@ -9,6 +9,9 @@ public class Player : NetworkBehaviour
     [SyncVar]
     Quaternion realRotation;
 
+    [SyncVar]
+    private bool isDead = false;
+
     private float updateInterval;
 
     public float turningSpeed;
@@ -32,6 +35,16 @@ public class Player : NetworkBehaviour
     Vector3 realView = Vector3.zero;
 
     private Vector3 view;   // the dragon's view vector - for shooting, etc
+
+    public void SetIsDead(bool _isDead)
+    {
+        isDead = _isDead;
+    }
+
+    public bool GetIsDead()
+    {
+        return isDead;
+    }
 
     // Get the view vector
     public Vector3 GetView()
@@ -188,6 +201,13 @@ public class Player : NetworkBehaviour
                 }
             }
 
+            if (GetComponent<Health>().currentHealth <= 0.0f)
+            {
+                Die();
+                //transform.position.Set(0, 0, 0);
+                //Debug.Log("dieded");
+            }
+
             // Update the server with position/rotation
             updateInterval += Time.deltaTime;
             if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
@@ -291,4 +311,16 @@ public class Player : NetworkBehaviour
         //Debug.Log(col.gameObject.name);
     }
 
+    private void Die()
+    {
+        isDead = true;
+
+        deaths++;
+
+        // DisableOnDeath stuff...
+
+        // Disable collider
+
+        // Time till respawn
+    }
 }

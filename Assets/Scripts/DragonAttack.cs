@@ -84,9 +84,9 @@ public class DragonAttack : NetworkBehaviour
         projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
         projScript.gameObject.transform.position = dragonMouth.transform.position;
 
-        NetworkServer.Spawn(ProjectileInstianted);
-
         projScript.Vel = projScript.Target;
+
+        NetworkServer.Spawn(ProjectileInstianted);
         test++;
     }
 

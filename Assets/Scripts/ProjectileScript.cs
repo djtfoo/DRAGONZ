@@ -81,7 +81,7 @@ public class ProjectileScript : NetworkBehaviour
     {
         if(col.gameObject.tag == "Terrain")
         {
-            Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
+            //Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
 
             if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > 0.35f)
             {
@@ -105,11 +105,16 @@ public class ProjectileScript : NetworkBehaviour
         // Collides with remote players
         if (col.gameObject.tag == "Player" && col.gameObject.name != owner.gameObject.name)
         {
+            if (col.gameObject.GetComponent<Player>().GetIsDead())
+            {
+                owner.kills++;
+            }
+
             CmdHitPlayer();
 
             combometer.AddToComboMeter(1);
             Health health = col.gameObject.GetComponent<Health>();
-            health.currentHealth -= 10;
+            health.currentHealth -= 50;
             //Debug.Log(health.currentHealth);
         }
     }
