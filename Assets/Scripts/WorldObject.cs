@@ -34,7 +34,7 @@ public class WorldObject : MonoBehaviour {
 	}
     void Awake()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
         LifeTimeEnabled = false;
         //MultipleChildObjects = false;
     }

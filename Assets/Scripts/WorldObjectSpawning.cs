@@ -11,57 +11,39 @@ public struct WorldObjectToSpawn
 
 public class WorldObjectSpawning : MonoBehaviour {
     public List<WorldObjectToSpawn> TypesOfGameObjects;
-
-    //[SerializeField]
-    //List<WorldObject> SpawnedGOList;
-    public int AmtOfGameObjects;
 	// Use this for initialization
-	//void Start () {
-    //
-    //    GameObject terrain = GameObject.FindGameObjectWithTag("Terrain");
-    //
-    //    foreach (WorldObject WO in TypesOfGameObjects)
-    //    {
-    //        for (int a = 0; a < AmtOfGameObjects; a++)
-    //        {
-    //
-    //            WorldObject temp = Instantiate(WO);
-    //            temp.gameObject.SetActive(true);
-    //            temp.LifeTimeEnabled = true;
-    //            SpawnedGOList.Add(temp);
-    //        }
-    //    }
-    //    for(int a=0; a<SpawnedGOList.Count; a++)
-    //    {
-    //        bool haveNotSpawned = true;
-    //        while (haveNotSpawned)
-    //        {
-    //            float x = Random.Range(0, 1);
-    //            float z = Random.Range(0, 1);
-    //
-    //            float height = GetTerrainHeight.GetHeight(terrain, x, z);
-    //            //if (height )
-    //            //Vector3 temp = new Vector3(x, G, Random.Range(0, 1));
-    //
-    //        }
-    //
-    //
-    //       //Vector3 temp =()
-    //    }
-	//}
+    GameObject terrain;
+	void Start () {
+        terrain = GameObject.FindGameObjectWithTag("Terrain");
+		//Random.seed = 42;
+
+        foreach (WorldObjectToSpawn WO in TypesOfGameObjects)
+        {
+           for(int a=0; a< WO.quantity;a++)	
+           {
+               while (true)
+               {
+                   Debug.Log("FUCK YEAH");
+                   float x = UnityEngine.Random.Range(-200f * 120, 200f * 120);
+                  // Debug.Log(x);
+
+                   float z = UnityEngine.Random.Range(-200f * 120, 200f * 120);
+                 //  Debug.Log(z);
+                   float y = GetTerrainHeight.GetHeight(terrain, x, z);
+                   Debug.Log(y);
+                   if (y > 0.35f && y < 0.58f)
+                   {
+						Vector3 Pos = new Vector3(x, y * terrain.transform.localScale.y + 0.5f * WO.wo.transform.localScale.y, z);
+                       Instantiate(WO.wo, Pos, Quaternion.identity); // Still need positioning
+                       break;
+                   }
+               }
+           }
+        }
+	}
 	//
 	//// Update is called once per frame
-	//void Update () {
-    //    foreach (WorldObject Wo in SpawnedGOList)
-    //    {
-    //        if (Wo.gameObject.activeSelf)
-    //        {
-    //            Wo.lifeTime -= Time.deltaTime;
-    //            if (Wo.lifeTime <= 0)
-    //            {
-    //                Wo.gameObject.SetActive(false);
-    //            }
-    //        }
-    //    }
-	//}
+	void Update () {
+    
+	}
 }
