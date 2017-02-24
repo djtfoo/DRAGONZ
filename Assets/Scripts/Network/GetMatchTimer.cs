@@ -13,7 +13,8 @@ public class GetMatchTimer : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        matchTimerText.text = NetworkManager.singleton.GetComponent<MatchTimer>().GetSeconds().ToString();
+	void Update () 
+    {
+        //matchTimerText.text = NetworkManager.singleton.GetComponent<MatchTimer>().GetSeconds().ToString();
 	}
 }

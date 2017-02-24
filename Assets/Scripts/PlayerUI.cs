@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class PlayerUI : MonoBehaviour {
+public class PlayerUI : NetworkBehaviour {
 
     [SerializeField]
     GameObject pauseMenu;
@@ -13,6 +14,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     GameObject respawnScreen;
 
+    public GameObject timer;
+
     public Image energyBar;
     public Image chargeEnergyBar;
     public Image healthBar;
@@ -22,6 +25,7 @@ public class PlayerUI : MonoBehaviour {
 
     void Start()
     {
+        NetworkManager.singleton.GetComponent<MatchTimer>().enabled = true;
         OverlayActive.SetOverlayActive(false);
         //PauseMenu.isOn = false;
     }
@@ -52,5 +56,10 @@ public class PlayerUI : MonoBehaviour {
     public RespawnScreen GetRespawnScreen()
     {
         return respawnScreen.GetComponent<RespawnScreen>();
+    }
+
+    public GetMatchTimer GetMatchTimer_()
+    {
+        return timer.GetComponent<GetMatchTimer>();
     }
 }

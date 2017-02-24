@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class MatchTimer : MonoBehaviour {
+public class MatchTimer : NetworkBehaviour {
 
     public int minutes;
 
@@ -15,6 +16,17 @@ public class MatchTimer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < playersGO.Length; ++i)
+        {
+            if (playersGO[i].GetComponent<PlayerSetup>().playerControllerId == -1)
+            {
+                playersGO[i].GetComponent<PlayerSetup>().matchTime = seconds;
+                break;
+            }
+        }
+
         if (seconds > 0f)
             seconds -= Time.deltaTime;
 	}
