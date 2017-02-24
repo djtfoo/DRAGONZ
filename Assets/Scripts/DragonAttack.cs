@@ -8,6 +8,7 @@ public class DragonAttack : NetworkBehaviour
     public EnergyScript energy;
     public GameObject Projectile, Target;
 
+    [SyncVar]
     public GameObject dragonMouth;
 
     //public Text debug;
@@ -76,7 +77,8 @@ public class DragonAttack : NetworkBehaviour
 
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
         player = GetComponent<Player>();
-        projScript.owner = player; // this.gameObject; // player.gameObject;
+        //projScript.owner = player; // this.gameObject; // player.gameObject;
+        projScript.owner = this.gameObject;
 
         //projScript.Target = (Target.transform.position - this.transform.position).normalized;
         //projScript.gameObject.transform.position = this.transform.position;
@@ -101,7 +103,8 @@ public class DragonAttack : NetworkBehaviour
 
         energy.DecreaseEnergy();
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
-        projScript.owner = player; // this.gameObject; //player.gameObject;
+        //projScript.owner = player; // this.gameObject; //player.gameObject;
+        projScript.owner = this.gameObject;
 
         //projScript.Target = player.GetView();
         //projScript.Target = (Target.transform.position - this.transform.position).normalized;

@@ -3,7 +3,13 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 public class ProjectileScript : NetworkBehaviour 
 {
-    public Vector3 Vel, Scale,Target;
+    [SyncVar]
+    public Vector3 Vel;
+
+    public Vector3 Scale;
+
+    [SyncVar]
+    public Vector3 Target;
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
     public float lifeTime, timer,particleTimer;
@@ -14,8 +20,9 @@ public class ProjectileScript : NetworkBehaviour
 
     float spawnTrailTimer = 0f;
     private ComboMeter combometer;
-    public Player owner;
-    
+
+    [SyncVar]
+    public GameObject owner;
 
 	// Use this for initialization
     [Client]
@@ -104,27 +111,30 @@ public class ProjectileScript : NetworkBehaviour
             }
         }
 
-        else if (col.gameObject.tag == "WorldObject")
+        if (col.gameObject.tag == "WorldObject")
         {
             CmdHitTerrainParticles();
             combometer.AddToComboMeter(1);
         }
 
         // Collides with remote players
-        else if (col.gameObject.tag == "Player" && col.gameObject.name != owner.gameObject.name)
+        if (col.gameObject.tag == "Player" && col.gameObject.name != owner.name)
         {
+            CmdHitPlayer();
+
             if (col.gameObject.GetComponent<Player>().GetIsDead())
             {
-                col.gameObject.GetComponent<Player>().SetKiller(owner.gameObject);
-                owner.kills++;
+            	col.gameObject.GetComponent<Player>().SetKiller(owner.gameObject);
+                owner.GetComponent<Player>().kills++;
             }
-
-            CmdHitPlayer();
 
             combometer.AddToComboMeter(1);
             Health health = col.gameObject.GetComponent<Health>();
             health.currentHealth -= 50;
             //Debug.Log(health.currentHealth);
+
+            // destroy fireball
+            Destroy(this.gameObject);
         }
     }
 
