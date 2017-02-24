@@ -94,14 +94,14 @@ public class ProjectileScript : NetworkBehaviour
         {
             //Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
 
-            if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > 0.35f)
+            if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > MapData.regions[0].height)
             {
                 // hit ground
                 CmdHitTerrainParticles();
                 combometer.AddToComboMeter(1);
-                BurntTexture burntTexture = GameObject.FindObjectOfType<BurntTexture>();
-                burntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal*5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
-
+                //BurntTexture burntTexture = GameObject.FindObjectOfType<BurntTexture>();
+               // burntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal*5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
+                CreateBurntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal * 5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
                 //if (burngm)
                 //{
                 //    burngm.transform.Rotate(Vector3.left, 70);

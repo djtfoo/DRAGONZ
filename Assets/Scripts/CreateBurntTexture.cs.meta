@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b5519d2a689cfd944ac72e08b97040b3
+timeCreated: 1487917719
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - burntGo: {fileID: 11484600, guid: 497da4036578fdc4a8174def8f4fbae7, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

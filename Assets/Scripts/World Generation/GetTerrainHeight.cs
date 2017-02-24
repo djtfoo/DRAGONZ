@@ -11,8 +11,8 @@ public static class GetTerrainHeight {
         float scale = terrain.transform.localScale.x;
         //Debug.Log(scale);
 
-        const int mapChunkSize = 240;
-        const int halfMapChunkSize = 120;
+        int mapChunkSize = 240;
+        int halfMapChunkSize = 120;
         // get position in the mesh
         int x = (int)(pos.x / scale) + halfMapChunkSize;
         int z = (int)(pos.z / scale) + halfMapChunkSize;
@@ -20,6 +20,25 @@ public static class GetTerrainHeight {
         //return mesh.vertices[z * mapChunkSize + x].y;
 
         return Noise.noiseMap[x, mapChunkSize - z];
+    }
+
+    public static float GetHeight(GameObject terrain, float x, float z)
+    {
+        // get mesh
+        //Mesh mesh = terrain.GetComponent<MeshFilter>().mesh;
+
+        float scale = terrain.transform.localScale.x;
+        //Debug.Log(scale);
+
+        int mapChunkSize = MapData.mapChunkSize - 1;
+        int halfMapChunkSize = mapChunkSize >> 2;
+        // get position in the mesh
+        int valX = (int)(x / scale) + halfMapChunkSize;
+        int valZ = (int)(z / scale) + halfMapChunkSize;
+
+        //return mesh.vertices[z * mapChunkSize + x].y;
+
+        return Noise.noiseMap[valX, mapChunkSize - valZ];
 
     }
 
