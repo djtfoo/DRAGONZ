@@ -18,7 +18,7 @@ public class Destruction : MonoBehaviour {
     void ObjectDestruct()
     {
         Debug.Log("BreakDeathRead");
-        Instantiate(BrokenBall, transform.position, BrokenBall.transform.rotation);
+        Instantiate(BrokenBall, transform.position-transform.localScale, BrokenBall.transform.rotation);
         // instantiate particle effect here
         // play sound
         Destroy(gameObject);
@@ -32,7 +32,7 @@ public class Destruction : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("spaced pressed");
             ObjectDestruct();
