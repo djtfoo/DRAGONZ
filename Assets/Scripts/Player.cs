@@ -17,9 +17,16 @@ public class Player : NetworkBehaviour
     public int kills;
     public int deaths;
     private GameObject killer;
+
     private float updateInterval;
 
-    public void SetKiller(GameObject _killer)
+    //public void SetKiller(GameObject _killer)
+    //{
+    //    killer = _killer;
+    //}
+
+    [ClientRpc]
+    public void RpcSetKiller(GameObject _killer)
     {
         killer = _killer;
     }
@@ -109,7 +116,7 @@ public class Player : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.K))
             {
                 GetComponent<Health>().currentHealth = 0;
-                SetKiller(gameObject);
+                killer = this.gameObject;
             }
 
             if (killer != null)
@@ -119,8 +126,8 @@ public class Player : NetworkBehaviour
                 else
                     GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetKillerText("Myself");
             }
-            else
-                Debug.Log("no killer");
+            //else
+                //Debug.Log("no killer");
 
             updateInterval += Time.deltaTime;
             if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
@@ -133,11 +140,6 @@ public class Player : NetworkBehaviour
         {
             if (GetComponent<Health>().currentHealth <= 0.0f)
                 isDead = true;
-
-            if (killer != null)
-            {
-                SetKiller(killer);
-            }
 
             RemotePlayerDead(isDead);
 

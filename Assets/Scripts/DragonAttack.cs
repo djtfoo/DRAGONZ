@@ -44,7 +44,7 @@ public class DragonAttack : NetworkBehaviour
 
         if (Input.GetMouseButtonUp(0) && energy.readyToUse)
         {
-            CmdFireBallAttack();
+            Shoot();
         }
         else
             keypress = false;
@@ -93,8 +93,8 @@ public class DragonAttack : NetworkBehaviour
         test++;
     }
 
-    [Command]
-    public void CmdFireBallAttack()
+    [Client]
+    void Shoot()
     {
         player = GetComponent<Player>();
         //Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
@@ -112,10 +112,19 @@ public class DragonAttack : NetworkBehaviour
         //projScript.gameObject.transform.position = this.transform.position;
         projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
         projScript.gameObject.transform.position = dragonMouth.transform.position;
+        //ProjectileInstianted.transform.position = dragonMouth.transform.position;
 
         projScript.Vel = projScript.Target;
 
-        NetworkServer.Spawn(ProjectileInstianted);
+        CmdFireBallAttack(ProjectileInstianted);
+    }
+
+    [Command]
+    public void CmdFireBallAttack(GameObject proj)
+    {
+
+
+        NetworkServer.Spawn(proj);
         test++;
     }
 }

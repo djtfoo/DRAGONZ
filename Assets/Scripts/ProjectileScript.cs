@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+
 public class ProjectileScript : NetworkBehaviour 
 {
     [SyncVar]
@@ -10,6 +11,12 @@ public class ProjectileScript : NetworkBehaviour
 
     [SyncVar]
     public Vector3 Target;
+
+    [SyncVar]
+    private Vector3 realPosition;
+
+    private float updateInterval;
+
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
     public float lifeTime, timer,particleTimer;
@@ -21,70 +28,94 @@ public class ProjectileScript : NetworkBehaviour
     float spawnTrailTimer = 0f;
     private ComboMeter combometer;
 
+    public WorldObject burntGO;
+
     [SyncVar]
     public GameObject owner;
 
 	// Use this for initialization
-    [Client]
+    //[Client]
 	void Start ()
     {
         //Vel = ( this.gameObject.transform.position-Target).normalized;
-        transform.localScale = Scale;          
-       
-       // Debug.Log(parti)
-     //   particleSystem.transform.ro
-       ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
-       ParticleSysInstianted.transform.position = this.gameObject.transform.position;
-       ParticleSysInstianted.Play();
-       combometer = (ComboMeter)FindObjectOfType<ComboMeter>();
-       GetComponent<Rigidbody>().AddForce(Target * MovementSpeed);
+        transform.localScale = Scale;
+
+        // Debug.Log(parti)
+        //   particleSystem.transform.ro
+        ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+        ParticleSysInstianted.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted.Play();
+        combometer = (ComboMeter)FindObjectOfType<ComboMeter>();
+        GetComponent<Rigidbody>().AddForce(Target * MovementSpeed);
 	}
 
 	// Update is called once per frame
-    [Client]
+    //[Client]
 	void Update () 
     {
-        //Debug.Log("owner: " + owner.name);
-        //Debug.DrawLine(this.transform.position, this.transform.position + GetComponent<Rigidbody>().GetPointVelocity(this.transform.position).normalized * 1000, Color.red);
-        timer += Time.deltaTime;
-        if (VeloctiyDegrade)
+        if (owner.GetComponent<Player>().isLocalPlayer)
         {
-            degradeTimer += Time.deltaTime;
-            if (degradeTimer >= DegradeRateTime)
+            //Debug.Log("owner: " + owner.name);
+            //Debug.DrawLine(this.transform.position, this.transform.position + GetComponent<Rigidbody>().GetPointVelocity(this.transform.position).normalized * 1000, Color.red);
+            timer += Time.deltaTime;
+
+            if (VeloctiyDegrade)
             {
-              //  Vel *= ((100-velocityDegradePercent) / 100);
-                  GetComponent<Rigidbody>().AddForce(-((Target)* ((100-velocityDegradePercent) / 100)));
-                degradeTimer = 0;
+                degradeTimer += Time.deltaTime;
+                if (degradeTimer >= DegradeRateTime)
+                {
+                    //  Vel *= ((100-velocityDegradePercent) / 100);
+                    GetComponent<Rigidbody>().AddForce(-((Target) * ((100 - velocityDegradePercent) / 100)));
+                    degradeTimer = 0;
+                }
+            }
+
+            spawnTrailTimer += Time.deltaTime;
+            if (spawnTrailTimer > 0.5f)
+            {
+                spawnTrailTimer = 0f;
+                ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+
+                instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
+                instantiateTrail.gameObject.transform.position = this.transform.position;
+
+                instantiateTrail.Play();
+            }
+
+            //ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
+            //
+            //instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
+            //  this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
+            //instantiateTrail.gameObject.transform.position = this.transform.position;
+            //Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
+            if (timer > lifeTime)
+            {
+                this.gameObject.SetActive(false);
+                Destroy(this.gameObject);
+
+            }
+
+            // Update the server with position/rotation
+            updateInterval += Time.deltaTime;
+            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
+            {
+                updateInterval = 0;
+                CmdSync(transform.position);
             }
         }
-
-        spawnTrailTimer += Time.deltaTime;
-        if (spawnTrailTimer > 0.5f)
+        else
         {
-            spawnTrailTimer = 0f;
-            ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
-
-            instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
-            instantiateTrail.gameObject.transform.position = this.transform.position;
-
-            instantiateTrail.Play();
-        }
-
-       //ParticleSystem instantiateTrail = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
-       //
-       //instantiateTrail.gameObject.transform.Rotate(new Vector3(-Vel.x, 180f, -Vel.z));
-     //  this.gameObject.transform.position += Vel * Time.deltaTime * MovementSpeed;
-       //instantiateTrail.gameObject.transform.position = this.transform.position;
-       //Debug.Log(this.ParticleSysInstianted.gameObject.transform.eulerAngles);
-        if(timer > lifeTime)
-        {
-            this.gameObject.SetActive(false);
-            Destroy(this.gameObject);
-
+            transform.position = Vector3.Lerp(transform.position, realPosition, 0.1f);
         }
 	}
 
-    [Client]
+    [Command]
+    void CmdSync(Vector3 position)
+    {
+        realPosition = position;
+    }
+
+    //[Client]
     void OnCollisionEnter(Collision col)
     {
         Debug.Log("collided " + col.gameObject.name);
@@ -101,7 +132,7 @@ public class ProjectileScript : NetworkBehaviour
                 combometer.AddToComboMeter(1);
                 //BurntTexture burntTexture = GameObject.FindObjectOfType<BurntTexture>();
                // burntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal*5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
-                CreateBurntTexture.InstantiateBurntTexture(col.contacts[0].point + (col.contacts[0].normal * 5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
+                CreateBurntTexture.InstantiateBurntTexture(burntGO, col.contacts[0].point + (col.contacts[0].normal * 5f), Quaternion.FromToRotation(Vector3.up, col.contacts[0].normal));
                 //if (burngm)
                 //{
                 //    burngm.transform.Rotate(Vector3.left, 70);
@@ -128,7 +159,9 @@ public class ProjectileScript : NetworkBehaviour
             if (col.gameObject.GetComponent<Player>().GetIsDead())
             {
             	//col.gameObject.GetComponent<Player>().SetKiller(owner);
-                RpcSetKiller(col.gameObject, owner);
+                //RpcSetKiller(col.gameObject, owner);
+                col.gameObject.GetComponent<Player>().RpcSetKiller(owner);
+
                 owner.GetComponent<Player>().kills++;
             }
 
@@ -148,13 +181,13 @@ public class ProjectileScript : NetworkBehaviour
     [Command]
     void CmdSetKiller(GameObject collided, GameObject owner)
     {
-        collided.GetComponent<Player>().SetKiller(owner);
+        //collided.GetComponent<Player>().SetKiller(owner);
     }
 
     [ClientRpc]
     void RpcSetKiller(GameObject collided, GameObject owner)
     {
-        collided.GetComponent<Player>().SetKiller(owner);
+        //collided.GetComponent<Player>().SetKiller(owner);
     }
 
     [Command]
@@ -183,6 +216,7 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted2.Play();
         NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
     }
+
    // [Command]
     void CmdHitWaterParticles()
     {
