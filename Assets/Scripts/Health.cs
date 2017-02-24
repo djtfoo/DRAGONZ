@@ -37,4 +37,9 @@ public class Health : NetworkBehaviour {
 
         HealthImage.fillAmount = (currentHealth / MaxHealth);
 	}
+
+    public void SetDefault()
+    {
+        currentHealth = MaxHealth;
+    }
 }

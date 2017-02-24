@@ -19,13 +19,13 @@ public class ThirdPersonCamera : NetworkBehaviour
 
     public float changeSpeed = 1f;
 
-    Player playerScript;
+    PlayerMovement playerScript;
 
     // Use this for initialization
     [Client]
     void Start()
     {
-        playerScript = player.GetComponent<Player>();
+        playerScript = player.GetComponent<PlayerMovement>();
         //offset = player.transform.position - transform.position;
         this.transform.position = player.transform.position + positionOffset;
 

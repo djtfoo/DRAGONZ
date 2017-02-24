@@ -19,14 +19,17 @@ public class PlayerSetup : NetworkBehaviour
 
     Camera sceneCamera;
 
+    public PlayerUI GetPlayerUI()
+    {
+        return playerUIInstance.GetComponent<PlayerUI>();
+    }
+
     // Use this for initialization
     void Start()
     {
         if (!isLocalPlayer)
         {
             DisableComponents();
-
-          
             AssignRemoteLayer();
         }
         else
@@ -58,6 +61,7 @@ public class PlayerSetup : NetworkBehaviour
         }
 
         RegisterPlayer();
+        GetComponent<Player>().Setup();
     }
 
     void Update()

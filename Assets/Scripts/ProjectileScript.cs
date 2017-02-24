@@ -115,6 +115,7 @@ public class ProjectileScript : NetworkBehaviour
         {
             if (col.gameObject.GetComponent<Player>().GetIsDead())
             {
+                col.gameObject.GetComponent<Player>().SetKiller(owner.gameObject);
                 owner.kills++;
             }
 

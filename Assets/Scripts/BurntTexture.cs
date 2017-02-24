@@ -19,7 +19,7 @@ public class BurntTexture : MonoBehaviour {
         {       
             burntGo =(BurntGameObject)Instantiate(burntGo);
             burnt_GoList.Add(burntGo);
-            Debug.Log(burntGo.transform.position);
+            //Debug.Log(burntGo.transform.position);
         }
     }
 

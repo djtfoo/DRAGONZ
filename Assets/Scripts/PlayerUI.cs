@@ -10,6 +10,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
      public  Radar radar;
 
+    [SerializeField]
+    GameObject respawnScreen;
+
     public Image energyBar;
     public Image chargeEnergyBar;
     public Image healthBar;
@@ -37,5 +40,17 @@ public class PlayerUI : MonoBehaviour {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
         OverlayActive.SetOverlayActive(!OverlayActive.IsOverlayActive());
         //PauseMenu.isOn = pauseMenu.activeSelf;
+    }
+
+    public void ToggleRespawnScreen()
+    {
+        respawnScreen.SetActive(!respawnScreen.activeSelf);
+        OverlayActive.SetOverlayActive(!OverlayActive.IsOverlayActive());
+        Debug.Log("toggled");
+    }
+
+    public RespawnScreen GetRespawnScreen()
+    {
+        return respawnScreen.GetComponent<RespawnScreen>();
     }
 }
