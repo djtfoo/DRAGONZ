@@ -87,6 +87,9 @@ public class ProjectileScript : NetworkBehaviour
     [Client]
     void OnCollisionEnter(Collision col)
     {
+        Debug.Log("collided " + col.gameObject.name);
+        Debug.Log("owner " + owner.gameObject.name);
+
         if(col.gameObject.tag == "Terrain")
         {
             //Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
@@ -124,18 +127,34 @@ public class ProjectileScript : NetworkBehaviour
 
             if (col.gameObject.GetComponent<Player>().GetIsDead())
             {
-            	col.gameObject.GetComponent<Player>().SetKiller(owner.gameObject);
+            	//col.gameObject.GetComponent<Player>().SetKiller(owner);
+                RpcSetKiller(col.gameObject, owner);
                 owner.GetComponent<Player>().kills++;
             }
 
             combometer.AddToComboMeter(1);
-            Health health = col.gameObject.GetComponent<Health>();
-            health.currentHealth -= 50;
+            //Health health = col.gameObject.GetComponent<Health>();
+            //health.currentHealth -= 50;
+
+            col.gameObject.GetComponent<Health>().RpcTakeDamage(50);
+
             //Debug.Log(health.currentHealth);
 
             // destroy fireball
             Destroy(this.gameObject);
         }
+    }
+
+    [Command]
+    void CmdSetKiller(GameObject collided, GameObject owner)
+    {
+        collided.GetComponent<Player>().SetKiller(owner);
+    }
+
+    [ClientRpc]
+    void RpcSetKiller(GameObject collided, GameObject owner)
+    {
+        collided.GetComponent<Player>().SetKiller(owner);
     }
 
     [Command]

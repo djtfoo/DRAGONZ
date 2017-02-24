@@ -35,7 +35,8 @@ public class DragonAttack : NetworkBehaviour
     [Client]
     void Update()
     {
-        if (!isLocalPlayer || OverlayActive.IsOverlayActive())
+        // Checks for overlay active done in Player.cs
+        if (!isLocalPlayer)
             return;
 
         if (energyMeterText != null)

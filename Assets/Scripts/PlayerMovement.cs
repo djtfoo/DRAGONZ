@@ -72,6 +72,9 @@ public class PlayerMovement : NetworkBehaviour
     public void SetDefault()
     {
         view = new Vector3(0, 0, 1);
+        if (rbody == null)
+            rbody = GetComponent<Rigidbody>();
+        rbody.velocity = Vector3.zero;
         rotateSpeed = 4f;
         changeSpeed = 20f;
         keyNotPressed = true;
@@ -86,8 +89,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (OverlayActive.IsOverlayActive())
-                return;
+            // Checks for overlay active done in Player.cs
 
             //float horizontal = Input.GetAxis("Horizontal") * turningSpeed * Time.deltaTime;
             //transform.Rotate(0, horizontal, 0);
