@@ -23,7 +23,6 @@ public class WorldObjectSpawning : MonoBehaviour {
            {
                while (true)
                {
-                   Debug.Log("FUCK YEAH");
                    float x = UnityEngine.Random.Range(-200f * 120, 200f * 120);
                   // Debug.Log(x);
 
