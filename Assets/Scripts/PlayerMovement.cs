@@ -198,9 +198,10 @@ public class PlayerMovement : NetworkBehaviour
                 }
             }
 
-            if (rbody.velocity.magnitude > 1f)
+            if (rbody.velocity.magnitude > 0.5f)
             {
                 rbody.velocity.Normalize();
+                rbody.velocity *= 0.5f;
             }
 
             // Update the server with position/rotation
