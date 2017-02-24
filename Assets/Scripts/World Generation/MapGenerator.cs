@@ -12,7 +12,6 @@ public class MapGenerator : MonoBehaviour {
     }
     public DrawMode drawMode;
 
-    const int mapChunkSize = 241;   // (size - 1) is divisible by even numbers from 2 to 12
     [Range(0, 6)]
     public int levelOfDetail;
     public float noiseScale;
@@ -35,12 +34,18 @@ public class MapGenerator : MonoBehaviour {
     public bool useFalloff;
     float[,] falloffMap;
 
+    int mapChunkSize;
+
     public TerrainType[] regions;
 
     private void Awake()
     {
+        mapChunkSize = MapData.mapChunkSize;
+
         falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
         GenerateMap();
+
+        MapData.regions = this.regions;
     }
 
     public void GenerateMap()

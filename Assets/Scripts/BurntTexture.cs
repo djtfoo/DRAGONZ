@@ -9,16 +9,19 @@ public class BurntTexture : MonoBehaviour {
     public int AmtOfBurntTexture;
 
     bool allOccupied;
-     public  BurntGameObject burntGo;
-    List<BurntGameObject> burnt_GoList = new List<BurntGameObject>();
+    bool allInstianted;
+     public  WorldObject burntGo;
+     List<WorldObject> burnt_GoList = new List<WorldObject>();
     // Use this for initialization
     void Start()
     {
         allOccupied = false;
+        allInstianted = false;
         for (int a = 0; a < AmtOfBurntTexture; a++)
-        {       
-            burntGo =(BurntGameObject)Instantiate(burntGo);
-            burnt_GoList.Add(burntGo);
+        {
+            WorldObject temp = (WorldObject)Instantiate(burntGo);
+            temp.LifeTimeEnabled = true;
+            burnt_GoList.Add(temp);
             //Debug.Log(burntGo.transform.position);
         }
     }
@@ -29,7 +32,7 @@ public class BurntTexture : MonoBehaviour {
       //  timer += Time.deltaTime;
         for (int a = 0; a < burnt_GoList.Count; a++)
         {
-            if (burnt_GoList[a].gameObject.activeSelf)
+            if (burnt_GoList[a].gameObject.activeSelf && burnt_GoList[a].LifeTimeEnabled)
             {
                 burnt_GoList[a].lifeTime -= Time.deltaTime;
                 if (burnt_GoList[a].lifeTime<=0)
@@ -45,6 +48,17 @@ public class BurntTexture : MonoBehaviour {
     //BulletTexture, location, Quaternion.FromToRotation(Vector3.forward, hit.point));
     public GameObject InstantiateBurntTexture(Vector3 pos,Quaternion Rot)
     {
+        //if(!allInstianted)
+        //{
+        //    WorldObject temp = (WorldObject)Instantiate(burntGo,pos,Rot);
+        //    temp.gameObject.SetActive(true);
+        //    burnt_GoList.Add(temp);
+        //    if(burnt_GoList.Count==AmtOfBurntTexture-1)
+        //    {
+        //        allInstianted = true;
+        //    }
+        //}
+        //else
         if (!allOccupied)
         {
             Debug.Log("NOT OCCUPIED");
@@ -58,6 +72,7 @@ public class BurntTexture : MonoBehaviour {
                     burnt_GoList[b].gameObject.transform.rotation = Rot;
                     burnt_GoList[b].lifeTime = this.lifetime;
                     burnt_GoList[b].gameObject.SetActive(true);
+                    burnt_GoList[b].LifeTimeEnabled = true;
                     allOccupied = false;
                     Debug.Log(b);
                     if(b==burnt_GoList.Count-1)
@@ -75,7 +90,7 @@ public class BurntTexture : MonoBehaviour {
         else
         {
             Debug.Log("OCCUPIED");
-            BurntGameObject temp = burnt_GoList[0];
+            WorldObject temp = burnt_GoList[0];
             for (int b = 0; b < burnt_GoList.Count; b++) //Find Object that has lowest lifetime currently;
             {
                if(burnt_GoList[b].lifeTime <temp.lifeTime)
@@ -86,6 +101,7 @@ public class BurntTexture : MonoBehaviour {
             temp.gameObject.transform.position = pos;
             temp.gameObject.transform.rotation = Rot;
             temp.lifeTime = this.lifetime;
+            temp.LifeTimeEnabled = true;
             return temp.gameObject;
         }
                 return null;

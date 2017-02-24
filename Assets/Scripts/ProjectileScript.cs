@@ -91,7 +91,7 @@ public class ProjectileScript : NetworkBehaviour
         {
             //Debug.Log(GetTerrainHeight.GetHeight(col.gameObject, this.transform.position));
 
-            if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > 0.35f)
+            if (GetTerrainHeight.GetHeight(col.gameObject, this.transform.position) > MapData.regions[0].height)
             {
                 // hit ground
                 CmdHitTerrainParticles();
