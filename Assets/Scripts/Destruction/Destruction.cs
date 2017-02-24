@@ -8,13 +8,14 @@ public class Destruction : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.tag == "WorldObject")
+        if (col.gameObject.tag == "Fireball")
         {
-            BreakDeath();
+            Debug.Log("Collidedededededed w the boombs");
+            ObjectDestruct();
         }
     }
 
-    void BreakDeath()
+    void ObjectDestruct()
     {
         Debug.Log("BreakDeathRead");
         Instantiate(BrokenBall, transform.position, BrokenBall.transform.rotation);
@@ -29,7 +30,12 @@ public class Destruction : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update ()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("spaced pressed");
+            ObjectDestruct();
+        }
+    }
 }
