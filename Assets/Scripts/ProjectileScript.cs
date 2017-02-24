@@ -12,11 +12,6 @@ public class ProjectileScript : NetworkBehaviour
     [SyncVar]
     public Vector3 Target;
 
-    [SyncVar]
-    private Vector3 realPosition;
-
-    private float updateInterval;
-
     public float MovementSpeed,velocityDegradePercent,DegradeRateTime;
     public bool VeloctiyDegrade;
     public float lifeTime, timer,particleTimer;
@@ -34,9 +29,12 @@ public class ProjectileScript : NetworkBehaviour
     public GameObject owner;
 
 	// Use this for initialization
-    //[Client]
+    [Client]
 	void Start ()
     {
+        //if (!owner.GetComponent<Player>().isLocalPlayer)
+        //    return;
+
         //Vel = ( this.gameObject.transform.position-Target).normalized;
         transform.localScale = Scale;
 
@@ -50,7 +48,7 @@ public class ProjectileScript : NetworkBehaviour
 	}
 
 	// Update is called once per frame
-    //[Client]
+    [Client]
 	void Update () 
     {
         if (owner.GetComponent<Player>().isLocalPlayer)
@@ -94,32 +92,14 @@ public class ProjectileScript : NetworkBehaviour
                 Destroy(this.gameObject);
 
             }
-
-            // Update the server with position/rotation
-            updateInterval += Time.deltaTime;
-            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
-            {
-                updateInterval = 0;
-                CmdSync(transform.position);
-            }
-        }
-        else
-        {
-            transform.position = Vector3.Lerp(transform.position, realPosition, 0.1f);
         }
 	}
 
-    [Command]
-    void CmdSync(Vector3 position)
-    {
-        realPosition = position;
-    }
-
-    //[Client]
+    [Client]
     void OnCollisionEnter(Collision col)
     {
-        Debug.Log("collided " + col.gameObject.name);
-        Debug.Log("owner " + owner.gameObject.name);
+        //if (!owner.GetComponent<Player>().isLocalPlayer)
+        //    return;
 
         if(col.gameObject.tag == "Terrain")
         {
@@ -154,6 +134,9 @@ public class ProjectileScript : NetworkBehaviour
         // Collides with remote players
         if (col.gameObject.tag == "Player" && col.gameObject.name != owner.name)
         {
+            Debug.Log("collided " + col.gameObject.name);
+            Debug.Log("owner " + owner.gameObject.name);
+
             CmdHitPlayer();
 
             if (col.gameObject.GetComponent<Player>().GetIsDead())
