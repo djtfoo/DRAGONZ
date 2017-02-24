@@ -34,13 +34,14 @@ public class MapGenerator : MonoBehaviour {
     public bool useFalloff;
     float[,] falloffMap;
 
-    int mapChunkSize;
+    int mapChunkSize = 241;
 
     public TerrainType[] regions;
 
     private void Awake()
     {
-        mapChunkSize = MapData.mapChunkSize;
+        //mapChunkSize = 241;
+        //MapData.mapChunkSize = mapChunkSize;
 
         falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
         GenerateMap();
