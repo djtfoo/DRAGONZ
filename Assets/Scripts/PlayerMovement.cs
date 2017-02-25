@@ -30,6 +30,13 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector3 view;   // the dragon's view vector - for shooting, etc
 
+    private MoveJoystick joystick;
+
+    public void SetJoystick(MoveJoystick _joystick)
+    {
+        joystick = _joystick;
+    }
+
     // Get the view vector
     public Vector3 GetView()
     {
@@ -158,6 +165,13 @@ public class PlayerMovement : NetworkBehaviour
             // Movement
             force = Vector3.zero;
 
+#if UNITY_ANDROID
+
+            // get joystick movement
+            force = joystick.GetJoystickDelta() * 100f * view;
+            keyNotPressed = false;
+
+#else
             if (Input.GetKey(KeyCode.W))
             {
                 force = 100f * view;
@@ -168,6 +182,7 @@ public class PlayerMovement : NetworkBehaviour
                 force = -100f * view;
                 keyNotPressed = false;
             }
+#endif
 
             velocity += force * Time.deltaTime;
 

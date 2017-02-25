@@ -51,8 +51,9 @@ public class PlayerSetup : NetworkBehaviour
             playerUIInstance = Instantiate(playerUIPrefab);
             playerUIInstance.name = playerUIPrefab.name;
 
+            PlayerUI playerUI = playerUIInstance.GetComponent<PlayerUI>();  // PlayerUI component of the PlayerUI instance
+
             EnergyScript energy = this.gameObject.GetComponent<EnergyScript>();
-            PlayerUI playerUI = playerUIInstance.GetComponent<PlayerUI>();
             energy.energyBarImage = playerUI.energyBar;
             energy.chargeBarImage = playerUI.chargeEnergyBar;
 
@@ -65,6 +66,9 @@ public class PlayerSetup : NetworkBehaviour
 
             Radar radar = this.gameObject.GetComponent <Radar>();
             radar = playerUI.radar;
+
+            MoveJoystick joystick = playerUI.joystick.GetComponent<MoveJoystick>();
+            this.gameObject.GetComponent<PlayerMovement>().SetJoystick(joystick);
         }
 
         RegisterPlayer();

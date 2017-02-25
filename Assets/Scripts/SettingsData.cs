@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Settings : MonoBehaviour {
+public static class SettingsData {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public static void SetSoundVolume(int vol)
+    {
+        PlayerPrefs.SetInt("SoundVolume", vol);
+    }
+
+    public static int GetSoundVolume()
+    {
+        return PlayerPrefs.GetInt("SoundVolume", 100);
+    }
+
 }

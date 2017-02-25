@@ -34,18 +34,25 @@ public class PlayerUI : NetworkBehaviour {
         NetworkManager.singleton.GetComponent<MatchTimer>().enabled = true;
         OverlayActive.SetOverlayActive(false);
         //PauseMenu.isOn = false;
+
+#if !UNITY_ANDROID
+        joystick.SetActive(false);
+        pauseButton.SetActive(false);
+#endif
     }
 	
 	// Update is called once per frame
 	void Update () 
     {
+#if !UNITY_ANDROID
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePauseMenu();
         }
+#endif
 	}
 
-    void TogglePauseMenu()
+    public void TogglePauseMenu()
     {
         pauseMenu.SetActive(!pauseMenu.activeSelf);
         OverlayActive.SetOverlayActive(!OverlayActive.IsOverlayActive());
