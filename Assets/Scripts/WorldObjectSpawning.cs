@@ -29,7 +29,7 @@ public class WorldObjectSpawning : MonoBehaviour {
                    float z = UnityEngine.Random.Range(-200f * 120, 200f * 120);
                  //  Debug.Log(z);
                    float y = GetTerrainHeight.GetHeight(terrain, x, z);
-                   Debug.Log(y);
+                   //Debug.Log(y);
                    if (y > 0.35f && y < 0.58f)
                    {
 						Vector3 Pos = new Vector3(x, y * terrain.transform.localScale.y + 0.5f * WO.wo.transform.localScale.y, z);

@@ -18,8 +18,9 @@ public class DragonAttack : NetworkBehaviour
     int test;
     Player player;
 
+    private GameObject ProjectileInstianted;
+
     // Use this for initialization
-    [Client]
     void Start() // public override void OnStartLocalPlayer()
     {
         if (!isLocalPlayer)
@@ -32,7 +33,6 @@ public class DragonAttack : NetworkBehaviour
     }
 
     // Update is called once per frame
-    [Client]
     void Update()
     {
         // Checks for overlay active done in Player.cs
@@ -44,7 +44,7 @@ public class DragonAttack : NetworkBehaviour
 
         if (Input.GetMouseButtonUp(0) && energy.readyToUse)
         {
-            Shoot();
+            CmdFireBallAttack(FireBallTarget());
         }
         else
             keypress = false;
@@ -60,13 +60,13 @@ public class DragonAttack : NetworkBehaviour
         }
         if (Input.GetMouseButtonUp(1) && energy.ChargedReadyToUse)
         {
-            CmdChargedAttack();
+            CmdChargedAttack(FireBallTarget());
             exceptionCharge = false;
         }
     }
 
     [Command]
-    public void CmdChargedAttack()
+    public void CmdChargedAttack(Vector3 _target)
     {
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
@@ -84,7 +84,7 @@ public class DragonAttack : NetworkBehaviour
         //projScript.Target = (Target.transform.position - this.transform.position).normalized;
         //projScript.gameObject.transform.position = this.transform.position;
 
-        projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
+        projScript.Target = _target;
         projScript.gameObject.transform.position = dragonMouth.transform.position;
 
         projScript.Vel = projScript.Target;
@@ -93,38 +93,26 @@ public class DragonAttack : NetworkBehaviour
         test++;
     }
 
-    [Client]
-    void Shoot()
+    [Command]
+    void CmdFireBallAttack(Vector3 _target)
     {
         player = GetComponent<Player>();
-        //Debug.Log(player.name + " view: " + player.GetView()); // view is always (0, 0, 1) for 2nd player
 
-        //debug.text = "Fired";
-        GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
+        ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
 
         energy.DecreaseEnergy();
+
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
-        //projScript.owner = player; // this.gameObject; //player.gameObject;
         projScript.owner = this.gameObject;
-
-        //projScript.Target = player.GetView();
-        //projScript.Target = (Target.transform.position - this.transform.position).normalized;
-        //projScript.gameObject.transform.position = this.transform.position;
-        projScript.Target = (Target.transform.position - dragonMouth.transform.position).normalized;
+        projScript.Target = _target;
         projScript.gameObject.transform.position = dragonMouth.transform.position;
-        //ProjectileInstianted.transform.position = dragonMouth.transform.position;
-
         projScript.Vel = projScript.Target;
 
-        CmdFireBallAttack(ProjectileInstianted);
+        NetworkServer.SpawnWithClientAuthority(ProjectileInstianted, connectionToClient);
     }
 
-    [Command]
-    public void CmdFireBallAttack(GameObject proj)
+    Vector3 FireBallTarget()
     {
-
-
-        NetworkServer.Spawn(proj);
-        test++;
+        return (Target.transform.position - dragonMouth.transform.position).normalized;
     }
 }

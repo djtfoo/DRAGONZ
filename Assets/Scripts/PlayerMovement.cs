@@ -84,7 +84,7 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     // Update is called once per frame
-    [Client]
+    //[Client]
     void Update()
     {
         if (isLocalPlayer)
@@ -220,7 +220,7 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    [Client]
+    //[Client]
     void UpdatePitch()
     {
         float inputValue = 0f;
@@ -249,7 +249,7 @@ public class PlayerMovement : NetworkBehaviour
             pitch = -80f;
     }
 
-    [Client]
+    //[Client]
     void UpdateYaw()
     {
         float inputValue = 0f;

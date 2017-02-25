@@ -6,14 +6,11 @@ using UnityEngine.Networking;
 public class Health : NetworkBehaviour 
 {
     public float MaxHealth;
-    public float currentHealth;
 
     [SyncVar]
-    private float realHealth;
+    public float currentHealth;
 
     public Image HealthImage;
-
-    private float updateInterval;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +18,6 @@ public class Health : NetworkBehaviour
 	}
 	
 	// Update is called once per frame
-    [Client]
 	void Update () 
     {
         if (isLocalPlayer)
@@ -45,30 +41,12 @@ public class Health : NetworkBehaviour
             }
 
             HealthImage.fillAmount = (currentHealth / MaxHealth);
-
-            updateInterval += Time.deltaTime;
-            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
-            {
-                updateInterval = 0;
-                CmdSync(currentHealth);
-            }
-        }
-        else
-        {
-            currentHealth = realHealth;
         }
 	}
 
-    [ClientRpc]
-    public void RpcTakeDamage(int _damage)
+    public void TakeDamage(int _damage)
     {
         currentHealth -= _damage;
-    }
-
-    [Command]
-    void CmdSync(float _health)
-    {
-        realHealth = _health;
     }
 
     public void SetDefault()
