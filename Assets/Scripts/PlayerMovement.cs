@@ -30,7 +30,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private Vector3 view;   // the dragon's view vector - for shooting, etc
 
+    // Android movement
     private MoveJoystick joystick;
+    private float prevAccelerometerX = 0f;
+    private float prevAccelerometerZ = 0f;
 
     public void SetJoystick(MoveJoystick _joystick)
     {
@@ -241,15 +244,19 @@ public class PlayerMovement : NetworkBehaviour
         float inputValue = 0f;
 
 #if UNITY_ANDROID
-        Vector3 dir = Vector3.zero;
-        dir.x = Input.acceleration.x;
-        dir.y = Input.acceleration.y;
-        dir.z = Input.acceleration.z;
 
+        Vector3 dir = Input.acceleration;
         if (dir.sqrMagnitude > 1)
             dir.Normalize();
 
         inputValue = dir.z;
+
+        //float deltaZ = dir.z - prevAccelerometerZ;
+        //if (Mathf.Abs(deltaZ) > 0.05f)
+        //{
+        //    inputValue = 20f * deltaZ;
+        //    prevAccelerometerZ = dir.z;
+        //}
 
 #else
         inputValue = Input.GetAxis("Mouse Y");
@@ -270,15 +277,19 @@ public class PlayerMovement : NetworkBehaviour
         float inputValue = 0f;
 
 #if UNITY_ANDROID
-        Vector3 dir = Vector3.zero;
-        dir.x = Input.acceleration.x;
-        dir.y = Input.acceleration.y;
-        dir.z = Input.acceleration.z;
 
+        Vector3 dir = Input.acceleration;
         if (dir.sqrMagnitude > 1)
             dir.Normalize();
 
         inputValue = dir.x;
+
+        //float deltaX = dir.x - prevAccelerometerX;
+        //if (Mathf.Abs(deltaX) > 0.05f)
+        //{
+        //    inputValue = 20f * deltaX;
+        //    prevAccelerometerX = dir.x;
+        //}
 
 #else
         inputValue = Input.GetAxis("Mouse X");
