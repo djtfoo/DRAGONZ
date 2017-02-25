@@ -9,7 +9,7 @@ public class PlayerUI : NetworkBehaviour {
     GameObject pauseMenu;
 
     [SerializeField]
-     public  Radar radar;
+    public Radar radar;
 
     [SerializeField]
     GameObject respawnScreen;
@@ -22,6 +22,12 @@ public class PlayerUI : NetworkBehaviour {
     public Image comboCounterTimer;
     public Text comboCounterText;
     public static Vector3 playerPos;
+
+    // Android stuff
+    [SerializeField]
+    public GameObject joystick;
+    [SerializeField]
+    public GameObject pauseButton;
 
     void Start()
     {
