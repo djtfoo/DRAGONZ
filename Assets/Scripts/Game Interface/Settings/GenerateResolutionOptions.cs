@@ -16,22 +16,21 @@ public class GenerateResolutionOptions : MonoBehaviour {
             string temp =  res.width.ToString()+ " X " + res.height.ToString();
             resolutionOptions.Add(temp);
 
-            if(PlayerSetting.ScreenHeight==res.height && PlayerSetting.ScreenWidth == res.width)
+            if(SettingsData.ScreenHeight==res.height && SettingsData.ScreenWidth == res.width)
             {
                 index = tempIndex;
             }
         }
         GetComponent<Dropdown>().AddOptions(resolutionOptions);
-        GetComponent<Dropdown>().itemText.text = PlayerSetting.ScreenWidth.ToString() + " X " +PlayerSetting.ScreenHeight.ToString() ;
+        GetComponent<Dropdown>().itemText.text = SettingsData.ScreenWidth.ToString() + " X " + SettingsData.ScreenHeight.ToString() ;
         GetComponent<Dropdown>().value = index;
-        PlayerSetting.AmtOfResolution = tempIndex;
+        SettingsData.AmtOfResolution = tempIndex;
 
 	}
 	public void OnValueChanged()
     {
-        PlayerSetting.ScreenHeight = Screen.resolutions[GetComponent<Dropdown>().value].height;
-        PlayerSetting.ScreenWidth = Screen.resolutions[GetComponent<Dropdown>().value].width;
-
+        SettingsData.ScreenHeight = Screen.resolutions[GetComponent<Dropdown>().value].height;
+        SettingsData.ScreenWidth = Screen.resolutions[GetComponent<Dropdown>().value].width;
     }
 	// Update is called once per frame
 	void Update () {
