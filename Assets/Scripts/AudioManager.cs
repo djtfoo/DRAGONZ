@@ -46,18 +46,25 @@ public class AudioManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+        // can iterate through GO children of this AudioManager here to do things
+        // the GO children will be temporary SFX AudioSources
 	}
 
     // generic
-    void PlayMusic(string name)
+    void PlayMusic(string key)
     {
-        musicPlayer.clip = musicClips[name];
+        musicPlayer.clip = musicClips[key];
         musicPlayer.Play();
     }
 
-    void PlaySFX()
+    void PlaySFX(string key)
     {
+        // create a temp AudioSource GameObject
+        // it'll destroy itself after its length
 
+        // newGO.volume = SettingsData.GetSFXVolumeRange();
+        // newGO.Play();
+        // Destroy(newGO, clip.Length);
     }
 
     // Set Volume
@@ -78,5 +85,9 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Play SFX
+    public void PlayWaterSplashSFX()
+    {
+        PlaySFX("WaterSplash");
+    }
 
 }
