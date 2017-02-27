@@ -8,6 +8,7 @@ public static class SettingsData {
     public static int ScreenWidth;
     public static bool isFullscreen;
     public static int AmtOfResolution;
+    public static float shadowDistance;
 
     // Sound
     public static void SetMusicVolume(int vol)
