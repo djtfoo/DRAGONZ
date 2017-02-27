@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class SettingsData {
 
@@ -10,6 +12,19 @@ public static class SettingsData {
     public static int AmtOfResolution;
     public static float shadowDistance;
     public static int QualityLevel;
+
+    // Android Settings
+    public static bool isLeftSide = true;
+
+    // Controls
+    public static void SaveKeyBindings(Dictionary<string, KeyCode> keys)
+    {
+        KeyBoardBindings.SetForwardKey(keys["ForwardKey"]);
+        KeyBoardBindings.SetBackwardKey(keys["BackwardKey"]);
+        KeyBoardBindings.SetAttackKey(keys["AttackKey"]);
+        KeyBoardBindings.SetChargedAttackKey(keys["ChargedAttackKey"]);
+        KeyBoardBindings.SetPauseKey(keys["PauseKey"]);
+    }
 
     // Sound
     public static void SetMusicVolume(int vol)

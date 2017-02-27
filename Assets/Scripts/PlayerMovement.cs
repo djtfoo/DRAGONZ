@@ -13,7 +13,7 @@ public class PlayerMovement : NetworkBehaviour
 
     public float turningSpeed;
     public float rotateSpeed = 4f;
-    private float changeSpeed = 20f;
+    private float changeSpeed = 5f;
     private bool keyNotPressed = true;
 
     private float yaw = 0f;
@@ -175,12 +175,12 @@ public class PlayerMovement : NetworkBehaviour
             keyNotPressed = false;
 
 #else
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(KeyBoardBindings.GetForwardKey()))
             {
                 force = 100f * view;
                 keyNotPressed = false;
             }
-            else if (Input.GetKey(KeyCode.S))
+            else if (Input.GetKey(KeyBoardBindings.GetBackwardKey()))
             {
                 force = -100f * view;
                 keyNotPressed = false;

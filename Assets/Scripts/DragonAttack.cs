@@ -42,7 +42,7 @@ public class DragonAttack : NetworkBehaviour
         if (energyMeterText != null)
             energyMeterText.text = energy.currentEnergy.ToString();
 
-        if (Input.GetMouseButtonUp(0) && energy.readyToUse)
+        if (Input.GetKeyDown(KeyBoardBindings.GetAttackKey()) && energy.readyToUse)
         {
             CmdFireBallAttack(FireBallTarget());
         }
@@ -54,11 +54,11 @@ public class DragonAttack : NetworkBehaviour
             exceptionCharge = true;
         }
            
-        if (Input.GetMouseButton(1) && (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge))
+        if (Input.GetKey(KeyBoardBindings.GetChargedAttackKey()) && (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge))
         {
             energy.ChargeEnergy();
         }
-        if (Input.GetMouseButtonUp(1) && energy.ChargedReadyToUse)
+        if (Input.GetKeyUp(KeyBoardBindings.GetChargedAttackKey()) && energy.ChargedReadyToUse)
         {
             CmdChargedAttack(FireBallTarget());
             exceptionCharge = false;

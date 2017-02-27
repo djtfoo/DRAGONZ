@@ -45,7 +45,7 @@ public class PlayerUI : NetworkBehaviour {
 	void Update () 
     {
 #if !UNITY_ANDROID
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyBoardBindings.GetPauseKey()))
         {
             TogglePauseMenu();
         }
