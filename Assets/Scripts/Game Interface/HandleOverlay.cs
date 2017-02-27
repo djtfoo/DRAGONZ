@@ -3,7 +3,7 @@ using System.Collections;
 
 public class HandleOverlay : MonoBehaviour {
 
-    GameObject overlay;
+    public GameObject overlay;
 
     public void SetOverlay(GameObject _overlay)
     {
