@@ -197,7 +197,7 @@ public class Player : NetworkBehaviour
         deaths++;
         isDead = true;
         RpcSetRespawnStatus(false); //hasRespawned = false;
-        //GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
+        GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
 
         for (int i = 0; i < disableOnDeath.Length; i++)
         {
@@ -217,7 +217,7 @@ public class Player : NetworkBehaviour
     {
         SetDefaults();
         RpcSetRespawnStatus(true); //hasRespawned = true;
-        //GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
+        GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
 
         Renderer renderer = GetComponent<Renderer>();
         if (renderer != null)
