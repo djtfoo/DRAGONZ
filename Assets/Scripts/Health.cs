@@ -42,6 +42,14 @@ public class Health : NetworkBehaviour
 
             HealthImage.fillAmount = (currentHealth / MaxHealth);
         }
+
+        if (isServer)
+        {
+            if (currentHealth <= 0.0f)
+                RpcComponentsActive(false);
+            else if (GetComponent<Player>().hasRespawned)
+                RpcComponentsActive(true);
+        }
 	}
 
     public void TakeDamage(int _damage)
@@ -50,18 +58,20 @@ public class Health : NetworkBehaviour
            return;
 
         currentHealth -= _damage;
-
-        //if (currentHealth <= 0.0f)
-            //RpcRespawn();
     }
 
     [ClientRpc] // This allows methods to be invoked on clients from server
-    void RpcRespawn()
+    void RpcComponentsActive(bool isActive)
     {
-        if (isLocalPlayer)
+        if (!isLocalPlayer)
         {
-            // Move back to zero location
-            transform.position = Vector3.zero;
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.enabled = isActive;
+
+            Collider col = GetComponent<Collider>();
+            if (col != null)
+                col.enabled = isActive;
         }
     }
 

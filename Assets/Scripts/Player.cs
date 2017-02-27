@@ -6,13 +6,20 @@ public class Player : NetworkBehaviour
 {
     [SyncVar]
     private bool isDead;
+
     private bool real_isDead = false;
+
+    [SyncVar]
+    public bool hasRespawned;
+
+    private bool real_hasRespawned;
     private float updateInterval;
 
     [Command]
-    void CmdSync(bool _isDead)
+    void CmdSync(bool _isDead, bool _hasRespawned)
     {
         real_isDead = _isDead;
+        real_hasRespawned = _hasRespawned;
     }
 
     [SerializeField]
@@ -114,32 +121,52 @@ public class Player : NetworkBehaviour
             updateInterval += Time.deltaTime;
             if (updateInterval > 0.11f)
             {
-                CmdSync(isDead);
+                CmdSync(isDead, hasRespawned);
             }
         }
         else
         {
             //if (GetComponent<Health>().currentHealth <= 0.0f)
             //    isDead = true;
+            //else
+            //    isDead = false;
 
-            //RemotePlayerDead(isDead);
             isDead = real_isDead;
-            RemotePlayerDead(isDead);
+            hasRespawned = real_hasRespawned;
+            RpcRemotePlayerDead();
         }
+
+        //RpcRemotePlayerDead();
     }
 
-    void RemotePlayerDead(bool _isDead)
+    [ClientRpc]
+    void RpcRemotePlayerDead()
     {
-        if (_isDead)
+        //if (GetComponent<Health>().currentHealth <= 0.0f)
+        //{
+        //    isDead = true;
+        //}
+        //if (isDead && hasRespawned)
+        //{
+        //    GetComponent<Health>().SetDefault();
+        //    hasRespawned = false;
+        //    isDead = false;
+        //}
+
+        if (isDead)
+        {
             GetComponent<Health>().SetDefault();
+        }
+        else
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.enabled = true;
 
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.enabled = !_isDead;
-
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = !_isDead;
+            Collider col = GetComponent<Collider>();
+            if (col != null)
+                col.enabled = true;
+        }
     }
 
     void OnCollisionEnter(Collision col)
@@ -154,6 +181,7 @@ public class Player : NetworkBehaviour
             killer.name = "";
         killer = null;
         isDead = false;
+        RpcSetRespawnStatus(false); // hasRespawned = false;
 
         GetComponent<PlayerMovement>().SetDefault();
         GetComponent<Health>().SetDefault();
@@ -162,21 +190,14 @@ public class Player : NetworkBehaviour
         {
             disableOnDeath[i].enabled = wasEnabled[i];
         }
-
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.enabled = true;
-
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = true;
     }
 
     private void Die()
     {
         deaths++;
         isDead = true;
-        GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
+        RpcSetRespawnStatus(false); //hasRespawned = false;
+        //GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
 
         for (int i = 0; i < disableOnDeath.Length; i++)
         {
@@ -195,11 +216,27 @@ public class Player : NetworkBehaviour
     void Respawn()
     {
         SetDefaults();
-        GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
+        RpcSetRespawnStatus(true); //hasRespawned = true;
+        //GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
+
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
+            renderer.enabled = true;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = true;
 
         Transform spawnPoint = NetworkManager.singleton.GetStartPosition();
         transform.position = spawnPoint.position;
         transform.rotation = spawnPoint.rotation;
         Debug.Log(transform.name + "respawned");
+    }
+
+    [ClientRpc]
+    void RpcSetRespawnStatus(bool _respawned)
+    {
+        if (isLocalPlayer)
+            hasRespawned = _respawned;
     }
 }
