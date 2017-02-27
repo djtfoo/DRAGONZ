@@ -137,8 +137,11 @@ public class Radar : MonoBehaviour
         worldObjArr = GameObject.FindGameObjectsWithTag("WorldObject");
         for (int i = 0; i < worldObjArr.Length; ++i)
         {
-            worldObject.Add(worldObjArr[i]);
-            RegisterRadarObject(WO_icon, WO_iconHigher, WO_iconLower);
+            if (worldObjArr[i].GetComponent<WorldObject>().IsLandmark())
+            {
+                worldObject.Add(worldObjArr[i]);
+                RegisterRadarObject(WO_icon, WO_iconHigher, WO_iconLower);
+            }
         }
 
 

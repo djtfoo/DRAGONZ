@@ -13,6 +13,7 @@ public class GraphicsSettingsMenu : MonoBehaviour {
         SettingsData.isFullscreen = Screen.fullScreen;
         FullscreenToggle.isOn = SettingsData.isFullscreen;
         SettingsData.shadowDistance = QualitySettings.shadowDistance;
+        SettingsData.QualityLevel = QualitySettings.GetQualityLevel();
         if(SettingsData.shadowDistance<=0)
         {
             Shadows.isOn = false;
@@ -30,6 +31,7 @@ public class GraphicsSettingsMenu : MonoBehaviour {
             SettingsData.shadowDistance = 0;
 
         QualitySettings.shadowDistance = SettingsData.shadowDistance;
+        QualitySettings.SetQualityLevel(SettingsData.QualityLevel, true);
         SettingsData.isFullscreen = FullscreenToggle.isOn;
         Screen.SetResolution(SettingsData.ScreenWidth, SettingsData.ScreenHeight, FullscreenToggle.isOn);
     }

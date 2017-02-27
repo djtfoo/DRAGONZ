@@ -5,6 +5,19 @@ using System.Collections.Generic;
 public class WorldObject : MonoBehaviour {
     public float lifeTime;
     public bool LifeTimeEnabled;
+
+    bool isLandmark = false;
+
+    public void SetIsLandmark(bool _isLandmark)
+    {
+        isLandmark = _isLandmark;
+    }
+
+    public bool IsLandmark()
+    {
+        return isLandmark;
+    }
+
    // public bool MultipleChildObjects;
   //  public List<GameObject> ListOfChildObjects;
 	// Use this for initialization

@@ -7,6 +7,7 @@ public struct WorldObjectToSpawn
 {
     public WorldObject wo;
     public int quantity;
+    public bool isLandmark;
 }
 
 public class WorldObjectSpawning : MonoBehaviour {
@@ -32,8 +33,9 @@ public class WorldObjectSpawning : MonoBehaviour {
                    //Debug.Log(y);
                    if (y > 0.35f && y < 0.58f)
                    {
-						Vector3 Pos = new Vector3(x, y * terrain.transform.localScale.y + 0.5f * WO.wo.transform.localScale.y, z);
-                       Instantiate(WO.wo, Pos, Quaternion.identity); // Still need positioning
+                       Vector3 Pos = new Vector3(x, y * terrain.transform.localScale.y + 0.5f * WO.wo.transform.localScale.y, z);
+                       WorldObject createdWO = (WorldObject)Instantiate(WO.wo, Pos, Quaternion.identity); // Still need positioning
+                       createdWO.SetIsLandmark(WO.isLandmark);
                        break;
                    }
                }
