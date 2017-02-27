@@ -130,6 +130,9 @@ public class Player : NetworkBehaviour
 
     void RemotePlayerDead(bool _isDead)
     {
+        if (_isDead)
+            GetComponent<Health>().SetDefault();
+
         Renderer renderer = GetComponent<Renderer>();
         if (renderer != null)
             renderer.enabled = !_isDead;

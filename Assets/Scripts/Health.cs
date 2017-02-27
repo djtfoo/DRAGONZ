@@ -67,7 +67,6 @@ public class Health : NetworkBehaviour
 
     public void SetDefault()
     {
-        if (isLocalPlayer)
-            currentHealth = MaxHealth;
+        currentHealth = MaxHealth;
     }
 }

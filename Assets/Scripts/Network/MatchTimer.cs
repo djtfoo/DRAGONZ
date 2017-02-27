@@ -20,7 +20,7 @@ public class MatchTimer : NetworkBehaviour {
         GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
         for (int i = 0; i < playersGO.Length; ++i)
         {
-            if (playersGO[i].GetComponent<PlayerSetup>().playerControllerId == -1)
+            if (playersGO[i].GetComponent<PlayerSetup>().isServer)
             {
                 playersGO[i].GetComponent<PlayerSetup>().matchTime = seconds;
                 break;

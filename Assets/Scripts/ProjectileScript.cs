@@ -39,7 +39,7 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted = (ParticleSystem)Instantiate(particleSystem, this.transform.position, this.transform.rotation);
         ParticleSysInstianted.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted.Play();
-        combometer = (ComboMeter)FindObjectOfType<ComboMeter>();
+        combometer = owner.GetComponent<ComboMeter>(); //(ComboMeter)FindObjectOfType<ComboMeter>();
         GetComponent<Rigidbody>().AddForce(Target * MovementSpeed);
 	}
 
@@ -160,7 +160,7 @@ public class ProjectileScript : NetworkBehaviour
     [Command]
     void CmdHitTerrainParticles()
     {
-        AudioManager.instance.PlayFireballHitGroundSFX();
+        //AudioManager.instance.PlayFireballHitGroundSFX();
 
         ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
@@ -189,7 +189,7 @@ public class ProjectileScript : NetworkBehaviour
     [Command]
     void CmdHitWaterParticles()
     {
-        AudioManager.instance.PlayWaterSplashSFX();
+        //AudioManager.instance.PlayWaterSplashSFX();
 
         ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
         system1.transform.position = this.gameObject.transform.position;
