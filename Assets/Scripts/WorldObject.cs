@@ -22,7 +22,7 @@ public class WorldObject : MonoBehaviour {
   //  public List<GameObject> ListOfChildObjects;
 	// Use this for initialization
 	void Start () {
-      
+        //LifeTimeEnabled = false;
         //if(MultipleChildObjects)
         //{ 
         //    foreach(Transform transform in this.transform)
@@ -48,7 +48,7 @@ public class WorldObject : MonoBehaviour {
     void Awake()
     {
         //gameObject.SetActive(false);
-        LifeTimeEnabled = false;
+       // LifeTimeEnabled = false;
         //MultipleChildObjects = false;
     }
 }
