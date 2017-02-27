@@ -46,11 +46,28 @@ public class Health : NetworkBehaviour
 
     public void TakeDamage(int _damage)
     {
+        if (!isServer)
+           return;
+
         currentHealth -= _damage;
+
+        //if (currentHealth <= 0.0f)
+            //RpcRespawn();
+    }
+
+    [ClientRpc] // This allows methods to be invoked on clients from server
+    void RpcRespawn()
+    {
+        if (isLocalPlayer)
+        {
+            // Move back to zero location
+            transform.position = Vector3.zero;
+        }
     }
 
     public void SetDefault()
     {
-        currentHealth = MaxHealth;
+        if (isLocalPlayer)
+            currentHealth = MaxHealth;
     }
 }

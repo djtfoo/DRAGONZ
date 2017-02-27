@@ -89,7 +89,7 @@ public class DragonAttack : NetworkBehaviour
 
         projScript.Vel = projScript.Target;
 
-        NetworkServer.Spawn(ProjectileInstianted);
+        NetworkServer.SpawnWithClientAuthority(ProjectileInstianted, connectionToClient);
         test++;
     }
 

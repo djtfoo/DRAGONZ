@@ -4,8 +4,16 @@ using System.Collections;
 
 public class Player : NetworkBehaviour
 {
-    private bool isDead = false;
-    private bool realIsDead = false;
+    [SyncVar]
+    private bool isDead;
+    private bool real_isDead = false;
+    private float updateInterval;
+
+    [Command]
+    void CmdSync(bool _isDead)
+    {
+        real_isDead = _isDead;
+    }
 
     [SerializeField]
     private Behaviour[] disableOnDeath;
@@ -17,8 +25,6 @@ public class Player : NetworkBehaviour
     public int kills;
     public int deaths;
     private GameObject killer;
-
-    private float updateInterval;
 
     //public void SetKiller(GameObject _killer)
     //{
@@ -40,31 +46,6 @@ public class Player : NetworkBehaviour
         }
 
         SetDefaults();
-    }
-
-    public void SetDefaults()
-    {
-        respawnTimer = timeTillRespawn;
-        if (killer != null)
-            killer.name = "";
-        killer = null;
-        isDead = false;
-
-        GetComponent<PlayerMovement>().SetDefault();
-        GetComponent<Health>().SetDefault();
-
-        for (int i = 0; i < disableOnDeath.Length; i++)
-        {
-            disableOnDeath[i].enabled = wasEnabled[i];
-        }
-
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.enabled = true;
-
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = true;
     }
 
     public void SetIsDead(bool _isDead)
@@ -89,7 +70,7 @@ public class Player : NetworkBehaviour
     }
 
     // Update is called once per frame
-    [Client]
+    //[Client]
     void Update()
     {
         if (isLocalPlayer)
@@ -129,28 +110,22 @@ public class Player : NetworkBehaviour
             //else
                 //Debug.Log("no killer");
 
+            //Debug.Log(GetComponent<Health>().currentHealth);
             updateInterval += Time.deltaTime;
-            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
+            if (updateInterval > 0.11f)
             {
-                updateInterval = 0;
                 CmdSync(isDead);
             }
         }
         else
         {
-            if (GetComponent<Health>().currentHealth <= 0.0f)
-                isDead = true;
+            //if (GetComponent<Health>().currentHealth <= 0.0f)
+            //    isDead = true;
 
+            //RemotePlayerDead(isDead);
+            isDead = real_isDead;
             RemotePlayerDead(isDead);
-
-            isDead = realIsDead;
         }
-    }
-
-    [Command]
-    void CmdSync(bool _isDead)
-    {
-        realIsDead = _isDead;
     }
 
     void RemotePlayerDead(bool _isDead)
@@ -169,12 +144,36 @@ public class Player : NetworkBehaviour
         //Debug.Log(col.gameObject.name);
     }
 
+    public void SetDefaults()
+    {
+        respawnTimer = timeTillRespawn;
+        if (killer != null)
+            killer.name = "";
+        killer = null;
+        isDead = false;
+
+        GetComponent<PlayerMovement>().SetDefault();
+        GetComponent<Health>().SetDefault();
+
+        for (int i = 0; i < disableOnDeath.Length; i++)
+        {
+            disableOnDeath[i].enabled = wasEnabled[i];
+        }
+
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
+            renderer.enabled = true;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = true;
+    }
+
     private void Die()
     {
         deaths++;
         isDead = true;
         GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
-        //Debug.Log("dieded");
 
         for (int i = 0; i < disableOnDeath.Length; i++)
         {

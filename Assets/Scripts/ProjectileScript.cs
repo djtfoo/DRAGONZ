@@ -110,16 +110,12 @@ public class ProjectileScript : NetworkBehaviour
                 // hit water
                 CmdHitWaterParticles();
             }
-
-            Destroy(this.gameObject);
         }
 
         if (col.gameObject.tag == "WorldObject")
         {
             CmdHitTerrainParticles();
             combometer.AddToComboMeter(1);
-
-            Destroy(this.gameObject);
         }
 
         // Collides with remote players
@@ -127,26 +123,26 @@ public class ProjectileScript : NetworkBehaviour
         {
             CmdHitPlayer();
 
-            if (col.gameObject.GetComponent<Player>().GetIsDead())
-            {
-            	//col.gameObject.GetComponent<Player>().SetKiller(owner);
-                //RpcSetKiller(col.gameObject, owner);
-                col.gameObject.GetComponent<Player>().RpcSetKiller(owner);
+            //if (col.gameObject.GetComponent<Player>().GetIsDead())
+            //{
+            //    //col.gameObject.GetComponent<Player>().SetKiller(owner);
+            //    //RpcSetKiller(col.gameObject, owner);
+            //    col.gameObject.GetComponent<Player>().RpcSetKiller(owner);
 
-                owner.GetComponent<Player>().kills++;
-            }
+            //    owner.GetComponent<Player>().kills++;
+            //}
 
             combometer.AddToComboMeter(1);
-            //Health health = col.gameObject.GetComponent<Health>();
-            //health.currentHealth -= 50;
 
-            col.gameObject.GetComponent<Health>().TakeDamage(50);
-
-            //Debug.Log(health.currentHealth);
-
-            // destroy fireball
-            Destroy(this.gameObject);
+            //col.gameObject.GetComponent<Health>().TakeDamage(50);
+            CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 50);
         }
+    }
+
+    [Command]
+    void CmdTakeDamage(NetworkInstanceId _netID, int _damage)
+    {
+        NetworkServer.FindLocalObject(_netID).GetComponent<Health>().TakeDamage(_damage);
     }
 
     [Command]
@@ -164,8 +160,6 @@ public class ProjectileScript : NetworkBehaviour
     [Command]
     void CmdHitTerrainParticles()
     {
-         //Destroy(this.gameObject);
-       
         ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted2.Play();
@@ -175,24 +169,24 @@ public class ProjectileScript : NetworkBehaviour
         ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted3.Play();
         NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
+
+        Destroy(this.gameObject);
     }
 
     [Command]
     void CmdHitPlayer()
     {
-        //Destroy(this.gameObject);
-
         ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
         ParticleSysInstianted2.Play();
         NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
+
+        Destroy(this.gameObject);
     }
 
     [Command]
     void CmdHitWaterParticles()
     {
-        //Destroy(this.gameObject);
-
         ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
         system1.transform.position = this.gameObject.transform.position;
         system1.Play();
@@ -202,5 +196,7 @@ public class ProjectileScript : NetworkBehaviour
         system1.transform.position = this.gameObject.transform.position;
         system1.Play();
       //      NetworkServer.Spawn(system1.gameObject);
+
+        Destroy(this.gameObject);
     }
 }
