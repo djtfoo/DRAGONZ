@@ -25,6 +25,7 @@ public class AudioManager : MonoBehaviour {
     public SetAudioClip[] SFXClipsSerialize;       // to serialize in inspector
     static Dictionary<string, AudioClip> SFXClips = new Dictionary<string, AudioClip>();   // to access conveniently via name
 
+    public static float SFXVolume = 1f;
 
     private void Awake()
     {
@@ -49,6 +50,8 @@ public class AudioManager : MonoBehaviour {
         SetBGMVolume(SettingsData.GetMusicVolumeRange());
         PlayMenuBGM();
 
+        SetSFXVolume(SettingsData.GetSFXVolumeRange());
+
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -72,7 +75,8 @@ public class AudioManager : MonoBehaviour {
         // it'll destroy itself after its length
         AudioSource SFXAudioSource = Instantiate(SFXprefab);
         SFXAudioSource.clip = SFXClips[key];
-        SFXAudioSource.volume = SettingsData.GetSFXVolumeRange();
+        //SFXAudioSource.volume = SettingsData.GetSFXVolumeRange();
+        SFXAudioSource.volume = SFXVolume;
         SFXAudioSource.Play();
         Destroy(SFXAudioSource.gameObject, SFXAudioSource.clip.length);
 
@@ -85,6 +89,10 @@ public class AudioManager : MonoBehaviour {
     public void SetBGMVolume(float _volume)
     {
         musicPlayer.volume = _volume;
+    }
+    public void SetSFXVolume(float _volume)
+    {
+        SFXVolume = _volume;
     }
 
     // Play Music
