@@ -12,19 +12,28 @@ public struct SetAudioClip
 
 public class AudioManager : MonoBehaviour {
 
-    public AudioSource musicPlayer;
+    public AudioSource SFXprefab;   // to be used for initialising a new AudioSource
+    public AudioSource musicPlayer;     // to instantiate conveniently in inspector
+
+    public static AudioManager instance = null;
 
     // music clips
     public SetAudioClip[] musicClipsSerialize;  // to serialize in inspector
-    Dictionary<string, AudioClip> musicClips = new Dictionary<string, AudioClip>(); // to access conveniently via name
+    static Dictionary<string, AudioClip> musicClips = new Dictionary<string, AudioClip>(); // to access conveniently via name
 
     // SFX clips
     public SetAudioClip[] SFXClipsSerialize;       // to serialize in inspector
-    Dictionary<string, AudioClip> SFXClips = new Dictionary<string, AudioClip>();   // to access conveniently via name
+    static Dictionary<string, AudioClip> SFXClips = new Dictionary<string, AudioClip>();   // to access conveniently via name
 
 
     private void Awake()
     {
+        if (instance != null)
+        {
+            return;
+        }
+        instance = this;
+
         // add music clips to dictionary
         for (int i = 0; i < musicClipsSerialize.Length; ++i)
         {
@@ -61,6 +70,11 @@ public class AudioManager : MonoBehaviour {
     {
         // create a temp AudioSource GameObject
         // it'll destroy itself after its length
+        AudioSource SFXAudioSource = Instantiate(SFXprefab);
+        SFXAudioSource.clip = SFXClips[key];
+        SFXAudioSource.volume = SettingsData.GetSFXVolumeRange();
+        SFXAudioSource.Play();
+        Destroy(SFXAudioSource.gameObject, SFXAudioSource.clip.length);
 
         // newGO.volume = SettingsData.GetSFXVolumeRange();
         // newGO.Play();
@@ -85,9 +99,34 @@ public class AudioManager : MonoBehaviour {
     }
 
     // Play SFX
+    public void PlayButtonMouseover()
+    {
+        PlaySFX("ButtonMouseover");
+    }
+
+    public void PlayButtonPress()
+    {
+        PlaySFX("ButtonPress");
+    }
+
     public void PlayWaterSplashSFX()
     {
         PlaySFX("WaterSplash");
+    }
+
+    public void PlayFireballReleaseSFX()
+    {
+        PlaySFX("FireballRelease");
+    }
+
+    public void PlayChargedFireballReleaseSFX()
+    {
+        PlaySFX("ChargedRelease");
+    }
+
+    public void PlayFireballHitGroundSFX()
+    {
+        PlaySFX("FireballHit");
     }
 
 }

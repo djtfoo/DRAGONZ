@@ -68,6 +68,8 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     public void CmdChargedAttack(Vector3 _target)
     {
+        AudioManager.instance.PlayChargedFireballReleaseSFX();
+
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
         //debug.text = ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed.ToString();
@@ -96,6 +98,8 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     void CmdFireBallAttack(Vector3 _target)
     {
+        AudioManager.instance.PlayFireballReleaseSFX();
+
         player = GetComponent<Player>();
 
         ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);

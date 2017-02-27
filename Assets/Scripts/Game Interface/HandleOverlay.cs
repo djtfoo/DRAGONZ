@@ -17,7 +17,10 @@ public class HandleOverlay : MonoBehaviour {
 
     public void DestroyOverlay()
     {
-        Destroy(overlay);
+        if (overlay != null) {
+            Destroy(overlay);
+            overlay = null;
+        }
     }
 
 }
