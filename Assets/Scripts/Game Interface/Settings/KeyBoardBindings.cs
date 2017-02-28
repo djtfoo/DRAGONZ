@@ -43,7 +43,7 @@ public static class KeyBoardBindings {
         PlayerPrefs.SetInt("ChargedAttackKey", (int)key);
     }
 
-    // Pause key
+    // Pause key - Windows only
     public static KeyCode GetPauseKey()
     {
         return (KeyCode)PlayerPrefs.GetInt("PauseKey", (int)KeyCode.Escape);
@@ -52,6 +52,28 @@ public static class KeyBoardBindings {
     public static void SetPauseKey(KeyCode key)
     {
         PlayerPrefs.SetInt("PauseKey", (int)key);
+    }
+
+    // Radar Zoom In key - Windows only
+    public static KeyCode GetZoomInKey()
+    {
+        return (KeyCode)PlayerPrefs.GetInt("ZoomInKey", (int)KeyCode.M);
+    }
+
+    public static void SetZoomInKey(KeyCode key)
+    {
+        PlayerPrefs.SetInt("ZoomInKey", (int)key);
+    }
+
+    // Radar Zoom Out key - Windows only
+    public static KeyCode GetZoomOutKey()
+    {
+        return (KeyCode)PlayerPrefs.GetInt("ZoomOutKey", (int)KeyCode.N);
+    }
+
+    public static void SetZoomOutKey(KeyCode key)
+    {
+        PlayerPrefs.SetInt("ZoomOutKey", (int)key);
     }
 
 }

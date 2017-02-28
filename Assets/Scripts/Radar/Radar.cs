@@ -217,6 +217,17 @@ public class Radar : MonoBehaviour
             }
         }
 
+#if !UNITY_ANDROID
+        // zoom in/out
+        if (Input.GetKeyDown(KeyBoardBindings.GetZoomInKey()))
+        {
+            this.ZoomIn();
+        }
+        else if (Input.GetKeyDown(KeyBoardBindings.GetZoomOutKey()))
+        {
+            this.ZoomOut();
+        }
+#endif
     }
 
 
