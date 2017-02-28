@@ -17,11 +17,6 @@ public class PlayerSetup : NetworkBehaviour
     public static long m_networkID;
     public static long m_nodeID;
 
-    [SyncVar]
-    private float hostTimer;
-
-    private float updateInterval;
-    private GameObject theHost;
     public float matchTime;
 
     Camera sceneCamera;
@@ -75,52 +70,23 @@ public class PlayerSetup : NetworkBehaviour
         GetComponent<Player>().Setup();
     }
 
-    [Client]
+    //[Client]
     void Update()
     {
         if (!isLocalPlayer)
             return;
 
-        if (isServer)
-        {
-            GetPlayerUI().GetMatchTimer_().matchTimerText.text = NetworkManager.singleton.GetComponent<MatchTimer>().GetSeconds().ToString();
-
-            updateInterval += Time.deltaTime;
-            if (updateInterval > 0.11f) // 9 times per sec (default unity send rate)
-            {
-                updateInterval = 0;
-                RpcSync(matchTime);
-            }
-        }
-        else
-        {
-            //GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
-            //for (int i = 0; i < playersGO.Length; ++i)
-            //{
-            //    if (playersGO[i].GetComponent<PlayerSetup>().hasAuthority)
-            //    {
-            //        theHost = playersGO[i];
-            //        break;
-            //    }
-            //    //NetworkManager.singleton.GetComponent<MatchTimer>().SetTime();
-            //}
-
-            // Set timer to theHost's timer
-            //matchTime = theHost.GetComponent<PlayerSetup>().matchTime;
-            
-
-           matchTime = hostTimer;
-           GetPlayerUI().GetMatchTimer_().matchTimerText.text = matchTime.ToString();
-        }
+        GetPlayerUI().GetMatchTimer_().matchTimerText.text = matchTime.ToString(); 
 
         PlayerUI.playerPos = transform.position;
         //Debug.Log(transform.position);
     }
 
     [ClientRpc]
-    void RpcSync(float _matchTime)
+    public void RpcSetMatchTime(float _matchTime)
     {
-        hostTimer = _matchTime;
+        if (isLocalPlayer)
+            matchTime = _matchTime;
     }
 
     void RegisterPlayer()

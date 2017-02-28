@@ -82,10 +82,7 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (OverlayActive.IsOverlayActive())
-                OnOverlayActive(false);
-            else
-                OnOverlayActive(true);
+            OnOverlayActive(!OverlayActive.IsOverlayActive());
 
             if (GetComponent<Health>().currentHealth <= 0.0f && isDead == false)
             {
@@ -133,14 +130,13 @@ public class Player : NetworkBehaviour
 
             isDead = real_isDead;
             hasRespawned = real_hasRespawned;
-            RpcRemotePlayerDead();
+            RemotePlayerDead();
         }
 
         //RpcRemotePlayerDead();
     }
 
-    [ClientRpc]
-    void RpcRemotePlayerDead()
+    void RemotePlayerDead()
     {
         //if (GetComponent<Health>().currentHealth <= 0.0f)
         //{
@@ -157,7 +153,7 @@ public class Player : NetworkBehaviour
         {
             GetComponent<Health>().SetDefault();
         }
-        else
+        else if (hasRespawned)
         {
             Renderer renderer = GetComponent<Renderer>();
             if (renderer != null)
@@ -181,7 +177,7 @@ public class Player : NetworkBehaviour
             killer.name = "";
         killer = null;
         isDead = false;
-        RpcSetRespawnStatus(false); // hasRespawned = false;
+        hasRespawned = false;
 
         GetComponent<PlayerMovement>().SetDefault();
         GetComponent<Health>().SetDefault();
@@ -196,7 +192,7 @@ public class Player : NetworkBehaviour
     {
         deaths++;
         isDead = true;
-        RpcSetRespawnStatus(false); //hasRespawned = false;
+        hasRespawned = false;
         GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
 
         for (int i = 0; i < disableOnDeath.Length; i++)
@@ -216,7 +212,7 @@ public class Player : NetworkBehaviour
     void Respawn()
     {
         SetDefaults();
-        RpcSetRespawnStatus(true); //hasRespawned = true;
+        hasRespawned = true;
         GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();
 
         Renderer renderer = GetComponent<Renderer>();
@@ -231,12 +227,5 @@ public class Player : NetworkBehaviour
         transform.position = spawnPoint.position;
         transform.rotation = spawnPoint.rotation;
         Debug.Log(transform.name + "respawned");
-    }
-
-    [ClientRpc]
-    void RpcSetRespawnStatus(bool _respawned)
-    {
-        if (isLocalPlayer)
-            hasRespawned = _respawned;
     }
 }

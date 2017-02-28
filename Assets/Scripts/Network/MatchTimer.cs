@@ -8,22 +8,39 @@ public class MatchTimer : NetworkBehaviour {
     public int minutes;
 
     private float seconds;  // the set time converted to seconds
+    private GameObject theHost;
+    private GameObject[] playersGO;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+    {
+        playersGO = GameObject.FindGameObjectsWithTag("Player");
+        if (playersGO[0].GetComponent<PlayerSetup>().isServer)
+            theHost = playersGO[0];
+        else
+            return;
+
         seconds = (float)(minutes * 60);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+    {
+        if (theHost == null)
+            return;
 
-        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        theHost.GetComponent<PlayerSetup>().matchTime = seconds;
+
+        playersGO = GameObject.FindGameObjectsWithTag("Player");
         for (int i = 0; i < playersGO.Length; ++i)
         {
-            if (playersGO[i].GetComponent<PlayerSetup>().isServer)
+            if (playersGO[i].layer == 9)//(!playersGO[i].GetComponent<PlayerSetup>().isServer)
             {
-                playersGO[i].GetComponent<PlayerSetup>().matchTime = seconds;
-                break;
+                if (playersGO[i] != null && playersGO[i] != theHost)
+                {
+                    Debug.Log(playersGO[i].GetComponent<PlayerSetup>().matchTime);
+                    playersGO[i].GetComponent<PlayerSetup>().RpcSetMatchTime(seconds);
+                }
             }
         }
 

@@ -63,7 +63,6 @@ public class PlayerUI : NetworkBehaviour {
     {
         respawnScreen.SetActive(!respawnScreen.activeSelf);
         OverlayActive.SetOverlayActive(!OverlayActive.IsOverlayActive());
-        Debug.Log("toggled");
     }
 
     public RespawnScreen GetRespawnScreen()
