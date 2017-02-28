@@ -80,7 +80,19 @@ public class PlayerSetup : NetworkBehaviour
         if (!isLocalPlayer)
             return;
 
-        GetPlayerUI().GetMatchTimer_().matchTimerText.text = matchTime.ToString(); 
+        // Set match timer
+        //GetPlayerUI().GetMatchTimer_().matchTimerText.text = matchTime.ToString(); 
+
+        // convert time to minutes & seconds
+        int minutesInt = (int)(matchTime / 60f);
+        int secondsInt = (int)(matchTime % 60f);
+        string minutes = minutesInt.ToString();
+        if (minutesInt < 10)
+            minutes = "0" + minutes;
+        string seconds = secondsInt.ToString();
+        if (secondsInt < 10)
+            seconds = "0" + seconds;
+        GetPlayerUI().GetMatchTimer_().matchTimerText.text = minutes + ":" + seconds;
 
         PlayerUI.playerPos = transform.position;
         //Debug.Log(transform.position);

@@ -8,6 +8,8 @@ public class AndroidGameplaySettingsMenu : MonoBehaviour {
     public GameObject setJoystickToLeft;
     public GameObject setJoystickToRight;
 
+    public Toggle vibration;
+
 	// Use this for initialization
 	void Start () {
 	    if (SettingsData.IsJoystickLeftSide())
@@ -22,7 +24,9 @@ public class AndroidGameplaySettingsMenu : MonoBehaviour {
             setJoystickToRight.SetActive(false);
             joystickText.text = "Joystick On Right";
         }
-	}
+
+        vibration.isOn = SettingsData.IsVibrationOn();
+    }
 
     public void SetJoystickPositionToggle()
     {
@@ -42,6 +46,9 @@ public class AndroidGameplaySettingsMenu : MonoBehaviour {
     // Called by Apply button
     public void ApplySettingsChange()
     {
+        // Set vibration
+        SettingsData.SetVibrationOn(vibration.isOn);
+
         if (setJoystickToLeft.activeSelf)   // set to left is active means joystick is currently on the right
         {
             SettingsData.SetIsJoystickLeftSide(false);

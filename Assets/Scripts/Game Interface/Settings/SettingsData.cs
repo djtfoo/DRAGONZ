@@ -13,7 +13,11 @@ public static class SettingsData {
     public static float shadowDistance;
     public static int QualityLevel;
 
-    // Android Settings
+    //==================
+    // ANDROID SETTINGS
+    //==================
+
+    // Joystick
     public static void SetIsJoystickLeftSide(bool b_isLeftSide)
     {
         if (b_isLeftSide)
@@ -29,6 +33,27 @@ public static class SettingsData {
 
         return false;
     }
+
+    // Vibration
+    public static void SetVibrationOn(bool b_vibration)
+    {
+        if (b_vibration)
+            PlayerPrefs.SetInt("Vibration", 1);
+        else
+            PlayerPrefs.SetInt("Vibration", 0);
+    }
+
+    public static bool IsVibrationOn()
+    {
+        if (PlayerPrefs.GetInt("Vibration", 1) == 1)
+            return true;
+
+        return false;
+    }
+
+    //==================
+    // WINDOWS SETTINGS
+    //==================
 
     // Controls
     public static void SaveKeyBindings(Dictionary<string, KeyCode> keys)

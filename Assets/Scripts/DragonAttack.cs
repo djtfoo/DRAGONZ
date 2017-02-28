@@ -134,7 +134,8 @@ public class DragonAttack : NetworkBehaviour
     {
         AudioManager.instance.PlayChargedFireballReleaseSFX();
 #if UNITY_ANDROID
-        Handheld.Vibrate();
+        if (SettingsData.IsVibrationOn())
+            Handheld.Vibrate();
 #endif
 
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
@@ -167,7 +168,8 @@ public class DragonAttack : NetworkBehaviour
     {
         AudioManager.instance.PlayFireballReleaseSFX();
 #if UNITY_ANDROID
-        Handheld.Vibrate();
+        if (SettingsData.IsVibrationOn())
+            Handheld.Vibrate();
 #endif
 
         player = GetComponent<Player>();

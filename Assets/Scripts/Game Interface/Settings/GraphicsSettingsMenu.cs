@@ -10,8 +10,12 @@ public class GraphicsSettingsMenu : MonoBehaviour {
 	void Start () {
         SettingsData.ScreenHeight = Screen.height;
         SettingsData.ScreenWidth = Screen.width;
+
+#if !UNITY_ANDROID
         SettingsData.isFullscreen = Screen.fullScreen;
         FullscreenToggle.isOn = SettingsData.isFullscreen;
+#endif
+
         SettingsData.shadowDistance = QualitySettings.shadowDistance;
         SettingsData.QualityLevel = QualitySettings.GetQualityLevel();
         if(SettingsData.shadowDistance<=0)
@@ -32,8 +36,10 @@ public class GraphicsSettingsMenu : MonoBehaviour {
 
         QualitySettings.shadowDistance = SettingsData.shadowDistance;
         QualitySettings.SetQualityLevel(SettingsData.QualityLevel, true);
+#if !UNITY_ANDROID
         SettingsData.isFullscreen = FullscreenToggle.isOn;
         Screen.SetResolution(SettingsData.ScreenWidth, SettingsData.ScreenHeight, FullscreenToggle.isOn);
+#endif
     }
 
 }
