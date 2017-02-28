@@ -19,17 +19,20 @@ public class CustomCursor : MonoBehaviour {
         {
             if(!LoadedScene)
             {
-                Cursor.visible = false; 
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 LoadedScene = true;
             }
-            if (Cursor.visible && Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.visible = false;
+
+            if (OverlayActive.IsOverlayActive()) {
+                Cursor.visible = true;
+                Cursor.lockState = cursorLockMode;
             }
-            else if (!Cursor.visible&&Input.GetKeyDown(KeyCode.Escape))
-            {
-                 Cursor.visible = true;
+            else {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
 	}
+
 }
