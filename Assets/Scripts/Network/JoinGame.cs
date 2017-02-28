@@ -8,8 +8,7 @@ public class JoinGame : MonoBehaviour {
 
     List<GameObject> roomList = new List<GameObject>();
 
-    [SerializeField]
-    private Text status;
+    public Text status;
 
     [SerializeField]
     private GameObject roomListItemPrefab;

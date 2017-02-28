@@ -31,17 +31,13 @@ public class Player : NetworkBehaviour
 
     public int kills;
     public int deaths;
-    private GameObject killer;
-
-    //public void SetKiller(GameObject _killer)
-    //{
-    //    killer = _killer;
-    //}
+    private string killerName;
 
     [ClientRpc]
-    public void RpcSetKiller(GameObject _killer)
+    public void RpcSetKillerName(string _killerName)
     {
-        killer = _killer;
+        if (isLocalPlayer)
+            killerName = _killerName;
     }
 
     public void Setup()
@@ -63,6 +59,11 @@ public class Player : NetworkBehaviour
     public bool GetIsDead()
     {
         return isDead;
+    }
+
+    public bool GetDeadStatus() // GetIsDead() isn't working properly
+    {
+        return (GetComponent<Health>().currentHealth <= Mathf.Epsilon);
     }
 
     // Use this for initialization
@@ -90,6 +91,14 @@ public class Player : NetworkBehaviour
             }
             else if (isDead)
             {
+                if (killerName != "")
+                {
+                    if (killerName != this.name)
+                        GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetKillerText(killerName);
+                    else
+                        GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetKillerText("Myself");
+                }
+
                 respawnTimer -= Time.deltaTime;
                 GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetRespawnTimerText(respawnTimer.ToString());
 
@@ -101,20 +110,9 @@ public class Player : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.K))
             {
                 GetComponent<Health>().currentHealth = 0;
-                killer = this.gameObject;
+                killerName = this.gameObject.name;
             }
 
-            if (killer != null)
-            {
-                if (killer.name != this.name)
-                    GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetKillerText(killer.name);
-                else
-                    GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetKillerText("Myself");
-            }
-            //else
-                //Debug.Log("no killer");
-
-            //Debug.Log(GetComponent<Health>().currentHealth);
             updateInterval += Time.deltaTime;
             if (updateInterval > 0.11f)
             {
@@ -123,32 +121,14 @@ public class Player : NetworkBehaviour
         }
         else
         {
-            //if (GetComponent<Health>().currentHealth <= 0.0f)
-            //    isDead = true;
-            //else
-            //    isDead = false;
-
             isDead = real_isDead;
             hasRespawned = real_hasRespawned;
             RemotePlayerDead();
         }
-
-        //RpcRemotePlayerDead();
     }
 
     void RemotePlayerDead()
     {
-        //if (GetComponent<Health>().currentHealth <= 0.0f)
-        //{
-        //    isDead = true;
-        //}
-        //if (isDead && hasRespawned)
-        //{
-        //    GetComponent<Health>().SetDefault();
-        //    hasRespawned = false;
-        //    isDead = false;
-        //}
-
         if (isDead)
         {
             GetComponent<Health>().SetDefault();
@@ -173,9 +153,7 @@ public class Player : NetworkBehaviour
     public void SetDefaults()
     {
         respawnTimer = timeTillRespawn;
-        if (killer != null)
-            killer.name = "";
-        killer = null;
+        killerName = "";
         isDead = false;
         hasRespawned = false;
 

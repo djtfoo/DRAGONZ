@@ -122,20 +122,10 @@ public class ProjectileScript : NetworkBehaviour
         if (col.gameObject.tag == "Player" && col.gameObject.name != owner.name)
         {
             CmdHitPlayer();
-
-            //if (col.gameObject.GetComponent<Player>().GetIsDead())
-            //{
-            //    //col.gameObject.GetComponent<Player>().SetKiller(owner);
-            //    //RpcSetKiller(col.gameObject, owner);
-            //    col.gameObject.GetComponent<Player>().RpcSetKiller(owner);
-
-            //    owner.GetComponent<Player>().kills++;
-            //}
+            CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 50);
+            CmdSetKillerName(col.gameObject.GetComponent<Player>().netId, owner.name);
 
             combometer.AddToComboMeter(1);
-
-            //col.gameObject.GetComponent<Health>().TakeDamage(50);
-            CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 50);
         }
     }
 
@@ -146,15 +136,13 @@ public class ProjectileScript : NetworkBehaviour
     }
 
     [Command]
-    void CmdSetKiller(GameObject collided, GameObject owner)
+    void CmdSetKillerName(NetworkInstanceId _netID, string _killerName)
     {
-        //collided.GetComponent<Player>().SetKiller(owner);
-    }
-
-    [ClientRpc]
-    void RpcSetKiller(GameObject collided, GameObject owner)
-    {
-        //collided.GetComponent<Player>().SetKiller(owner);
+        if (NetworkServer.FindLocalObject(_netID).GetComponent<Player>().GetDeadStatus())
+        {
+            NetworkServer.FindLocalObject(_netID).GetComponent<Player>().RpcSetKillerName(_killerName);
+            //owner.GetComponent<Player>().kills++;
+        }
     }
 
     [Command]

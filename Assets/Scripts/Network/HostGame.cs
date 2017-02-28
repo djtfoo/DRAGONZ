@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class HostGame : NetworkBehaviour {
 
     [SerializeField]
-    private uint roomSize = 16;
+    private uint roomSize = 16; // not working, use the one under NetworkManager
 
     public Text errorText;
 
@@ -29,6 +29,8 @@ public class HostGame : NetworkBehaviour {
 
         if (errorText != null)
             errorText.text = "";
+
+        NetworkServer.Reset();
 
         if (networkManager.matchMaker == null)
         {
@@ -88,6 +90,7 @@ public class HostGame : NetworkBehaviour {
             if (toggleLAN.isOn)
             {
                 Debug.Log("Creating LAN Room: " + roomName + " Size: " + roomSize);
+                //networkManager.networkAddress = "localhost"; // if host is Unity editor
                 networkManager.StartHost();
             }
             else if (toggleOnline.isOn)

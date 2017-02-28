@@ -9,9 +9,10 @@ public class InitLobby : MonoBehaviour {
     {
         ToggleLAN,
         ToggleOnline,
-        ErrorText,
         CreateRoomButton,
         JoinLANButton,
+        StatusText,
+        ErrorText,
     }
 
     public Type type;
@@ -27,17 +28,31 @@ public class InitLobby : MonoBehaviour {
             case Type.ToggleOnline:
                 NetworkManager.singleton.GetComponent<HostGame>().toggleOnline = this.GetComponent<Toggle>();
                 break;
-            case Type.ErrorText:
-                NetworkManager.singleton.GetComponent<HostGame>().errorText = this.GetComponent<Text>();
-                break;
             case Type.CreateRoomButton:
-                //this.GetComponent<Button>().onClick.AddListener(() => NetworkManager.singleton.GetComponent<HostGame>());
+                //this.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateRoomButton(); });
+                //this.GetComponent<Button>().onClick.AddListener(() => NetworkManager.singleton.GetComponent<HostGame>().CreateRoom());
                 break;
             case Type.JoinLANButton:
-                //this.GetComponent<Button>().onClick.AddListener(() => NetworkManager.singleton.GetComponent<HostGame>());
+                //this.GetComponent<Button>().onClick.AddListener(delegate { OnClickJoinLANButton(); });
+                //this.GetComponent<Button>().onClick.AddListener(() => NetworkManager.singleton.GetComponent<HostGame>().JoinLANRoom());
+                break;
+            case Type.StatusText:
+                NetworkManager.singleton.GetComponent<JoinGame>().status = this.GetComponent<Text>();
+                break;
+            case Type.ErrorText:
+                NetworkManager.singleton.GetComponent<HostGame>().errorText = this.GetComponent<Text>();
                 break;
         }
         
 	}
 
+    void OnClickCreateRoomButton()
+    {
+        NetworkManager.singleton.GetComponent<HostGame>().CreateRoom();
+    }
+
+    void OnClickJoinLANButton()
+    {
+        NetworkManager.singleton.GetComponent<HostGame>().JoinLANRoom();
+    }
 }

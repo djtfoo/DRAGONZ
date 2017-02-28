@@ -38,7 +38,6 @@ public class MatchTimer : NetworkBehaviour {
             {
                 if (playersGO[i] != null && playersGO[i] != theHost)
                 {
-                    Debug.Log(playersGO[i].GetComponent<PlayerSetup>().matchTime);
                     playersGO[i].GetComponent<PlayerSetup>().RpcSetMatchTime(seconds);
                 }
             }
