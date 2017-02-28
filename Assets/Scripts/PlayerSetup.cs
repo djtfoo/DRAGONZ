@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class PlayerSetup : NetworkBehaviour
 {
@@ -58,6 +59,9 @@ public class PlayerSetup : NetworkBehaviour
             ComboMeter combometer = this.gameObject.GetComponent<ComboMeter>();
             combometer.ComboCounterText = playerUI.comboCounterText;
             combometer.ComboTimerBar = playerUI.comboCounterTimer;
+
+            DragonAttack dragonAttack = this.gameObject.GetComponent<DragonAttack>();
+            dragonAttack.raycaster = playerUIInstance.GetComponent<GraphicRaycaster>();
 
             Radar radar = this.gameObject.GetComponent <Radar>();
             radar = playerUI.radar;

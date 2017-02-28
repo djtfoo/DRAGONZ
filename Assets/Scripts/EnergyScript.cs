@@ -16,6 +16,8 @@ public class EnergyScript : NetworkBehaviour
 
     public UnityEvent ReadyToUseEnergy;
 
+    public bool unchargeEnergy = false;
+
     // Use this for initialization
     void Start()
     {
@@ -42,18 +44,37 @@ public class EnergyScript : NetworkBehaviour
     { 
         currentEnergy -= EnergyNeededToRun;
     }
-    // Update is called once per frame
+
+    // Charging up energy for an attack
     public void ChargeEnergy()
     {
         recharging = false;
-        if (currentEnergy > 0 && AmtenergyCharge <MaxCharge)
+#if UNITY_ANDROID
+            if (currentEnergy > 0 && AmtenergyCharge < (MaxCharge - EnergyNeededToRun))
+            {
+                if (AmtenergyCharge == 0)
+                {
+                    //AmtenergyCharge += EnergyNeededToRun;
+                    currentEnergy -= EnergyNeededToRun;
+                    ChargedReadyToUse = true;
+                }
+                currentEnergy -= rateEnergyCharge;
+                AmtenergyCharge += rateEnergyCharge;
+            }
+#else
+        if (currentEnergy > 0 && AmtenergyCharge < MaxCharge)
         {
-            ChargedReadyToUse = true;
+            if (AmtenergyCharge >= MinimumCharge)
+                ChargedReadyToUse = true;
+            else
+                ChargedReadyToUse = false;
             currentEnergy -= rateEnergyCharge;
             AmtenergyCharge += rateEnergyCharge;
         }
-
+#endif
     }
+
+    // Update is called once per frame
     void Update()
     {
         if (!isLocalPlayer)
@@ -61,8 +82,13 @@ public class EnergyScript : NetworkBehaviour
 
         timer += Time.deltaTime;
 
+#if UNITY_ANDROID
+        energyBarImage.fillAmount = (currentEnergy / MaxEnergy);
+        chargeBarImage.fillAmount = (AmtenergyCharge / (MaxCharge - EnergyNeededToRun));
+#else
         energyBarImage.fillAmount = (currentEnergy / MaxEnergy); //if()
         chargeBarImage.fillAmount = (AmtenergyCharge / MaxCharge);
+#endif
         if (Input.GetKeyDown("z"))
         {
             currentEnergy-=10; ;
@@ -71,7 +97,20 @@ public class EnergyScript : NetworkBehaviour
         {
             currentEnergy+=10;
         }
-        if (recharging)
+        if (unchargeEnergy)
+        {
+            currentEnergy += rateEnergyCharge;
+            AmtenergyCharge -= rateEnergyCharge;
+            if (AmtenergyCharge < 0)
+            {
+                currentEnergy += AmtenergyCharge;
+                AmtenergyCharge = 0;
+                this.recharging = true;
+                this.readyToUse = true;
+                this.unchargeEnergy = false;
+            }
+        }
+        else if (recharging)
         {
             if (currentEnergy >= EnergyNeededToRun)
             {
@@ -81,20 +120,18 @@ public class EnergyScript : NetworkBehaviour
             {
                 readyToUse = false;
             }
-            if(AmtenergyCharge>0)
-            {
-                currentEnergy += rateEnergyCharge;
-                AmtenergyCharge -= rateEnergyCharge;
-            }
+            //if(AmtenergyCharge>0)
+            //{
+            //    currentEnergy += rateEnergyCharge;
+            //    AmtenergyCharge -= rateEnergyCharge;
+            //}
             if (currentEnergy < MaxEnergy)
             {
                 if (timer >= TimeIncreaseEnergy)
                 {  
-                    if (currentEnergy >= MaxEnergy)
-                        currentEnergy = MaxEnergy;
-                    else
                     currentEnergy += AmtEnergyIncrease;
-                  
+                    if (currentEnergy > MaxEnergy)
+                        currentEnergy = MaxEnergy;
                     timer = 0;
                 }
             }

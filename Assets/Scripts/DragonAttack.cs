@@ -16,6 +16,7 @@ public class DragonAttack : NetworkBehaviour
     //public Text debug;
     public Text energyMeterText;
     public bool exceptionCharge;
+    
     bool keypress;
     int test;
     Player player;
@@ -58,8 +59,11 @@ public class DragonAttack : NetworkBehaviour
                     raycaster.Raycast(ped, results);
                     if (results.Count == 0)
                     {
-                        touchID = i;
-                        break;
+                        if (energy.currentEnergy >= energy.EnergyNeededToRun) {
+                            exceptionCharge = true;
+                            touchID = i;
+                            break;
+                        }
                     }
                 }
             }
@@ -70,6 +74,7 @@ public class DragonAttack : NetworkBehaviour
             {
                 CmdChargedAttack(FireBallTarget());
                 exceptionCharge = false;
+                touchID = -1;
             }
             else if (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge)
             {
@@ -96,11 +101,31 @@ public class DragonAttack : NetworkBehaviour
         {
             energy.ChargeEnergy();
         }
-        if (Input.GetKeyUp(KeyBoardBindings.GetChargedAttackKey()) && energy.ChargedReadyToUse)
+        if (Input.GetKeyUp(KeyBoardBindings.GetChargedAttackKey()))
         {
+#if UNITY_ANDROID
             CmdChargedAttack(FireBallTarget());
             exceptionCharge = false;
+#else
+            if (energy.ChargedReadyToUse)
+            {
+                CmdChargedAttack(FireBallTarget());
+                exceptionCharge = false;
+            }
+            else
+            {
+                //energy.recharging = true;
+                energy.unchargeEnergy = true;
+                energy.readyToUse = false;
+                exceptionCharge = false;
+            }
+#endif
         }
+
+        //if (unchargeEnergy)
+        //{
+        //    unchargeEnergy = energy.UnchargeEnergy();
+        //}
 #endif
     }
 
@@ -108,6 +133,9 @@ public class DragonAttack : NetworkBehaviour
     public void CmdChargedAttack(Vector3 _target)
     {
         AudioManager.instance.PlayChargedFireballReleaseSFX();
+#if UNITY_ANDROID
+        Handheld.Vibrate();
+#endif
 
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
@@ -138,6 +166,9 @@ public class DragonAttack : NetworkBehaviour
     void CmdFireBallAttack(Vector3 _target)
     {
         AudioManager.instance.PlayFireballReleaseSFX();
+#if UNITY_ANDROID
+        Handheld.Vibrate();
+#endif
 
         player = GetComponent<Player>();
 

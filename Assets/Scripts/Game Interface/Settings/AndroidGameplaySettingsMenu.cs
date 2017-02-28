@@ -50,6 +50,12 @@ public class AndroidGameplaySettingsMenu : MonoBehaviour {
         {
             SettingsData.SetIsJoystickLeftSide(true);
         }
+
+        // Apply to joystick if in the game scene
+        GameObject joystick = GameObject.Find("Joystick");
+        if (joystick != null) {
+            joystick.GetComponent<InitialiseJoystick>().SetJoystickPos();
+        }
     }
 
 }

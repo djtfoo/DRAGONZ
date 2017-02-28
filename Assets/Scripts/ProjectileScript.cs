@@ -150,7 +150,7 @@ public class ProjectileScript : NetworkBehaviour
     {
         AudioManager.instance.PlayFireballHitGroundSFX();
 #if UNITY_ANDROID
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
 #endif
         ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
@@ -169,7 +169,7 @@ public class ProjectileScript : NetworkBehaviour
     void CmdHitPlayer()
     {
 #if UNITY_ANDROID
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
 #endif
         ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
         ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
@@ -184,7 +184,7 @@ public class ProjectileScript : NetworkBehaviour
     {
         AudioManager.instance.PlayWaterSplashSFX();
 #if UNITY_ANDROID
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
 #endif
         ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
         system1.transform.position = this.gameObject.transform.position;
