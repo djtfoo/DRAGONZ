@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class DragonAttack : NetworkBehaviour
 {
@@ -20,6 +22,11 @@ public class DragonAttack : NetworkBehaviour
 
     private GameObject ProjectileInstianted;
 
+    public GraphicRaycaster raycaster;
+
+    // for shooting in Android
+    private int touchID = -1;
+
     // Use this for initialization
     void Start() // public override void OnStartLocalPlayer()
     {
@@ -38,7 +45,38 @@ public class DragonAttack : NetworkBehaviour
         // Checks for overlay active done in Player.cs
         if (!isLocalPlayer)
             return;
-
+#if UNITY_ANDROID
+        if (touchID == -1)  // not touching the screen; not charging up yet
+        {
+            for (int i = 0; i < Input.touchCount; ++i)
+            {
+                if (Input.GetTouch(i).phase == TouchPhase.Began)    // if the touch just began, check if it's not on a GUI object
+                {
+                    PointerEventData ped = new PointerEventData(null);
+                    ped.position = Input.GetTouch(i).position;
+                    List<RaycastResult> results = new List<RaycastResult>();
+                    raycaster.Raycast(ped, results);
+                    if (results.Count == 0)
+                    {
+                        touchID = i;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {   // there is a touch; start to charge up
+            if (Input.GetTouch(touchID).phase == TouchPhase.Ended)    // if the touch has ended, release the charged fireball
+            {
+                CmdChargedAttack(FireBallTarget());
+                exceptionCharge = false;
+            }
+            else if (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge)
+            {
+                energy.ChargeEnergy();
+            }
+        }
+#else
         if (energyMeterText != null)
             energyMeterText.text = energy.currentEnergy.ToString();
 
@@ -63,12 +101,13 @@ public class DragonAttack : NetworkBehaviour
             CmdChargedAttack(FireBallTarget());
             exceptionCharge = false;
         }
+#endif
     }
 
     [Command]
     public void CmdChargedAttack(Vector3 _target)
     {
-        //AudioManager.instance.PlayChargedFireballReleaseSFX();
+        AudioManager.instance.PlayChargedFireballReleaseSFX();
 
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
@@ -98,7 +137,7 @@ public class DragonAttack : NetworkBehaviour
     [Command]
     void CmdFireBallAttack(Vector3 _target)
     {
-        //AudioManager.instance.PlayFireballReleaseSFX();
+        AudioManager.instance.PlayFireballReleaseSFX();
 
         player = GetComponent<Player>();
 

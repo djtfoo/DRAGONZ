@@ -14,7 +14,21 @@ public static class SettingsData {
     public static int QualityLevel;
 
     // Android Settings
-    public static bool isLeftSide = true;
+    public static void SetIsJoystickLeftSide(bool b_isLeftSide)
+    {
+        if (b_isLeftSide)
+            PlayerPrefs.SetInt("JoystickLeftSide", 1);
+        else
+            PlayerPrefs.SetInt("JoystickLeftSide", 0);
+    }
+
+    public static bool IsJoystickLeftSide()
+    {
+        if (PlayerPrefs.GetInt("JoystickLeftSide", 1) == 1)
+            return true;
+
+        return false;
+    }
 
     // Controls
     public static void SaveKeyBindings(Dictionary<string, KeyCode> keys)
