@@ -12,7 +12,8 @@ public static class SettingsData {
     public static int AmtOfResolution;
     public static float shadowDistance;
     public static int QualityLevel;
-
+    public static int ResolutionDropDownValue;
+    public static bool MoveScrollBar;
     //==================
     // ANDROID SETTINGS
     //==================

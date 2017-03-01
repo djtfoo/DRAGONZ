@@ -24,6 +24,7 @@ public class GenerateResolutionOptions : MonoBehaviour {
         GetComponent<Dropdown>().AddOptions(resolutionOptions);
         GetComponent<Dropdown>().itemText.text = SettingsData.ScreenWidth.ToString() + " X " + SettingsData.ScreenHeight.ToString() ;
         GetComponent<Dropdown>().value = index;
+        SettingsData.ResolutionDropDownValue = index;
         SettingsData.AmtOfResolution = tempIndex;
 
 	}
@@ -31,6 +32,8 @@ public class GenerateResolutionOptions : MonoBehaviour {
     {
         SettingsData.ScreenHeight = Screen.resolutions[GetComponent<Dropdown>().value].height;
         SettingsData.ScreenWidth = Screen.resolutions[GetComponent<Dropdown>().value].width;
+        SettingsData.ResolutionDropDownValue = GetComponent<Dropdown>().value;
+        SettingsData.MoveScrollBar = true;
     }
 	// Update is called once per frame
 	void Update () {
