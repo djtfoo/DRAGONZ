@@ -114,7 +114,11 @@ public class HostGame : NetworkBehaviour {
                 {
                     Debug.Log("shutdown");
                     errorText.text = "No LAN room found";
-                    networkManager.StartClient().Shutdown();
+                    //networkManager.StartClient().Shutdown();
+                    networkManager.StopClient();
+                    networkManager.StopHost();
+                    networkManager.StopMatchMaker();
+                    Network.Disconnect();
                 }
 
                 LANTimer = 0.0f;

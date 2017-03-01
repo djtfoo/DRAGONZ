@@ -13,18 +13,13 @@ public class JoinGame : MonoBehaviour {
     [SerializeField]
     private GameObject roomListItemPrefab;
 
-    [SerializeField]
-    private Transform roomListParent;
-
-    private NetworkManager networkManager;
+    public Transform roomListParent;
 
     void Start()
     {
-        networkManager = NetworkManager.singleton;
-
-        if (networkManager.matchMaker == null)
+        if (NetworkManager.singleton.matchMaker == null)
         {
-            networkManager.StartMatchMaker();
+            NetworkManager.singleton.StartMatchMaker();
         }
 
         RefreshRoomList();
@@ -33,7 +28,7 @@ public class JoinGame : MonoBehaviour {
     public void RefreshRoomList()
     {
         ClearRoomList();
-        networkManager.matchMaker.ListMatches(0, 20, "", OnMatchList);
+        NetworkManager.singleton.matchMaker.ListMatches(0, 20, "", OnMatchList);
         status.text = "Loading...";
     }
 
@@ -79,7 +74,7 @@ public class JoinGame : MonoBehaviour {
 
     public void JoinRoom(MatchDesc _match)
     {
-        networkManager.matchMaker.JoinMatch(_match.networkId, "", networkManager.OnMatchJoined);
+        NetworkManager.singleton.matchMaker.JoinMatch(_match.networkId, "", NetworkManager.singleton.OnMatchJoined);
         ClearRoomList();
         status.text = "Joining Room";
     }
