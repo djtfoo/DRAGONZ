@@ -41,7 +41,7 @@ public class DragonAttack : NetworkBehaviour
         keypress = false;
         test = 0;
         exceptionCharge = false;
-        lightsource = gameObject.transform.GetChild(1).GetComponent<Light>();
+        lightsource = gameObject.transform.GetChild(1).GetChild(0).GetComponent<Light>();   // mouth's child is Light
     }
 
     // Update is called once per frame
