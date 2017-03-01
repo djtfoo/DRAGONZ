@@ -30,7 +30,7 @@ public class DragonAttack : NetworkBehaviour
     public float MaxLightIntensity;
     // for shooting in Android
     private int touchID = -1;
-
+    
     // Use this for initialization
     void Start() // public override void OnStartLocalPlayer()
     {

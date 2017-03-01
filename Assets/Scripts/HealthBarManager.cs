@@ -21,12 +21,14 @@ public class HealthBarManager : NetworkBehaviour {
     void Start()
     {
         foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))    
-        {
+        {   
             if (playerGO.layer==9)
             {
                 HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
                 temp.PlayerHealthScript = playerGO.GetComponent<Health>();
+              
                 temp.HealthBarAbovePlayer = Instantiate(HealthBar);
+                temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
                 // temp.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
                 HealthBarEnemyList.Add(temp);
             }
@@ -54,6 +56,7 @@ public class HealthBarManager : NetworkBehaviour {
                     HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
                     temp.PlayerHealthScript = playerGO.GetComponent<Health>();
                     temp.HealthBarAbovePlayer = Instantiate(HealthBar);
+                    temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
                     HealthBarEnemyList.Add(temp);
                 }
                 else if (playerGO.layer == 8)// Main Player
@@ -94,6 +97,7 @@ public class HealthBarManager : NetworkBehaviour {
                 HealthBarAboveEnemy TempHealthBar = new HealthBarAboveEnemy();
                 TempHealthBar.PlayerHealthScript = TempEnemy.GetComponent<Health>();
                 TempHealthBar.HealthBarAbovePlayer = Instantiate(HealthBar);
+                TempHealthBar.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = TempEnemy.GetComponent<Player>().username;
                 TempHealthBar.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
                 HealthBarEnemyList.Add(TempHealthBar);
                 amtOfPlayers = HealthBarEnemyList.Count;
