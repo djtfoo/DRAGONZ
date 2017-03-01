@@ -6,6 +6,11 @@ public class DataTranslator : MonoBehaviour {
     private const string KILL_SYMBOL = "[KILLS]";
     private const string DEATH_SYMBOL = "[DEATHS]";
 
+    public static string ValueToData(int kills, int deaths)
+    {
+        return KILL_SYMBOL + kills + "/" + DEATH_SYMBOL + deaths;
+    }
+
     private static string DataToValue(string data, string symbol)
     {
         string[] values = data.Split('/');

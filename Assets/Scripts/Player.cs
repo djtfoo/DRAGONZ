@@ -29,15 +29,47 @@ public class Player : NetworkBehaviour
     public float timeTillRespawn;
     private float respawnTimer;
 
-    public int kills;
-    public int deaths;
+    private int kills;
+    private int deaths;
     private string killerName;
+
+    public void SetKills(int _kills)
+    {
+        kills = _kills;
+    }
+
+    public int GetKills()
+    {
+        return kills;
+    }
+
+    public void SetDeaths(int _deaths)
+    {
+        deaths = _deaths;
+    }
+
+    public int GetDeaths()
+    {
+        return deaths;
+    }
 
     [ClientRpc]
     public void RpcSetKillerName(string _killerName)
     {
-        if (isLocalPlayer)
-            killerName = _killerName;
+        killerName = _killerName;
+    }
+
+    [ClientRpc]
+    public void RpcIncreaseStatsCount(string type)
+    {
+        if (type == "Kills")
+            kills++;
+        else if (type == "Deaths")
+            deaths++;
+        else if (type == "Combo")
+            ;
+        else
+            Debug.LogError("RpcIncreaseStatsCount: Undefined type");
     }
 
     public void Setup()
@@ -100,9 +132,9 @@ public class Player : NetworkBehaviour
                 }
 
                 respawnTimer -= Time.deltaTime;
-                GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetRespawnTimerText(respawnTimer.ToString());
+                GetComponent<PlayerSetup>().GetPlayerUI().GetRespawnScreen().SetRespawnTimerText(((int)respawnTimer).ToString());
 
-                if (respawnTimer <= Mathf.Epsilon)
+                if (respawnTimer <= 1f)
                     Respawn();
             }
 
@@ -152,7 +184,7 @@ public class Player : NetworkBehaviour
 
     public void SetDefaults()
     {
-        respawnTimer = timeTillRespawn;
+        respawnTimer = timeTillRespawn + 1;
         killerName = "";
         isDead = false;
         hasRespawned = false;
@@ -168,7 +200,7 @@ public class Player : NetworkBehaviour
 
     private void Die()
     {
-        deaths++;
+        //deaths++;
         isDead = true;
         hasRespawned = false;
         GetComponent<PlayerSetup>().GetPlayerUI().ToggleRespawnScreen();

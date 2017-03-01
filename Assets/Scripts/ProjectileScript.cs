@@ -123,7 +123,7 @@ public class ProjectileScript : NetworkBehaviour
         {
             CmdHitPlayer();
             CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 50);
-            CmdSetKillerName(col.gameObject.GetComponent<Player>().netId, owner.name);
+            CmdSetKillerName(col.gameObject.GetComponent<Player>().netId, owner.gameObject.GetComponent<Player>().netId);
 
             combometer.AddToComboMeter(1);
         }
@@ -136,12 +136,14 @@ public class ProjectileScript : NetworkBehaviour
     }
 
     [Command]
-    void CmdSetKillerName(NetworkInstanceId _netID, string _killerName)
+    void CmdSetKillerName(NetworkInstanceId _collidedID, NetworkInstanceId _killerID)
     {
-        if (NetworkServer.FindLocalObject(_netID).GetComponent<Player>().GetDeadStatus())
+        if (NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().GetDeadStatus())
         {
-            NetworkServer.FindLocalObject(_netID).GetComponent<Player>().RpcSetKillerName(_killerName);
-            //owner.GetComponent<Player>().kills++;
+            string killerName = NetworkServer.FindLocalObject(_killerID).name;
+            NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().RpcSetKillerName(killerName);
+            NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().RpcIncreaseStatsCount("Deaths");
+            NetworkServer.FindLocalObject(_killerID).GetComponent<Player>().RpcIncreaseStatsCount("Kills");
         }
     }
 
@@ -189,15 +191,15 @@ public class ProjectileScript : NetworkBehaviour
         //if (SettingsData.IsVibrationOn())
         //    Handheld.Vibrate();
 #endif
-        ParticleSystem system1 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
-        system1.transform.position = this.gameObject.transform.position;
-        system1.Play();
-      //  NetworkServer.Spawn(system1.gameObject);
+        ParticleSysInstianted2 = (ParticleSystem)Instantiate(hitWaterSystem, this.transform.position, hitWaterSystem.transform.rotation);
+        ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted2.Play();
+        NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
 
-        ParticleSystem system2 = (ParticleSystem)Instantiate(waterSplashSystem, this.transform.position, waterSplashSystem.transform.rotation);
-        system1.transform.position = this.gameObject.transform.position;
-        system1.Play();
-      //      NetworkServer.Spawn(system1.gameObject);
+        ParticleSysInstianted3 = (ParticleSystem)Instantiate(waterSplashSystem, this.transform.position, waterSplashSystem.transform.rotation);
+        ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted3.Play();
+        NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
 
         Destroy(this.gameObject);
     }
