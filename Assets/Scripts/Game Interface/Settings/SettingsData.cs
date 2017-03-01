@@ -9,10 +9,10 @@ public static class SettingsData {
     public static int ScreenHeight;
     public static int ScreenWidth;
     public static bool isFullscreen;
-    public static int AmtOfResolution;
+    public static float AmtOfResolution;
     public static float shadowDistance;
     public static int QualityLevel;
-    public static int ResolutionDropDownValue;
+    public static float ResolutionDropDownValue;
     public static bool MoveScrollBar;
     //==================
     // ANDROID SETTINGS

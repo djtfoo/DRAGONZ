@@ -106,9 +106,6 @@ public class DragonAttack : NetworkBehaviour
             energy.ChargeEnergy();
             if (lightsource.intensity <= MaxLightIntensity)
                 lightsource.intensity = (energy.AmtenergyCharge / energy.MaxCharge) * MaxLightIntensity;
-
-
-    //material.SetColor("_Color",Color.Lerp(Color.white, new Color(1f,0.5f,0f), energy.AmtenergyCharge / energy.MaxCharge));
         }
         else
         if (lightsource.intensity> 0)

@@ -18,7 +18,7 @@ public class GenerateResolutionOptions : MonoBehaviour {
 
             if(SettingsData.ScreenHeight==res.height && SettingsData.ScreenWidth == res.width)
             {
-                index = tempIndex-1;
+                index = tempIndex;
             }
         }
         GetComponent<Dropdown>().AddOptions(resolutionOptions);
