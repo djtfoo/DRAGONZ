@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
 public class MapGenerator : MonoBehaviour {
@@ -38,13 +39,37 @@ public class MapGenerator : MonoBehaviour {
 
     public TerrainType[] regions;
 
+    private bool isHost = false;
+    private GameObject[] playersGO;
+
     private void Awake()
     {
+        playersGO = GameObject.FindGameObjectsWithTag("Player");
+
+        if (NetworkManager.singleton.playerPrefab.GetComponent<PlayerSetup>().isServer)
+            isHost = true;
+
         //mapChunkSize = 241;
         //MapData.mapChunkSize = mapChunkSize;
 
         falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
-        seed = Random.Range(int.MinValue, int.MaxValue);
+        if (isHost)
+        {
+            seed = Random.Range(int.MinValue, int.MaxValue);
+            NetworkManager.singleton.playerPrefab.GetComponent<PlayerSetup>().mapSeed = seed;
+        }
+        else
+        {
+            for (int i = 0; i < playersGO.Length; ++i)
+            {
+                if (playersGO[i].GetComponent<PlayerSetup>().isServer)
+                {
+                    seed = playersGO[i].GetComponent<PlayerSetup>().mapSeed;
+                    break;
+                }
+            }
+        }
+
         MapData.seed = seed;
         GenerateMap();
 

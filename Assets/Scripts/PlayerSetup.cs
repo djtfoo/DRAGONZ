@@ -21,6 +21,8 @@ public class PlayerSetup : NetworkBehaviour
 
     public float matchTime;
 
+    public int mapSeed;
+
     Camera sceneCamera;
 
     public PlayerUI GetPlayerUI()
