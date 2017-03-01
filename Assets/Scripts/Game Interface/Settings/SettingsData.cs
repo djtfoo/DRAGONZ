@@ -63,6 +63,8 @@ public static class SettingsData {
         KeyBoardBindings.SetAttackKey(keys["AttackKey"]);
         KeyBoardBindings.SetChargedAttackKey(keys["ChargedAttackKey"]);
         KeyBoardBindings.SetPauseKey(keys["PauseKey"]);
+        KeyBoardBindings.SetZoomInKey(keys["ZoomInKey"]);
+        KeyBoardBindings.SetZoomOutKey(keys["ZoomOutKey"]);
     }
 
     // Sound

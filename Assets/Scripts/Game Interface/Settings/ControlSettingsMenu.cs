@@ -11,6 +11,8 @@ public class ControlSettingsMenu : MonoBehaviour {
     public Text attackKey;
     public Text chargedAttackKey;
     public Text pauseKey;
+    public Text zoomInKey;
+    public Text zoomOutKey;
 
     GameObject selectedButton = null;
 
@@ -22,6 +24,8 @@ public class ControlSettingsMenu : MonoBehaviour {
         attackKey.text = KeyBoardBindings.GetAttackKey().ToString();
         chargedAttackKey.text = KeyBoardBindings.GetChargedAttackKey().ToString();
         pauseKey.text = KeyBoardBindings.GetPauseKey().ToString();
+        zoomInKey.text = KeyBoardBindings.GetZoomInKey().ToString();
+        zoomOutKey.text = KeyBoardBindings.GetZoomOutKey().ToString();
     }
 
     private void Update()
@@ -49,6 +53,8 @@ public class ControlSettingsMenu : MonoBehaviour {
         keyBindings.Add("AttackKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), attackKey.text));
         keyBindings.Add("ChargedAttackKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), chargedAttackKey.text));
         keyBindings.Add("PauseKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), pauseKey.text));
+        keyBindings.Add("ZoomInKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), zoomInKey.text));
+        keyBindings.Add("ZoomOutKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), zoomOutKey.text));
 
         SettingsData.SaveKeyBindings(keyBindings);
     }
