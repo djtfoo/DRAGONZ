@@ -20,11 +20,14 @@ public class DragonAttack : NetworkBehaviour
     bool keypress;
     int test;
     Player player;
-
+    Light lightsource;
+    
+   // public Color ColorRGB;
     private GameObject ProjectileInstianted;
 
     public GraphicRaycaster raycaster;
-
+    public float LightSourceIntensityMultilpier;
+    public float MaxLightIntensity;
     // for shooting in Android
     private int touchID = -1;
 
@@ -38,6 +41,7 @@ public class DragonAttack : NetworkBehaviour
         keypress = false;
         test = 0;
         exceptionCharge = false;
+        lightsource = gameObject.transform.GetChild(1).GetComponent<Light>();
     }
 
     // Update is called once per frame
@@ -100,17 +104,27 @@ public class DragonAttack : NetworkBehaviour
         if (Input.GetKey(KeyBoardBindings.GetChargedAttackKey()) && (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge))
         {
             energy.ChargeEnergy();
+            if (lightsource.intensity <= MaxLightIntensity)
+                lightsource.intensity = (energy.AmtenergyCharge / energy.MaxCharge) * MaxLightIntensity;
+
+
+    //material.SetColor("_Color",Color.Lerp(Color.white, new Color(1f,0.5f,0f), energy.AmtenergyCharge / energy.MaxCharge));
         }
+        else
+        if (lightsource.intensity> 0)
+                lightsource.intensity -= Time.deltaTime * LightSourceIntensityMultilpier;
         if (Input.GetKeyUp(KeyBoardBindings.GetChargedAttackKey()))
         {
 #if UNITY_ANDROID
             CmdChargedAttack(FireBallTarget());
             exceptionCharge = false;
 #else
+            
+
             if (energy.ChargedReadyToUse)
             {
                 CmdChargedAttack(FireBallTarget());
-                exceptionCharge = false;
+                exceptionCharge = false;    
             }
             else
             {
