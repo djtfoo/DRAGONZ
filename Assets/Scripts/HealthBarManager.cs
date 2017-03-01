@@ -1,36 +1,169 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-[System.Serializable]
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
-public class HealthBarManager : MonoBehaviour {
-    //List<PlayerHealth> playerList;
-    //public GameObject HealthBarObject;
-	//// Use this for initialization
+[System.Serializable]
+public class HealthBarAboveEnemy // For tying player to their own healthbar image
+{
+    public Health PlayerHealthScript;
+    public Image HealthBarAbovePlayer;// MaxHealthBar will be attached as a child to this
+}
+public class HealthBarManager : NetworkBehaviour {
+  
     GameObject MainPlayer;
+    public Image HealthBar;
     Camera camera;
+    public int amtOfPlayers;
+    List<HealthBarAboveEnemy> HealthBarEnemyList = new List<HealthBarAboveEnemy>();
+
     void Start()
     {
-        //playerList = GameObject.FindGameObjectsWithTag("RemotePlayer");
-        //PlayerHealth temp;
-        
+        foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))    
+        {
+            if (playerGO.layer==9)
+            {
+                HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
+                temp.PlayerHealthScript = playerGO.GetComponent<Health>();
+                temp.HealthBarAbovePlayer = Instantiate(HealthBar);
+                // temp.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
+                HealthBarEnemyList.Add(temp);
+            }
+            else if(playerGO.layer==8)// Main Player
+            {
+                MainPlayer = playerGO;
+                camera = MainPlayer.GetComponentInChildren<Camera>();
+            }
+            
+        }
+        amtOfPlayers = HealthBarEnemyList.Count;
     }
-	
+
+    void CheckEnemyList()
+    {
+        bool EnemyNotInsideList = false;
+        GameObject TempEnemy=null;
+        if (amtOfPlayers == 0)
+        {
+            Debug.Log("AmtPlayers==0");
+            foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (playerGO.layer == 9)
+                {
+                    HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
+                    temp.PlayerHealthScript = playerGO.GetComponent<Health>();
+                    temp.HealthBarAbovePlayer = Instantiate(HealthBar);
+                    HealthBarEnemyList.Add(temp);
+                }
+                else if (playerGO.layer == 8)// Main Player
+                {
+                    MainPlayer = playerGO;
+                    camera = MainPlayer.GetComponentInChildren<Camera>();
+                }
+
+            }
+            amtOfPlayers = HealthBarEnemyList.Count;
+        }
+        else
+        {
+            foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                foreach (HealthBarAboveEnemy temp in HealthBarEnemyList)
+                {
+                    if (playerGO.layer == 9)
+                    {
+                        if (temp.PlayerHealthScript.gameObject.name == playerGO.name) // Check whether player is not the same
+                        {
+                            EnemyNotInsideList = false;
+                            TempEnemy = null;
+                            break;
+                        }
+                        else
+                        {
+                            EnemyNotInsideList = true;
+                            TempEnemy = playerGO;
+                        }
+                    }
+                }
+
+            }
+            if (EnemyNotInsideList)
+            {
+                Debug.Log("YES");
+                HealthBarAboveEnemy TempHealthBar = new HealthBarAboveEnemy();
+                TempHealthBar.PlayerHealthScript = TempEnemy.GetComponent<Health>();
+                TempHealthBar.HealthBarAbovePlayer = Instantiate(HealthBar);
+                TempHealthBar.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
+                HealthBarEnemyList.Add(TempHealthBar);
+                amtOfPlayers = HealthBarEnemyList.Count;
+            }
+        }
+    }
 	// Update is called once per frame
 	void Update () {
-        if( MainPlayer != GameObject.FindGameObjectWithTag("Player"))
-        MainPlayer = GameObject.FindGameObjectWithTag("Player");
-        else
-        { 
-         if(camera !=MainPlayer.GetComponentInChildren<Camera>())
-            camera = MainPlayer.GetComponentInChildren<Camera>();
-        }
-      
-        foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("RemotePlayer"))    
+
+        Debug.Log(GameObject.FindGameObjectsWithTag("Player").Length);
+        
+
+        
+        if (MainPlayer == null) 
         {
-           Health health = playerGO.GetComponent<Health>();
-           health.HealthBarAbovePlayer.transform.position = camera.WorldToScreenPoint(playerGO.transform.position + playerGO.transform.up*50);
-           health.MaxHealthBarAbovePlayer.transform.position = health.HealthBarAbovePlayer.transform.position;
+            foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
+            {
+
+                if (playerGO.layer == 8)
+                {
+                    MainPlayer = playerGO;
+                    camera = MainPlayer.GetComponentInChildren<Camera>();
+                    break;
+                }
+            }
         }
+        if(amtOfPlayers!=GameObject.FindGameObjectsWithTag("Player").Length-1) // Minus one cos excluding main player
+        {
+            Debug.Log("FUCK OFF");
+            CheckEnemyList();
+        }
+        foreach(HealthBarAboveEnemy temp in HealthBarEnemyList)
+        {
+            if(MainPlayer.GetComponent<Health>().currentHealth <=0)
+            {
+                temp.HealthBarAbovePlayer.gameObject.SetActive(false);
+                continue;
+            }
+            else
+                temp.HealthBarAbovePlayer.gameObject.SetActive(true);
+
+            if (temp.PlayerHealthScript.currentHealth == 0)
+                temp.HealthBarAbovePlayer.gameObject.SetActive(false);
+            else
+                temp.HealthBarAbovePlayer.gameObject.SetActive(true);
+
+            temp.HealthBarAbovePlayer.transform.GetChild(0).GetComponent<Image>().fillAmount = temp.PlayerHealthScript.currentHealth / temp.PlayerHealthScript.MaxHealth;
+
+            if (temp.HealthBarAbovePlayer.transform.parent != GameObject.Find("PlayerUI").transform)
+                temp.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
+
+            temp.HealthBarAbovePlayer.transform.position = camera.WorldToScreenPoint(temp.PlayerHealthScript.gameObject.transform.position + temp.PlayerHealthScript.gameObject.transform.up * 50);
+            //temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, 0f);
+
+            
+            Vector3 dist = MainPlayer.transform.position - temp.PlayerHealthScript.gameObject.transform.position;
+
+            //Vector3 playerView = MainPlayer.GetComponent<PlayerMovement>().GetView();
+            //float cosAngle = playerView.x * dist.x + playerView.y * dist.y + playerView.z * dist.z;
+            //
+            //if (cosAngle > 0f)
+            //    temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, -999999f);
+
+            float minDistRange = 2000f; // within this distance, hp bar is at 1x scale (aka largest possible)
+            float reducingFactor = 3000f;   // ratio of reduction
+            float healthbarScale = Mathf.Clamp((minDistRange - dist.magnitude) / reducingFactor, 0f, 1f);
+
+            temp.HealthBarAbovePlayer.transform.localScale = new Vector3(healthbarScale, healthbarScale, 1f);
+        }
+        
+       
 	}
 }

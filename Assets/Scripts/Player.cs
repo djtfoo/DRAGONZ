@@ -163,10 +163,12 @@ public class Player : NetworkBehaviour
     {
         if (isDead)
         {
-            GetComponent<Health>().SetDefault();
+            
         }
         else if (hasRespawned)
         {
+            GetComponent<Health>().SetDefault();
+
             Renderer renderer = GetComponent<Renderer>();
             if (renderer != null)
                 renderer.enabled = true;

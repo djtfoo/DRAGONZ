@@ -12,8 +12,8 @@ public class Health : NetworkBehaviour
 
     public Image HealthImage;
 
-    public Image HealthBarAbovePlayer;
-    public Image MaxHealthBarAbovePlayer;
+   // public Image HealthBarAbovePlayer;
+    //public Image MaxHealthBarAbovePlayer;
     
 	// Use this for initialization
 	void Start () {
@@ -48,7 +48,7 @@ public class Health : NetworkBehaviour
             }
             
             HealthImage.fillAmount = (currentHealth / MaxHealth);
-            HealthBarAbovePlayer.fillAmount = HealthImage.fillAmount;
+            //HealthBarAbovePlayer.fillAmount = HealthImage.fillAmount;
         }
 
         if (isServer)

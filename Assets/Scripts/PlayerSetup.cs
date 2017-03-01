@@ -55,10 +55,8 @@ public class PlayerSetup : NetworkBehaviour
 
             Health health = this.gameObject.GetComponent<Health>();
             health.HealthImage = playerUI.healthBar;
-            health.HealthBarAbovePlayer = Instantiate(playerUI.HealthBarAbovePlayer);
-            health.MaxHealthBarAbovePlayer = Instantiate(playerUI.MaxHealthBarAbovePlayer);
-            health.MaxHealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
-            health.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
+
+       //     HealthBarManager healthBarManager = GameObject.FindObjectOfType<HealthBarManager>();
            
 
             ComboMeter combometer = this.gameObject.GetComponent<ComboMeter>();
