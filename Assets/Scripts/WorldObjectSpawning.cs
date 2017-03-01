@@ -16,7 +16,7 @@ public class WorldObjectSpawning : MonoBehaviour {
     GameObject terrain;
 	void Start () {
         terrain = GameObject.FindGameObjectWithTag("Terrain");
-		//Random.seed = 42;
+        Random.seed = MapData.seed;
 
         foreach (WorldObjectToSpawn WO in TypesOfGameObjects)
         {

@@ -44,6 +44,8 @@ public class MapGenerator : MonoBehaviour {
         //MapData.mapChunkSize = mapChunkSize;
 
         falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        seed = Random.Range(int.MinValue, int.MaxValue);
+        MapData.seed = seed;
         GenerateMap();
 
         MapData.regions = this.regions;
