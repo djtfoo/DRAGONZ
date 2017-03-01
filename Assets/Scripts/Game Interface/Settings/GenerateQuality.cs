@@ -10,22 +10,21 @@ public class GenerateQuality : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         int index=0;
-           foreach (string temp in QualitySettings.names)
-           {
-               tempIndex++;
-               qualityOptions.Add(temp);
-               if(temp == QualitySettings.names[SettingsData.QualityLevel])
-               {
-                   index = tempIndex;
-               }
-           }
-           GetComponent<Dropdown>().AddOptions(qualityOptions);
-           GetComponent<Dropdown>().itemText.text = QualitySettings.names[SettingsData.QualityLevel].ToString();
-           GetComponent<Dropdown>().value = index;
-          // GetComponent<Dropdown>().
-          
+        foreach (string temp in QualitySettings.names)
+        {
+            tempIndex++;
+            qualityOptions.Add(temp);
+            if (temp == QualitySettings.names[SettingsData.QualityLevel])
+            {
+                index = tempIndex - 1;
+            }
+        }
+        GetComponent<Dropdown>().AddOptions(qualityOptions);
+        GetComponent<Dropdown>().itemText.text = QualitySettings.names[SettingsData.QualityLevel].ToString();
+        GetComponent<Dropdown>().value = index;
+        // GetComponent<Dropdown>().
 
-	}
+    }
     public void OnValueChanged()
     {
         SettingsData.QualityLevel = GetComponent<Dropdown>().value;
