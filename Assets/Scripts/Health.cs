@@ -12,9 +12,16 @@ public class Health : NetworkBehaviour
 
     public Image HealthImage;
 
+    public Image HealthBarAbovePlayer;
+    public Image MaxHealthBarAbovePlayer;
+    
 	// Use this for initialization
 	void Start () {
-	
+	     // if(isLocalPlayer)
+          //{
+             // Destroy(HealthBarAbovePlayer);
+             // Destroy(MaxHealthBarAbovePlayer);
+          //}
 	}
 	
 	// Update is called once per frame
@@ -39,8 +46,9 @@ public class Health : NetworkBehaviour
             {
                 currentHealth++;
             }
-
+            
             HealthImage.fillAmount = (currentHealth / MaxHealth);
+            HealthBarAbovePlayer.fillAmount = HealthImage.fillAmount;
         }
 
         if (isServer)
