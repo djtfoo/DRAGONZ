@@ -54,6 +54,17 @@ public static class KeyBoardBindings {
         PlayerPrefs.SetInt("PauseKey", (int)key);
     }
 
+    // Scoreboard key - Windows only
+    public static KeyCode GetScoreboardKey()
+    {
+        return (KeyCode)PlayerPrefs.GetInt("ScoreboardKey", (int)KeyCode.Tab);
+    }
+
+    public static void SetScoreboardKey(KeyCode key)
+    {
+        PlayerPrefs.SetInt("ScoreboardKey", (int)key);
+    }
+
     // Radar Zoom In key - Windows only
     public static KeyCode GetZoomInKey()
     {

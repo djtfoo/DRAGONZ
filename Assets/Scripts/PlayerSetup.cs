@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerSetup : NetworkBehaviour
 {
@@ -44,6 +45,8 @@ public class PlayerSetup : NetworkBehaviour
                 //sceneCamera.gameObject.SetActive(false);
             }
 
+            
+
             playerUIInstance = Instantiate(playerUIPrefab);
             playerUIInstance.name = playerUIPrefab.name;
 
@@ -75,6 +78,28 @@ public class PlayerSetup : NetworkBehaviour
 
         RegisterPlayer();
         GetComponent<Player>().Setup();
+
+        string username = "Loading...";
+        if (UserAccountManager.IsLoggedIn)
+            username = UserAccountManager.LoggedIn_Username;
+        else
+            username = transform.name;
+
+        CmdSetUsername(transform.name, username);
+    }
+
+    [Command]
+    void CmdSetUsername(string playerName, string username)
+    {
+        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < playersGO.Length; ++i)
+        {
+            if (playersGO[i].name == playerName)
+            {
+                playersGO[i].GetComponent<Player>().username = username;
+                break;
+            }
+        }
     }
 
     //[Client]
@@ -96,6 +121,11 @@ public class PlayerSetup : NetworkBehaviour
         if (secondsInt < 10)
             seconds = "0" + seconds;
         GetPlayerUI().GetMatchTimer_().matchTimerText.text = minutes + ":" + seconds;
+
+        if (int.Parse(minutes) == 0 && int.Parse(seconds) == 0)
+        {
+            //SceneManager.LoadScene(sceneName);
+        }
 
         PlayerUI.playerPos = transform.position;
         //Debug.Log(transform.position);

@@ -33,6 +33,9 @@ public class Player : NetworkBehaviour
     private int deaths;
     private string killerName;
 
+    [SyncVar]
+    public string username;
+
     public void SetKills(int _kills)
     {
         kills = _kills;
@@ -51,6 +54,11 @@ public class Player : NetworkBehaviour
     public int GetDeaths()
     {
         return deaths;
+    }
+
+    public int GetBestCombo()
+    {
+        return 0;
     }
 
     [ClientRpc]
@@ -110,7 +118,6 @@ public class Player : NetworkBehaviour
     }
 
     // Update is called once per frame
-    //[Client]
     void Update()
     {
         if (isLocalPlayer)
@@ -163,11 +170,11 @@ public class Player : NetworkBehaviour
     {
         if (isDead)
         {
-            
+            GetComponent<Health>().SetDefault();
         }
         else if (hasRespawned)
         {
-            GetComponent<Health>().SetDefault();
+            //GetComponent<Health>().SetDefault();
 
             Renderer renderer = GetComponent<Renderer>();
             if (renderer != null)
@@ -238,6 +245,6 @@ public class Player : NetworkBehaviour
         Transform spawnPoint = NetworkManager.singleton.GetStartPosition();
         transform.position = spawnPoint.position;
         transform.rotation = spawnPoint.rotation;
-        Debug.Log(transform.name + "respawned");
+        //Debug.Log(transform.name + " respawned");
     }
 }

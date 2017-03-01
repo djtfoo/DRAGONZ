@@ -9,6 +9,9 @@ public class PlayerUI : NetworkBehaviour {
     GameObject pauseMenu;
 
     [SerializeField]
+    GameObject scoreboard;
+
+    [SerializeField]
     public Radar radar;
 
     [SerializeField]
@@ -51,6 +54,14 @@ public class PlayerUI : NetworkBehaviour {
         if (Input.GetKeyDown(KeyBoardBindings.GetPauseKey()))
         {
             TogglePauseMenu();
+        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            scoreboard.SetActive(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            scoreboard.SetActive(false);
         }
 #endif
 	}

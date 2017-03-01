@@ -3,6 +3,9 @@ using System.Collections;
 
 public class PlayerScore : MonoBehaviour {
 
+    int lastKills = 0;
+    int lastDeaths = 0;
+
     Player player;
 
 	// Use this for initialization
@@ -36,21 +39,27 @@ public class PlayerScore : MonoBehaviour {
 
     void OnReceivedData(string data)
     {
-        if (player.GetKills() == 0 && player.GetDeaths() == 0)
+        if (player.GetKills() <= lastKills && player.GetDeaths() <= lastDeaths)
+            return;
+
+        int killsSince = player.GetKills() - lastKills;
+        int deathsSince = player.GetDeaths() - lastDeaths;
+
+        if (killsSince == 0 && deathsSince == 0)
             return;
 
         int kills = DataTranslator.DataToKills(data);
         int deaths = DataTranslator.DataToDeaths(data);
 
-        int newKills = player.GetKills() + kills;
-        int newDeaths = player.GetDeaths() + deaths;
+        int newKills = killsSince + kills;
+        int newDeaths = deathsSince + deaths;
 
         string newData = DataTranslator.ValueToData(newKills, newDeaths);
 
-        Debug.Log("Syncing: " + newData);
+        //Debug.Log("Syncing: " + newData);
 
-        player.SetKills(0);
-        player.SetDeaths(0);
+        lastKills = player.GetKills();
+        lastDeaths = player.GetDeaths();
 
         UserAccountManager.instance.SendData(newData);
     }

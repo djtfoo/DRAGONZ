@@ -140,7 +140,7 @@ public class ProjectileScript : NetworkBehaviour
     {
         if (NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().GetDeadStatus())
         {
-            string killerName = NetworkServer.FindLocalObject(_killerID).name;
+            string killerName = NetworkServer.FindLocalObject(_killerID).GetComponent<Player>().username;
             NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().RpcSetKillerName(killerName);
             NetworkServer.FindLocalObject(_collidedID).GetComponent<Player>().RpcIncreaseStatsCount("Deaths");
             NetworkServer.FindLocalObject(_killerID).GetComponent<Player>().RpcIncreaseStatsCount("Kills");
