@@ -21,6 +21,8 @@ public class PlayerUI : NetworkBehaviour {
     public Image healthBar;
     public Image comboCounterTimer;
     public Text comboCounterText;
+    public Image HealthBarAbovePlayer;
+    public Image MaxHealthBarAbovePlayer;
     public static Vector3 playerPos;
 
     // Android stuff
@@ -33,6 +35,7 @@ public class PlayerUI : NetworkBehaviour {
     {
         NetworkManager.singleton.GetComponent<MatchTimer>().enabled = true;
         OverlayActive.SetOverlayActive(false);
+     
         //PauseMenu.isOn = false;
 
 #if !UNITY_ANDROID
