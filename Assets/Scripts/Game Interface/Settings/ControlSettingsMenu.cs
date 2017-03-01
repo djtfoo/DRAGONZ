@@ -13,6 +13,7 @@ public class ControlSettingsMenu : MonoBehaviour {
     public Text pauseKey;
     public Text zoomInKey;
     public Text zoomOutKey;
+    public Text showScoreboardKey;
 
     GameObject selectedButton = null;
 
@@ -26,6 +27,7 @@ public class ControlSettingsMenu : MonoBehaviour {
         pauseKey.text = KeyBoardBindings.GetPauseKey().ToString();
         zoomInKey.text = KeyBoardBindings.GetZoomInKey().ToString();
         zoomOutKey.text = KeyBoardBindings.GetZoomOutKey().ToString();
+        showScoreboardKey.text = KeyBoardBindings.GetScoreboardKey().ToString();
     }
 
     private void Update()
@@ -55,6 +57,7 @@ public class ControlSettingsMenu : MonoBehaviour {
         keyBindings.Add("PauseKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), pauseKey.text));
         keyBindings.Add("ZoomInKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), zoomInKey.text));
         keyBindings.Add("ZoomOutKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), zoomOutKey.text));
+        keyBindings.Add("ScoreboardKey", (KeyCode)System.Enum.Parse(typeof(KeyCode), showScoreboardKey.text));
 
         SettingsData.SaveKeyBindings(keyBindings);
     }

@@ -66,6 +66,7 @@ public static class SettingsData {
         KeyBoardBindings.SetPauseKey(keys["PauseKey"]);
         KeyBoardBindings.SetZoomInKey(keys["ZoomInKey"]);
         KeyBoardBindings.SetZoomOutKey(keys["ZoomOutKey"]);
+        KeyBoardBindings.SetScoreboardKey(keys["ScoreboardKey"]);
     }
 
     // Sound
