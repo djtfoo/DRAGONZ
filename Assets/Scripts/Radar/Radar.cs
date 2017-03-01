@@ -167,6 +167,7 @@ public class Radar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (!playerScript.isLocalPlayer)
             return;
 
@@ -227,11 +228,38 @@ public class Radar : MonoBehaviour
         {
             this.ZoomOut();
         }
+        if (Input.GetAxis("Mouse ScrollWheel") != 0f)   // mouse scroll
+        {
+
+            mapScale += 0.01f * Input.GetAxis("Mouse ScrollWheel");
+            //if (mapScale < 0.02f)
+            //    mapScale = 0.002f;
+            //
+            //if (mapScale > 0.05f)
+            //    mapScale = 0.005f;
+        }
 #endif
+    }   // end of Update()
+
+    // Getters
+    public float GetMapScale()
+    {
+        return mapScale;
     }
 
+    public Vector3 GetPlayerRotation()
+    {
+        foreach (Transform child in player.transform)
+        {
+            ThirdPersonCamera camera = child.gameObject.GetComponent<ThirdPersonCamera>();
+            if (camera != null)
+            {
+                return camera.transform.eulerAngles;
+            }
+        }
 
-
+        return Vector3.forward; // default
+    }
 
 
 }
