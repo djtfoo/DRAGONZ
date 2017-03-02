@@ -17,11 +17,7 @@ public class DecideMatchWinner : MonoBehaviour {
 	void Start () 
     {
         player = NetworkManager.singleton.playerPrefab;
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {   
+
         OverlayActive.SetOverlayActive(true);
 
         // Stop rendering stuff
@@ -32,7 +28,7 @@ public class DecideMatchWinner : MonoBehaviour {
         //GameObject.Find("Terrain").SetActive(false);
         //GameObject.Find("WorldSpawner").SetActive(false);
         //GameObject.Find("HealthBarManager").SetActive(false);
-        
+
         // Set winner/loser text
         playersGO = GameObject.FindGameObjectsWithTag("Player");
         if (playersGO.Length > 1)
@@ -58,6 +54,11 @@ public class DecideMatchWinner : MonoBehaviour {
             matchWinnerText.text = "Loser";
         else
             matchWinnerText.text = "Neutral";
+	}
+	
+	// Update is called once per frame
+	void Update () 
+    {
 	}
 
     public void OnClickReturnToLobbyButton()

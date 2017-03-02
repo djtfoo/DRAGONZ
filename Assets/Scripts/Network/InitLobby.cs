@@ -9,13 +9,15 @@ public class InitLobby : MonoBehaviour {
     {
         ToggleLAN,
         ToggleOnline,
-        CreateRoomButton,
         RoomNameInput,
+        CreateRoomButton,
+        IPAddressInput,
         JoinLANButton,
         RoomListParent,
         RefreshRoomList,
         StatusText,
-        ErrorText,
+        CreateRoomErrorText,
+        JoinLANText,
     }
 
     public Type type;
@@ -41,13 +43,18 @@ public class InitLobby : MonoBehaviour {
                 this.GetComponent<Toggle>().onValueChanged.AddListener(delegate { OnToggleOnline(); });
                 break;
 
+            case Type.RoomNameInput:
+                NetworkManager.singleton.GetComponent<HostGame>().SetRoomName("");
+                this.GetComponent<InputField>().onValueChanged.AddListener(delegate { OnSetRoomName(this.GetComponent<InputField>().text); });
+                break;
+
             case Type.CreateRoomButton:
                 this.GetComponent<Button>().onClick.AddListener(delegate { OnClickCreateRoomButton(); });
                 break;
 
-            case Type.RoomNameInput:
-                NetworkManager.singleton.GetComponent<HostGame>().SetRoomName("");
-                this.GetComponent<InputField>().onValueChanged.AddListener(delegate { OnSetRoomName(this.GetComponent<InputField>().text); });
+            case Type.IPAddressInput:
+                NetworkManager.singleton.GetComponent<HostGame>().SetIPAddress("");
+                this.GetComponent<InputField>().onValueChanged.AddListener(delegate { OnSetIPAddress(this.GetComponent<InputField>().text); });
                 break;
 
             case Type.JoinLANButton:
@@ -66,9 +73,14 @@ public class InitLobby : MonoBehaviour {
                 NetworkManager.singleton.GetComponent<JoinGame>().status = this.GetComponent<Text>();
                 break;
 
-            case Type.ErrorText:
-                NetworkManager.singleton.GetComponent<HostGame>().errorText = this.GetComponent<Text>();
-                NetworkManager.singleton.GetComponent<HostGame>().errorText.text = "";
+            case Type.CreateRoomErrorText:
+                NetworkManager.singleton.GetComponent<HostGame>().createRoomErrorText = this.GetComponent<Text>();
+                NetworkManager.singleton.GetComponent<HostGame>().createRoomErrorText.text = "";
+                break;
+
+            case Type.JoinLANText:
+                NetworkManager.singleton.GetComponent<HostGame>().joinLANGameText = this.GetComponent<Text>();
+                NetworkManager.singleton.GetComponent<HostGame>().joinLANGameText.text = "";
                 break;
         }
         
@@ -92,6 +104,11 @@ public class InitLobby : MonoBehaviour {
     void OnSetRoomName(string _roomName)
     {
         NetworkManager.singleton.GetComponent<HostGame>().SetRoomName(_roomName);
+    }
+
+    void OnSetIPAddress(string _ipAddress)
+    {
+        NetworkManager.singleton.GetComponent<HostGame>().SetIPAddress(_ipAddress);
     }
 
     void OnClickJoinLANButton()

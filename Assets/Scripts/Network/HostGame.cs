@@ -8,14 +8,16 @@ public class HostGame : NetworkBehaviour {
     [SerializeField]
     private uint roomSize = 16; // not working, use the one under NetworkManager
 
-    public Text errorText;
+    public Text createRoomErrorText;
+    public Text joinLANGameText;
 
     private string roomName;
+    private string ipAddress;
     public Toggle toggleLAN;
     public Toggle toggleOnline;
     private bool canCreate;
 
-    private bool clickedLAN;
+    private bool clickedJoinLAN;
     private float LANTimer;
 
     private NetworkManager networkManager;
@@ -24,11 +26,12 @@ public class HostGame : NetworkBehaviour {
     {
         networkManager = NetworkManager.singleton;
         canCreate = false;
-        clickedLAN = false;
+        clickedJoinLAN = false;
         LANTimer = 0.0f;
+        ipAddress = "";
 
-        if (errorText != null)
-            errorText.text = "";
+        if (createRoomErrorText != null)
+            createRoomErrorText.text = "";
 
         NetworkServer.Reset();
 
@@ -41,6 +44,11 @@ public class HostGame : NetworkBehaviour {
     public void SetRoomName(string _name)
     {
         roomName = _name;
+    }
+
+    public void SetIPAddress(string _ipAddress)
+    {
+        ipAddress = _ipAddress;
     }
 
     public void SetLAN()
@@ -70,14 +78,14 @@ public class HostGame : NetworkBehaviour {
         if (!toggleLAN.isOn && !toggleOnline.isOn)
         {
             canCreate = false;
-            errorText.text = "Select game type";
+            createRoomErrorText.text = "Select game type";
             return;
         }
 
         if (roomName == "" || roomName == null)
         {
             canCreate = false;
-            errorText.text = "Room name cannot be empty";
+            createRoomErrorText.text = "Room name cannot be empty";
             return;
         }
 
@@ -90,7 +98,7 @@ public class HostGame : NetworkBehaviour {
             if (toggleLAN.isOn)
             {
                 Debug.Log("Creating LAN Room: " + roomName + " Size: " + roomSize);
-                //networkManager.networkAddress = "localhost"; // if host is Unity editor
+                networkManager.networkAddress = Network.player.ipAddress; // localhost if host is Unity editor
                 networkManager.StartHost();
             }
             else if (toggleOnline.isOn)
@@ -103,17 +111,25 @@ public class HostGame : NetworkBehaviour {
 
     void Update()
     {
-        if (clickedLAN)
+        if (clickedJoinLAN)
         {
+            if (ipAddress == "")
+            {
+                joinLANGameText.text = "IP Address cannot be empty";
+                //ipAddress = "localhost";
+                clickedJoinLAN = false;
+                return;
+            }
+
             LANTimer += Time.deltaTime;
-            errorText.text = "Searching for LAN room";
+            joinLANGameText.text = "Searching for LAN room";
 
             if (LANTimer > 1.0f)
             {
                 if (networkManager.client.isConnected == false)
                 {
                     Debug.Log("shutdown");
-                    errorText.text = "No LAN room found";
+                    joinLANGameText.text = "No LAN room found";
                     //networkManager.StartClient().Shutdown();
                     networkManager.StopClient();
                     networkManager.StopHost();
@@ -122,14 +138,15 @@ public class HostGame : NetworkBehaviour {
                 }
 
                 LANTimer = 0.0f;
-                clickedLAN = false;
+                clickedJoinLAN = false;
             }
         }
     }
 
     public void JoinLANRoom()
     {
+        networkManager.networkAddress = ipAddress;
         networkManager.StartClient();
-        clickedLAN = true;
+        clickedJoinLAN = true;
     }
 }
