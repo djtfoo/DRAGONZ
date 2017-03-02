@@ -259,7 +259,7 @@ public class PlayerMovement : NetworkBehaviour
         //}
 
 #else
-        inputValue = Input.GetAxis("Mouse Y");
+        inputValue = SettingsData.GetInvertVerticalAxis() * Input.GetAxis("Mouse Y");
 
 #endif
         float vertical = inputValue * rotateSpeed;
@@ -292,7 +292,7 @@ public class PlayerMovement : NetworkBehaviour
         //}
 
 #else
-        inputValue = Input.GetAxis("Mouse X");
+        inputValue = SettingsData.GetInvertHorizontalAxis() * Input.GetAxis("Mouse X");
 
 #endif
         float horizontal = inputValue * rotateSpeed;

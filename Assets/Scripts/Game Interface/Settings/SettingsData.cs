@@ -14,10 +14,10 @@ public static class SettingsData {
     public static int QualityLevel;
     public static float ResolutionDropDownValue;
     public static bool MoveScrollBar;
+
     //==================
     // ANDROID SETTINGS
     //==================
-
     // Joystick
     public static void SetIsJoystickLeftSide(bool b_isLeftSide)
     {
@@ -55,6 +55,33 @@ public static class SettingsData {
     //==================
     // WINDOWS SETTINGS
     //==================
+
+    // Axis
+    public static void SetInvertVerticalAxis(bool b_invertVert)
+    {
+        if (b_invertVert)
+            PlayerPrefs.SetInt("InvertVertical", -1);
+        else
+            PlayerPrefs.SetInt("InvertVertical", 1);
+    }
+
+    public static int GetInvertVerticalAxis()
+    {
+        return PlayerPrefs.GetInt("InvertVertical", 1);
+    }
+
+    public static void SetInvertHorizontalAxis(bool b_invertHorz)
+    {
+        if (b_invertHorz)
+            PlayerPrefs.SetInt("InvertHorizontal", -1);
+        else
+            PlayerPrefs.SetInt("InvertHorizontal", 1);
+    }
+
+    public static int GetInvertHorizontalAxis()
+    {
+        return PlayerPrefs.GetInt("InvertHorizontal", 1);
+    }
 
     // Controls
     public static void SaveKeyBindings(Dictionary<string, KeyCode> keys)
