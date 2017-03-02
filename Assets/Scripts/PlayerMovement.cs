@@ -249,7 +249,7 @@ public class PlayerMovement : NetworkBehaviour
         if (dir.sqrMagnitude > 1)
             dir.Normalize();
 
-        inputValue = dir.z;
+        inputValue = dir.z + 0.4f;
 
         //float deltaZ = dir.z - prevAccelerometerZ;
         //if (Mathf.Abs(deltaZ) > 0.05f)
