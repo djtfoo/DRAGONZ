@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 018c68ee4dfa3224aab91142bebc34c1
-timeCreated: 1488185135
-licenseType: Free
+guid: be1d37387208c6f4191cf91dd13ece6e
+timeCreated: 1488450523
+licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: House_3
+    100002: House_2
     400000: //RootNode
-    400002: House_3
-    2300000: House_3
-    3300000: House_3
-    4300000: House_3
+    400002: House_2
+    2300000: House_2
+    3300000: House_2
+    4300000: House_2
   materials:
     importMaterials: 1
     materialName: 0
