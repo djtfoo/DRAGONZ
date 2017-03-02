@@ -21,7 +21,8 @@ public class HealthBarManager : NetworkBehaviour {
 
     bool EnemyNotInsideList;
     GameObject TempEnemy;
-
+    [SerializeField]
+    GameObject[] playerList;
     void Start()
     {
         EnemyNotInsideList = false;
@@ -35,10 +36,12 @@ public class HealthBarManager : NetworkBehaviour {
                 temp.PlayerHealthScript = playerGO.GetComponent<Health>();
               
                 temp.HealthBarAbovePlayer = Instantiate(HealthBar);
-                temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
-                //GameObject.Find("PlayerUI").transform
-                temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
-                HealthBarEnemyList.Add(temp);
+               
+                    temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
+                    //GameObject.Find("PlayerUI").transform
+                    temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
+                    HealthBarEnemyList.Add(temp);
+                   
             }
             else if(playerGO.layer==8)// Main Player
             {
@@ -58,21 +61,24 @@ public class HealthBarManager : NetworkBehaviour {
         if (amtOfPlayers == 0)
         {
             Debug.Log("AmtPlayers==0");
-            foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
+            foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
             {
-                if (playerGO.layer == 9)
+                if (player.layer == 9)
                 {
-                    HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
-                    temp.PlayerHealthScript = playerGO.GetComponent<Health>();
+                        HealthBarAboveEnemy temp = new HealthBarAboveEnemy();
+                    temp.PlayerHealthScript = player.GetComponent<Health>();
                     temp.HealthBarAbovePlayer = Instantiate(HealthBar);
-                    temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
-                    Debug.Log(playerGO.GetComponent<Player>().username);
-                    temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
-                    HealthBarEnemyList.Add(temp);
+                    if (player.GetComponent<Player>().username != MainPlayer.GetComponent<Player>().username)
+                    {
+                        temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = player.GetComponent<Player>().username;
+                        Debug.Log(player.GetComponent<Player>().username);
+                        temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
+                        HealthBarEnemyList.Add(temp);
+                    }
                 }
-                else if (playerGO.layer == 8)// Main Player
+                else if (player.layer == 8)// Main Player
                 {
-                    MainPlayer = playerGO;
+                    MainPlayer = player;
                     camera = MainPlayer.GetComponentInChildren<Camera>();
                 }
 
@@ -120,7 +126,7 @@ public class HealthBarManager : NetworkBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+        playerList = GameObject.FindGameObjectsWithTag("Player");
         //Debug.Log(GameObject.FindGameObjectsWithTag("Player").Length);
 
         //foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
