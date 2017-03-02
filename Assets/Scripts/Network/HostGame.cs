@@ -128,7 +128,6 @@ public class HostGame : NetworkBehaviour {
             {
                 if (networkManager.client.isConnected == false)
                 {
-                    Debug.Log("shutdown");
                     joinLANGameText.text = "No LAN room found";
                     //networkManager.StartClient().Shutdown();
                     networkManager.StopClient();
