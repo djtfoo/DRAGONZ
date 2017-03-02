@@ -122,7 +122,7 @@ public class ProjectileScript : NetworkBehaviour
         if (col.gameObject.tag == "Player" && col.gameObject.name != owner.name)
         {
             CmdHitPlayer();
-            CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 50);
+            CmdTakeDamage(col.gameObject.GetComponent<Player>().netId, 40);
             CmdSetKillerName(col.gameObject.GetComponent<Player>().netId, owner.gameObject.GetComponent<Player>().netId);
 
             combometer.AddToComboMeter(1);

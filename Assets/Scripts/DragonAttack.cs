@@ -53,6 +53,9 @@ public class DragonAttack : NetworkBehaviour
 #if UNITY_ANDROID
         if (touchID == -1)  // not touching the screen; not charging up yet
         {
+            if (lightsource.intensity > 0)
+                lightsource.intensity -= Time.deltaTime * LightSourceIntensityMultilpier;
+
             for (int i = 0; i < Input.touchCount; ++i)
             {
                 if (Input.GetTouch(i).phase == TouchPhase.Began)    // if the touch just began, check if it's not on a GUI object
@@ -71,7 +74,7 @@ public class DragonAttack : NetworkBehaviour
                     }
                 }
             }
-        }
+        }   
         else
         {   // there is a touch; start to charge up
             if (Input.GetTouch(touchID).phase == TouchPhase.Ended)    // if the touch has ended, release the charged fireball
@@ -79,19 +82,30 @@ public class DragonAttack : NetworkBehaviour
                 CmdChargedAttack(FireBallTarget());
                 exceptionCharge = false;
                 touchID = -1;
+
+                // reduce the energy
+                energy.AmtenergyCharge = 0;
+                energy.recharging = true;
+                energy.timer = 0;
+                energy.ChargedReadyToUse = false;
             }
             else if (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge)
             {
                 energy.ChargeEnergy();
+                if (lightsource.intensity <= MaxLightIntensity)
+                    lightsource.intensity = (energy.AmtenergyCharge / energy.MaxCharge) * MaxLightIntensity;
             }
+
         }
 #else
-        if (energyMeterText != null)
-            energyMeterText.text = energy.currentEnergy.ToString();
+        // Debug text
+        //if (energyMeterText != null)
+        //    energyMeterText.text = energy.currentEnergy.ToString();
 
         if (Input.GetKeyDown(KeyBoardBindings.GetAttackKey()) && energy.readyToUse)
         {
             CmdFireBallAttack(FireBallTarget());
+            energy.DecreaseEnergy();
         }
         else
             keypress = false;
@@ -100,28 +114,28 @@ public class DragonAttack : NetworkBehaviour
         {
             exceptionCharge = true;
         }
-           
+
         if (Input.GetKey(KeyBoardBindings.GetChargedAttackKey()) && (energy.currentEnergy >= energy.MinimumCharge || exceptionCharge))
         {
             energy.ChargeEnergy();
             if (lightsource.intensity <= MaxLightIntensity)
                 lightsource.intensity = (energy.AmtenergyCharge / energy.MaxCharge) * MaxLightIntensity;
         }
-        else
-        if (lightsource.intensity> 0)
+        else {
+            if (lightsource.intensity> 0)
                 lightsource.intensity -= Time.deltaTime * LightSourceIntensityMultilpier;
+        }
         if (Input.GetKeyUp(KeyBoardBindings.GetChargedAttackKey()))
         {
-#if UNITY_ANDROID
-            CmdChargedAttack(FireBallTarget());
-            exceptionCharge = false;
-#else
-            
-
             if (energy.ChargedReadyToUse)
             {
                 CmdChargedAttack(FireBallTarget());
-                exceptionCharge = false;    
+                exceptionCharge = false;
+
+                energy.AmtenergyCharge = 0;
+                energy.recharging = true;
+                energy.timer = 0;
+                energy.ChargedReadyToUse = false;
             }
             else
             {
@@ -130,14 +144,9 @@ public class DragonAttack : NetworkBehaviour
                 energy.readyToUse = false;
                 exceptionCharge = false;
             }
-#endif
         }
-
-        //if (unchargeEnergy)
-        //{
-        //    unchargeEnergy = energy.UnchargeEnergy();
-        //}
 #endif
+
     }
 
     [Command]
@@ -152,10 +161,6 @@ public class DragonAttack : NetworkBehaviour
         GameObject ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
         ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed += energy.AmtenergyCharge * 50;
         //debug.text = ProjectileInstianted.GetComponent<ProjectileScript>().MovementSpeed.ToString();
-        energy.AmtenergyCharge = 0;
-        energy.recharging = true;
-        energy.timer = 0;
-        energy.ChargedReadyToUse = false;
 
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
         player = GetComponent<Player>();
@@ -186,8 +191,6 @@ public class DragonAttack : NetworkBehaviour
         player = GetComponent<Player>();
 
         ProjectileInstianted = (GameObject)Instantiate(Projectile, this.transform.position, Quaternion.identity);
-
-        energy.DecreaseEnergy();
 
         ProjectileScript projScript = ProjectileInstianted.GetComponent<ProjectileScript>();
         projScript.owner = this.gameObject;
