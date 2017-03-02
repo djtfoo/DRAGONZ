@@ -174,16 +174,18 @@ public class HealthBarManager : NetworkBehaviour {
                 temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
 
             temp.HealthBarAbovePlayer.transform.position = camera.WorldToScreenPoint(temp.PlayerHealthScript.gameObject.transform.position + temp.PlayerHealthScript.gameObject.transform.up * 50);
-            //temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, 0f);
+            temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, 0f);
 
             
             Vector3 dist = MainPlayer.transform.position - temp.PlayerHealthScript.gameObject.transform.position;
 
             //Vector3 playerView = MainPlayer.GetComponent<PlayerMovement>().GetView();
             //float cosAngle = playerView.x * dist.x + playerView.y * dist.y + playerView.z * dist.z;
-            //
-            //if (cosAngle > 0f)
-            //    temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, -999999f);
+            Vector3 cameraView = camera.gameObject.GetComponent<ThirdPersonCamera>().GetCameraView();
+            float cosAngle = cameraView.x * dist.x + cameraView.y * dist.y + cameraView.z * dist.z;
+
+            if (cosAngle > 0f)
+                temp.HealthBarAbovePlayer.transform.position = new Vector3(temp.HealthBarAbovePlayer.transform.position.x, temp.HealthBarAbovePlayer.transform.position.y, -999999f);
 
             float minDistRange = 2000f; // within this distance, hp bar is at 1x scale (aka largest possible)
             float reducingFactor = 3000f;   // ratio of reduction

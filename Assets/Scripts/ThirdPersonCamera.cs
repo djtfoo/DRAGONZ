@@ -125,4 +125,9 @@ public class ThirdPersonCamera : NetworkBehaviour
         target.transform.position = this.transform.position + 1000f * cameraDir;
     }
 
+    public Vector3 GetCameraView()
+    {
+        return cameraDir;
+    }
+
 }

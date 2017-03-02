@@ -33,6 +33,11 @@ public class CustomCursor : MonoBehaviour {
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
 	}
 
 }
