@@ -17,6 +17,9 @@ public class PlayerUI : NetworkBehaviour {
     [SerializeField]
     GameObject respawnScreen;
 
+    [SerializeField]
+    GameObject matchEndScreen;
+
     public GameObject timer;
 
     public Image energyBar;
@@ -99,6 +102,16 @@ public class PlayerUI : NetworkBehaviour {
     public RespawnScreen GetRespawnScreen()
     {
         return respawnScreen.GetComponent<RespawnScreen>();
+    }
+
+    public GameObject GetMatchEndScreen()
+    {
+        return matchEndScreen;
+    }
+
+    public GameObject GetPauseMenuScreen()
+    {
+        return pauseMenu;
     }
 
     public GetMatchTimer GetMatchTimer_()

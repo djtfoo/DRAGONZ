@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class PlayerSetup : NetworkBehaviour
 {
@@ -20,10 +19,13 @@ public class PlayerSetup : NetworkBehaviour
     public static long m_nodeID;
 
     public float matchTime;
+    private bool bStartTimeCheck;
 
     public int mapSeed;
 
     Camera sceneCamera;
+
+    GameObject[] playersGO;
 
     public PlayerUI GetPlayerUI()
     {
@@ -33,6 +35,8 @@ public class PlayerSetup : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
+        string username = "Loading...";
+
         if (!isLocalPlayer)
         {
             DisableComponents();
@@ -46,8 +50,6 @@ public class PlayerSetup : NetworkBehaviour
             {
                 //sceneCamera.gameObject.SetActive(false);
             }
-
-            
 
             playerUIInstance = Instantiate(playerUIPrefab);
             playerUIInstance.name = playerUIPrefab.name;
@@ -76,12 +78,14 @@ public class PlayerSetup : NetworkBehaviour
 
             MoveJoystick joystick = playerUI.joystick.GetComponent<MoveJoystick>();
             this.gameObject.GetComponent<PlayerMovement>().SetJoystick(joystick);
+
+            bStartTimeCheck = false;
         }
 
         RegisterPlayer();
         GetComponent<Player>().Setup();
 
-        string username = "Loading...";
+        
         if (UserAccountManager.IsLoggedIn)
             username = UserAccountManager.LoggedIn_Username;
         else
@@ -91,20 +95,28 @@ public class PlayerSetup : NetworkBehaviour
     }
 
     [Command]
-    void CmdSetUsername(string playerName, string username)
+    void CmdSetUsername(string playerName, string _username)
     {
-        GameObject[] playersGO = GameObject.FindGameObjectsWithTag("Player");
+        playersGO = GameObject.FindGameObjectsWithTag("Player");
+        //RpcSetUserName(0, _username);
+
         for (int i = 0; i < playersGO.Length; ++i)
         {
             if (playersGO[i].name == playerName)
             {
-                playersGO[i].GetComponent<Player>().username = username;
+                playersGO[i].GetComponent<Player>().username = _username;
+                //NetworkServer.FindLocalObject(playersGO[i].GetComponent<PlayerSetup>().netId).GetComponent<Player>().username = _username;
                 break;
             }
         }
     }
 
-    //[Client]
+    [ClientRpc]
+    void RpcSetUserName(int index, string _username)
+    {
+        playersGO[index].GetComponent<Player>().username = _username;
+    }
+
     void Update()
     {
         if (!isLocalPlayer)
@@ -124,13 +136,16 @@ public class PlayerSetup : NetworkBehaviour
             seconds = "0" + seconds;
         GetPlayerUI().GetMatchTimer_().matchTimerText.text = minutes + ":" + seconds;
 
-        if (int.Parse(minutes) == 0 && int.Parse(seconds) == 0)
+        if (matchTime > 0)
+            bStartTimeCheck = true;
+
+        if (bStartTimeCheck && matchTime <= Mathf.Epsilon)
         {
-            //SceneManager.LoadScene(sceneName);
+            GetPlayerUI().GetMatchEndScreen().SetActive(true);
+            GetPlayerUI().GetPauseMenuScreen().SetActive(false);
         }
 
         PlayerUI.playerPos = transform.position;
-        //Debug.Log(transform.position);
     }
 
     [ClientRpc]
