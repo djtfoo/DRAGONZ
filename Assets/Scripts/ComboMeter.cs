@@ -16,7 +16,7 @@ public class ComboMeter :  NetworkBehaviour {
     {
         if (!isLocalPlayer)
             return;
-
+        ComboTimerBar.fillAmount = 0;
         ComboCounter=0;
 	}
 	

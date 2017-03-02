@@ -16,6 +16,7 @@ public class HealthBarManager : NetworkBehaviour {
     public Image HealthBar;
     Camera camera;
     public int amtOfPlayers;
+    [SerializeField]
     List<HealthBarAboveEnemy> HealthBarEnemyList = new List<HealthBarAboveEnemy>();
 
     bool EnemyNotInsideList;
@@ -35,7 +36,8 @@ public class HealthBarManager : NetworkBehaviour {
               
                 temp.HealthBarAbovePlayer = Instantiate(HealthBar);
                 temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
-                // temp.HealthBarAbovePlayer.transform.SetParent(GameObject.Find("PlayerUI").transform);
+                //GameObject.Find("PlayerUI").transform
+                temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
                 HealthBarEnemyList.Add(temp);
             }
             else if(playerGO.layer==8)// Main Player
@@ -64,6 +66,7 @@ public class HealthBarManager : NetworkBehaviour {
                     temp.PlayerHealthScript = playerGO.GetComponent<Health>();
                     temp.HealthBarAbovePlayer = Instantiate(HealthBar);
                     temp.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = playerGO.GetComponent<Player>().username;
+                    Debug.Log(playerGO.GetComponent<Player>().username);
                     temp.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
                     HealthBarEnemyList.Add(temp);
                 }
@@ -96,33 +99,36 @@ public class HealthBarManager : NetworkBehaviour {
                             TempEnemy = playerGO;
                         }
                     }
+
+                    if (EnemyNotInsideList)
+                    {
+                        Debug.Log("YES");
+                        HealthBarAboveEnemy TempHealthBar = new HealthBarAboveEnemy();
+                        TempHealthBar.PlayerHealthScript = TempEnemy.GetComponent<Health>();
+                        TempHealthBar.HealthBarAbovePlayer = Instantiate(HealthBar);
+                        TempHealthBar.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = TempEnemy.GetComponent<Player>().username;
+                        Debug.Log(TempEnemy.GetComponent<Player>().username);
+                        TempHealthBar.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
+                        HealthBarEnemyList.Add(TempHealthBar);
+                        amtOfPlayers = HealthBarEnemyList.Count;
+                    }
                 }
 
             }
-            if (EnemyNotInsideList)
-            {
-                Debug.Log("YES");
-                HealthBarAboveEnemy TempHealthBar = new HealthBarAboveEnemy();
-                TempHealthBar.PlayerHealthScript = TempEnemy.GetComponent<Health>();
-                TempHealthBar.HealthBarAbovePlayer = Instantiate(HealthBar);
-                TempHealthBar.HealthBarAbovePlayer.transform.GetChild(1).GetComponent<Text>().text = TempEnemy.GetComponent<Player>().username;
-                //TempHealthBar.HealthBarAbovePlayer.transform.SetParent(TempEnemy.GetComponent<PlayerUI>().transform);
-                TempHealthBar.HealthBarAbovePlayer.transform.SetParent(MainPlayer.GetComponent<PlayerSetup>().GetPlayerUI().transform);
-                HealthBarEnemyList.Add(TempHealthBar);
-                amtOfPlayers = HealthBarEnemyList.Count;
-            }
         }
     }
+
 	// Update is called once per frame
 	void Update () {
 
-        Debug.Log(GameObject.FindGameObjectsWithTag("Player").Length);
+        //Debug.Log(GameObject.FindGameObjectsWithTag("Player").Length);
 
         //foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
         //{
         //    Debug.Log(playerGO.name + " " + playerGO.GetComponent<Player>().username);
         //}
-        
+        if (!MainPlayer.GetComponent<Player>().isLocalPlayer)
+            return;
         if (MainPlayer == null) 
         {
             foreach (GameObject playerGO in GameObject.FindGameObjectsWithTag("Player"))
@@ -136,7 +142,7 @@ public class HealthBarManager : NetworkBehaviour {
                 }
             }
         }
-        if(amtOfPlayers!=GameObject.FindGameObjectsWithTag("Player").Length-1) // Minus one cos excluding main player
+        if (amtOfPlayers != GameObject.FindGameObjectsWithTag("Player").Length - 1) // Minus one cos excluding main player
         {
             Debug.Log("FUCK OFF");
             CheckEnemyList();
