@@ -130,6 +130,12 @@ public class Player : NetworkBehaviour
             }
             else if (isDead)
             {
+                //GetComponent<Rigidbody>().AddForce(0, -500, 0);
+                //**Dropping Down code****/
+                this.gameObject.transform.position+=Vector3.down*2;
+                this.gameObject.transform.Rotate(0, 0, 5);
+                Debug.Log(gameObject.transform.position);
+                //************************/
                 if (killerName != "")
                 {
                     if (killerName != this.name)
@@ -218,10 +224,10 @@ public class Player : NetworkBehaviour
         {
             disableOnDeath[i].enabled = false;
         }
-
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.enabled = false;
+        
+        //Renderer renderer = GetComponent<Renderer>();
+        //if (renderer != null)
+        //    renderer.enabled = false;
 
         Collider col = GetComponent<Collider>();
         if (col != null)
