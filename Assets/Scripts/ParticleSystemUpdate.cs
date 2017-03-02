@@ -4,7 +4,7 @@ using System.Collections;
 public class ParticleSystemUpdate : MonoBehaviour {
 
     public ParticleSystem particleSystem;
-
+    public bool enabled;
 	// Use this for initialization
 	void Start () {
 	
@@ -12,10 +12,13 @@ public class ParticleSystemUpdate : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	        if(!particleSystem.IsAlive())
+        if (enabled)
+        {
+            if (!particleSystem.IsAlive())
             {
                 Destroy(this.gameObject);
             }
+        }
             //particleSystem.emissionRate=
 	}
 }

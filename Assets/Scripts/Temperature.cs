@@ -7,6 +7,7 @@ public class Temperature : MonoBehaviour {
 
 
     public ParticleSystem onFireParticleSystem;
+    ParticleSystem InstantiantedParticleSystem;
     //ParticleSystem onFireActivated;
     public HeatTransfer heatTransfer;
 	// Use this for initialization
@@ -15,19 +16,26 @@ public class Temperature : MonoBehaviour {
         Burnt = false;
         heatTransfer = FindObjectOfType<HeatTransfer>();
         heatTransfer.AddToGoList(this.gameObject);
-        onFireParticleSystem = (ParticleSystem)Instantiate(onFireParticleSystem, this.gameObject.transform.position, onFireParticleSystem.transform.rotation);
-        onFireParticleSystem.transform.position = this.gameObject.transform.position;
+           // onFireParticleSystem.gameObject.SetActive(false);
+        InstantiantedParticleSystem = (ParticleSystem)Instantiate(onFireParticleSystem, this.gameObject.transform.position+this.gameObject.transform.up*10, onFireParticleSystem.transform.rotation);
+        InstantiantedParticleSystem.transform.position = this.gameObject.transform.position + this.gameObject.transform.up * 10;
+        InstantiantedParticleSystem.GetComponent<ParticleSystemUpdate>().enabled = false;
+        InstantiantedParticleSystem.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update() {
+        if(currentTemperature<=0)
+        {
+            currentTemperature = 0;
+        }
         if (onFIRE)
         {
-            onFireParticleSystem.gameObject.SetActive(true);
+            InstantiantedParticleSystem.gameObject.SetActive(true);
         }
         if (!onFIRE)
         {
-            onFireParticleSystem.gameObject.SetActive(false);
+            InstantiantedParticleSystem.gameObject.SetActive(false);
         }
         if (currentTemperature >= MaxTemperature && !Burnt)
         {
@@ -35,15 +43,11 @@ public class Temperature : MonoBehaviour {
         }
         if (onFIRE && !Burnt)
         {
-            timer += Time.deltaTime;
-            if (timer >= FireLifeTime)
+            FireLifeTime -= Time.deltaTime;
+            currentTemperature = MaxTemperature;
+            if (FireLifeTime <=0)
             {
                 Burnt = true;
-                onFIRE = false;
-                timer = 0;
-            }
-            if (currentTemperature <= MinTempExtinguish)
-            {
                 onFIRE = false;
                 timer = 0;
             }
@@ -51,7 +55,7 @@ public class Temperature : MonoBehaviour {
         if (Burnt)
         {
             heatTransfer.DeleteToGoList(this.gameObject);
-            Destroy(onFireParticleSystem.gameObject);
+            Destroy(InstantiantedParticleSystem.gameObject);
             Destroy(this.gameObject);
         }
             //if(Burnt) //Test Case

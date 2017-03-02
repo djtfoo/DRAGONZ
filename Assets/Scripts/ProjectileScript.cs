@@ -111,7 +111,13 @@ public class ProjectileScript : NetworkBehaviour
                 CmdHitWaterParticles();
             }
         }
-
+        if(col.gameObject.tag=="Tree")
+        {
+            col.gameObject.GetComponent<Temperature>().currentTemperature = col.gameObject.GetComponent<Temperature>().MaxTemperature;
+            col.gameObject.GetComponent<Temperature>().onFIRE = true;
+            Debug.Log(col.gameObject.GetComponent<Temperature>().currentTemperature);
+            CmdHitTrees();
+        }
         if (col.gameObject.tag == "WorldObject")
         {
             CmdHitTerrainParticles();
@@ -146,7 +152,21 @@ public class ProjectileScript : NetworkBehaviour
             NetworkServer.FindLocalObject(_killerID).GetComponent<Player>().RpcIncreaseStatsCount("Kills");
         }
     }
+     [Command]
+    void CmdHitTrees()
+    {
+        ParticleSysInstianted2 = (ParticleSystem)Instantiate(ShockWaveSystem, this.transform.position, ShockWaveSystem.transform.rotation);
+        ParticleSysInstianted2.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted2.Play();
+        NetworkServer.Spawn(ParticleSysInstianted2.gameObject);
 
+        ParticleSysInstianted3 = (ParticleSystem)Instantiate(ExplosionSystem, this.transform.position, ExplosionSystem.transform.rotation);
+        ParticleSysInstianted3.transform.position = this.gameObject.transform.position;
+        ParticleSysInstianted3.Play();
+        NetworkServer.Spawn(ParticleSysInstianted3.gameObject);
+
+        Destroy(this.gameObject);
+    }
     [Command]
     void CmdHitTerrainParticles()
     {

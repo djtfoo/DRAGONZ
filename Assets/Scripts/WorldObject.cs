@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class WorldObject : MonoBehaviour {
     public float lifeTime;
     public bool LifeTimeEnabled;
-
+   // public bool HeatTranferActivated;
     bool isLandmark = false;
 
     public void SetIsLandmark(bool _isLandmark)
@@ -22,6 +22,7 @@ public class WorldObject : MonoBehaviour {
   //  public List<GameObject> ListOfChildObjects;
 	// Use this for initialization
 	void Start () {
+      
         //LifeTimeEnabled = false;
         //if(MultipleChildObjects)
         //{ 
