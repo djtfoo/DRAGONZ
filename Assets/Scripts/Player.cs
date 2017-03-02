@@ -113,7 +113,11 @@ public class Player : NetworkBehaviour
 
     void OnOverlayActive(bool _enabled)
     {
-        GetComponent<PlayerMovement>().enabled = _enabled;
+        if (!isDead)
+            GetComponent<PlayerMovement>().enabled = _enabled;
+        else
+            GetComponent<PlayerMovement>().enabled = true;
+        
         GetComponent<DragonAttack>().enabled = _enabled;
     }
 
@@ -134,7 +138,6 @@ public class Player : NetworkBehaviour
                 //**Dropping Down code****/
                 this.gameObject.transform.position+=Vector3.down*2;
                 this.gameObject.transform.Rotate(0, 0, 5);
-                //Debug.Log(gameObject.transform.position);
                 //************************/
                 if (killerName != "")
                 {
@@ -176,8 +179,8 @@ public class Player : NetworkBehaviour
     {
         if (isDead)
         {
-            //this.gameObject.transform.position += Vector3.down * 2;
-            //this.gameObject.transform.Rotate(0, 0, 5);
+            this.gameObject.transform.position += Vector3.down * 2;
+            this.gameObject.transform.Rotate(0, 0, 5);
             GetComponent<Health>().SetDefault();
         }
         else if (hasRespawned)
